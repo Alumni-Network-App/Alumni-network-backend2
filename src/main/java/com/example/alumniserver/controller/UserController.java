@@ -19,8 +19,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "api/user", method = RequestMethod.GET)
-    public User getUserByQueryId(@RequestParam(value="id", defaultValue = "ALFKI") int id){
-        return userRepository.getUserById(id);
+    public User getUserByQueryId(@RequestHeader int user_id){
+        return userRepository.getUserById(user_id);
     }
 
     @RequestMapping(value = "api/users/add", method = RequestMethod.POST)
@@ -28,7 +28,7 @@ public class UserController {
         return userRepository.addUser(user);
     }
 
-    @RequestMapping(value = "api/users", method = RequestMethod.PUT)
+    @RequestMapping(value = "api/user/update", method = RequestMethod.PATCH)
     public Boolean UpdateUser(@RequestBody int id, User user){
         return userRepository.updateUser(user);
     }
