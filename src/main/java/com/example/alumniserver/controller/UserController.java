@@ -28,8 +28,8 @@ public class UserController {
         return userRepository.addUser(user);
     }
 
-    @RequestMapping(value = "api/users/{id}", method = RequestMethod.PUT)
-    public Boolean UpdateUser(@PathVariable int id, @RequestBody User user){
+    @RequestMapping(value = "api/users", method = RequestMethod.PUT)
+    public Boolean UpdateUser(@RequestBody int id, User user){
         return userRepository.updateUser(user);
     }
 
