@@ -1,0 +1,9 @@
+
+# Steps to get a proper application.user.properties file:
+# 1. Copy this file into the same directory.
+# 2. Right click the newly copied file and refactor > rename, and change the name to "application-user.properties".
+# (Never push the application-user.properties file to github, it should be by default in .gitignore).
+# 3. Add values to the missing fields below.
+
+user.database.username=
+user.database.password=

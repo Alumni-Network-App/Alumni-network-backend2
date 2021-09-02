@@ -1,0 +1,117 @@
+CREATE TABLE "User" (
+    "user_id" int   NOT NULL,
+    "name" varchar   NOT NULL,
+    "picture" varchar   NOT NULL,
+    "status" varchar   NOT NULL,
+    "bio" varchar   NOT NULL,
+    "fun_fact" varchar   NOT NULL,
+    CONSTRAINT "pk_User" PRIMARY KEY (
+        "user_id"
+     )
+);
+
+CREATE TABLE Cont (
+    "content" varchar   NOT NULL,
+    "last_updated" date   NOT NULL
+);
+
+CREATE TABLE "Reply" (
+    "reply_id" int  UNIQUE NOT NULL,
+	"reply_parent_id" int  NOT NULL,
+    CONSTRAINT "pk_Reply" PRIMARY KEY (
+        "reply_id"
+     )
+) INHERITS(Cont);
+
+CREATE TABLE Post (
+    "post_id" int  UNIQUE NOT NULL,
+    "topic_id" int   NOT NULL,
+    "title" varchar   NOT NULL,
+    "sender_id" int   NOT NULL,
+    CONSTRAINT "pk_Post" PRIMARY KEY (
+        "post_id"
+     )
+)  INHERITS(Cont);
+
+CREATE TABLE "Topic" (
+    "topic_id" int   NOT NULL,
+    "name" varchar   NOT NULL,
+    "description" varchar   NOT NULL,
+    CONSTRAINT "pk_Topic" PRIMARY KEY (
+        "topic_id"
+     )
+);
+
+CREATE TABLE "Group" (
+    "group_id" int   NOT NULL,
+    "name" varchar   NOT NULL,
+    "description" varchar   NOT NULL,
+    "is_private" boolean   NOT NULL,
+    CONSTRAINT "pk_Group" PRIMARY KEY (
+        "group_id"
+     )
+);
+
+CREATE TABLE "GroupMember" (
+    "group_id" int   NOT NULL,
+    "user_id" int   NOT NULL
+);
+
+CREATE TABLE "EventGroupInvite" (
+    "event_id" int   NOT NULL,
+    "group_id" int   NOT NULL
+);
+
+CREATE TABLE "Event" (
+    "event_id" int   NOT NULL,
+    "topic_id" int   NOT NULL,
+    "created_by" int   NOT NULL,
+    "name" varchar   NOT NULL,
+    "description" varchar   NOT NULL,
+    "banner_img" varchar   NOT NULL,
+    "start_time" date   NOT NULL,
+    "end_time" date   NOT NULL,
+    CONSTRAINT "pk_Event" PRIMARY KEY (
+        "event_id"
+     )
+);
+
+CREATE TABLE "RSVP" (
+    "last_updated" date   NOT NULL,
+    "guest_count" int   NOT NULL,
+    "user_id" int   NOT NULL,
+    "event_id" int   NOT NULL
+);
+
+ALTER TABLE Post ADD CONSTRAINT "fk_Post_topic_id" FOREIGN KEY("topic_id")
+REFERENCES "Topic" ("topic_id");
+
+ALTER TABLE Post ADD CONSTRAINT "fk_Post_sender_id" FOREIGN KEY("sender_id")
+REFERENCES "User" ("user_id");
+
+ALTER TABLE "Reply" ADD CONSTRAINT "fk_Reply_reply_parent_id" FOREIGN KEY("reply_parent_id")
+REFERENCES Post ("post_id");
+
+ALTER TABLE "GroupMember" ADD CONSTRAINT "fk_GroupMember_group_id" FOREIGN KEY("group_id")
+REFERENCES "Group" ("group_id");
+
+ALTER TABLE "GroupMember" ADD CONSTRAINT "fk_GroupMember_user_id" FOREIGN KEY("user_id")
+REFERENCES "User" ("user_id");
+
+ALTER TABLE "EventGroupInvite" ADD CONSTRAINT "fk_EventGroupInvite_event_id" FOREIGN KEY("event_id")
+REFERENCES "Event" ("event_id");
+
+ALTER TABLE "EventGroupInvite" ADD CONSTRAINT "fk_EventGroupInvite_group_id" FOREIGN KEY("group_id")
+REFERENCES "Group" ("group_id");
+
+ALTER TABLE "Event" ADD CONSTRAINT "fk_Event_topic_id" FOREIGN KEY("topic_id")
+REFERENCES "Topic" ("topic_id");
+
+ALTER TABLE "Event" ADD CONSTRAINT "fk_Event_created_by" FOREIGN KEY("created_by")
+REFERENCES "User" ("user_id");
+
+ALTER TABLE "RSVP" ADD CONSTRAINT "fk_RSVP_user_id" FOREIGN KEY("user_id")
+REFERENCES "User" ("user_id");
+
+ALTER TABLE "RSVP" ADD CONSTRAINT "fk_RSVP_event_id" FOREIGN KEY("event_id")
+REFERENCES "Event" ("event_id");
