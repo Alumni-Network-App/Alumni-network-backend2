@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HttpStatusCodeTest {
 
-    private HttpStatusCode statusCode = new HttpStatusCode();
+    private final HttpStatusCode statusCode = new HttpStatusCode();
 
     @Test
     void getSeeOtherCode_noInput_seeOtherCode() {
