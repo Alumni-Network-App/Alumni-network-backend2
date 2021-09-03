@@ -17,8 +17,8 @@ public class PostService {
         this.repository = repository;
     }
 
-    public List<Post> getAllPosts() {
-        return repository.findAll();
+    public List<Post> getAllPosts(long id) {
+        return repository.findAllByUserId(id);
     }
 
 }
