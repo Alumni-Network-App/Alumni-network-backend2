@@ -21,4 +21,8 @@ public class PostService {
         return repository.findAllByUserId(id);
     }
 
+    public List<Post> getPostsSentToUser(long id) {
+        return repository.findAllByReceiverTypeAndReceiverId("user", id);
+    }
+
 }

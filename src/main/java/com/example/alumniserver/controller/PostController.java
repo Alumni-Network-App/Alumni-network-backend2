@@ -3,6 +3,7 @@ package com.example.alumniserver.controller;
 
 import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.model.Post;
+import com.example.alumniserver.model.Reply;
 import com.example.alumniserver.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,5 +31,13 @@ public class PostController {
         List<Post> posts = postService.getAllPosts(id);
         return new ResponseEntity<>(posts, statusCode.getFoundStatus(posts));
     }
+
+    @GetMapping(value = "/user")
+    public ResponseEntity<List<Post>> getPostsToUser() {
+        long id = new Long(1);
+        List<Post> posts = postService.getPostsSentToUser(id);
+        return new ResponseEntity<>(posts, statusCode.getFoundStatus(posts));
+    }
+
 
 }

@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity
 @Table(name="post")
 @Data
-public class Post {
+public class Post<T> {
 
     @Id
     @Column(name = "post_id")
@@ -43,4 +44,9 @@ public class Post {
     @JoinColumn(name="reply_parent_id")
     private List<Reply> replies;
 
+    @Column(name = "receiver_type")
+    private String receiverType;
+
+    @Column(name="receiver_id")
+    private long receiverId;
 }
