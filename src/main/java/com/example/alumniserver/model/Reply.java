@@ -11,15 +11,20 @@ import java.time.LocalDateTime;
 public class Reply {
 
     @Id
+    @Column(name="reply_id")
     private long id;
-
-    @Column(name = "last_updated")
-    private LocalDateTime lastUpdated;
 
     @Column(length = 1000)
     private String content;
 
+    @Column(name = "last_updated")
+    private LocalDateTime lastUpdated;
+
     @ManyToOne
-    @JoinColumn(foreignKey = @ForeignKey(name = "post_id"))
+    @JoinColumn(name = "reply_parent_id")
     private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "sender_id")
+    private User user;
 }

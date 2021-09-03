@@ -38,4 +38,10 @@ public class User {
     @JoinColumn(name = "sender_id")
     private List<Post> posts;
 
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @OneToMany
+    @JoinColumn(name = "event_id")
+    private List<Event> events;
+
 }
