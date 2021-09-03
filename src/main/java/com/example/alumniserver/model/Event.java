@@ -46,5 +46,4 @@ public class Event {
     @ManyToMany(mappedBy = "events")
     private List<Group> groups;
 
-
 }

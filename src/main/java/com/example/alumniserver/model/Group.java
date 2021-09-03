@@ -36,4 +36,9 @@ public class Group {
     )
     private List<Event> events;
 
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @ManyToMany(mappedBy = "groups")
+    private List<User> users;
+
 }
