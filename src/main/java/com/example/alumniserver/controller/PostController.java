@@ -25,9 +25,9 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Post>> getPosts() {
-        List<Post> posts = postService.getAllPosts();
-        System.out.println(posts.get(0).getTitle());
+    public ResponseEntity<List<Post>> getPostsForUser() {
+        long id = new Long(1);
+        List<Post> posts = postService.getAllPosts(id);
         return new ResponseEntity<>(posts, statusCode.getFoundStatus(posts));
     }
 
