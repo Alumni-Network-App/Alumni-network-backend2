@@ -26,6 +26,12 @@ public class Topic {
     @JoinColumn(name = "topic_id")
     private List<Post> posts;
 
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @OneToMany
+    @JoinColumn(name = "topic_id")
+    private List<Event> events;
+
     @Column(length = 1000)
     private String description;
 
