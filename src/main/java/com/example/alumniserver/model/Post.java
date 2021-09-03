@@ -40,7 +40,7 @@ public class Post {
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @OneToMany
-    @JoinColumn(name="reply_id")
+    @JoinColumn(name="reply_parent_id")
     private List<Reply> replies;
 
 }

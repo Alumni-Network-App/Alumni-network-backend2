@@ -38,4 +38,20 @@ public class User {
     @JoinColumn(name = "sender_id")
     private List<Post> posts;
 
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @OneToMany
+    @JoinColumn(name = "event_id")
+    private List<Event> events;
+
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @ManyToMany
+    @JoinTable(
+            name="group_member",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "group_id")}
+    )
+    private List<Group> groups;
+
 }
