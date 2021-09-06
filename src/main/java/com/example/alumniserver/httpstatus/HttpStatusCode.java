@@ -13,26 +13,14 @@ public class HttpStatusCode<T> {
     }
 
     /**
-     * Used for checking if a group accepts non members to post, if the group is private,
-     * and the user is not a member this method will return a 403 forbidden status.
-     *
-     * @param isMember used for checking if the user is a member.
-     * @param isPrivate checks if the group is private.
-     * @return a status code indicating if a user can post to this group.
-     */
-    public HttpStatus getForbiddenForGroupStatus(boolean isMember, boolean isPrivate) {
-        return (isPrivate == true && !isMember) ? HttpStatus.FORBIDDEN : HttpStatus.OK;
-    }
-
-    /**
      * Used for checking if a topic / post allows a user to post to it,
      * depending on if the user is a member.
      *
-     * @param isMember the value used for checking if the user is a member.
+     * @param isAdded the value used for checking if the user is a member.
      * @return a status code indicating if a user is allowed to make a post.
      */
-    public HttpStatus getForbiddenStatus(boolean isMember) {
-        return (!isMember) ? HttpStatus.FORBIDDEN : HttpStatus.OK;
+    public HttpStatus getForbiddenStatus(boolean isAdded) {
+        return (!isAdded) ? HttpStatus.FORBIDDEN : HttpStatus.OK;
     }
 
     /**

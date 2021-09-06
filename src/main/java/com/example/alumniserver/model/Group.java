@@ -15,6 +15,7 @@ public class Group {
 
     @Id
     @Column(name = "group_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column
@@ -40,5 +41,13 @@ public class Group {
     @Setter(AccessLevel.NONE)
     @ManyToMany(mappedBy = "groups")
     private List<User> users;
+
+    public boolean isUserMember(long id) {
+        for (User user : users) {
+            if(user.getId() == id)
+                return true;
+        }
+        return false;
+    }
 
 }

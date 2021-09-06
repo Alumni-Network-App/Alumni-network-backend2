@@ -12,6 +12,7 @@ public class Reply {
 
     @Id
     @Column(name="reply_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(length = 1000)

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.annotation.processing.Generated;
 import javax.persistence.*;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class Topic {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "topic_id")
     private long id;
 

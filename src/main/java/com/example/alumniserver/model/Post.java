@@ -18,10 +18,11 @@ public class Post<T> {
 
     @Id
     @Column(name = "post_id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private long id;
 
     @Column(name = "last_updated")
-    private LocalDateTime date;
+    private LocalDateTime date = LocalDateTime.now();
 
     @Column(length = 1000)
     private String content;
