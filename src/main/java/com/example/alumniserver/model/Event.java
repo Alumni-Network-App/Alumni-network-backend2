@@ -11,7 +11,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "\"event\"")
-@Data
+@Getter
+@Setter
 public class Event {
 
     @Id
