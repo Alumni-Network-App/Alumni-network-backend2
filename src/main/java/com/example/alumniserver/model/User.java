@@ -14,6 +14,7 @@ import java.util.List;
 public class User {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private long id;
 
@@ -40,12 +41,6 @@ public class User {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @OneToMany
-    @JoinColumn(name = "event_id")
-    private List<Event> events;
-
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     @ManyToMany
     @JoinTable(
             name="group_member",
@@ -53,5 +48,20 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "group_id")}
     )
     private List<Group> groups;
+/*
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @ManyToMany(mappedBy = "userRsvp")
+    private List<Event> eventRsvp;
+ */
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @ManyToMany
+    @JoinTable(
+            name="event_invite",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "event_id")}
+    )
+    private List<Event> events;
 
 }

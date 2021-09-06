@@ -1,117 +1,107 @@
 CREATE TABLE usertable (
-    "user_id" int   NOT NULL,
+    "user_id" int   PRIMARY KEY,
     "name" varchar   NOT NULL,
     "picture" varchar   NOT NULL,
     "status" varchar   NOT NULL,
     "bio" varchar   NOT NULL,
-    "fun_fact" varchar   NOT NULL,
-    CONSTRAINT "pk_usertable" PRIMARY KEY (
-        "user_id"
-     )
+    "fun_fact" varchar   NOT NULL
+);
+
+CREATE TABLE "topic" (
+    "topic_id" int   PRIMARY KEY,
+    "name" varchar   NOT NULL,
+    "description" varchar   NOT NULL
 );
 
 CREATE TABLE cont (
-    "content" varchar   NOT NULL,
+    "content" varchar(1000)   NOT NULL,
     "last_updated" date   NOT NULL
 );
 
-CREATE TABLE "reply" (
-    "reply_id" int  UNIQUE NOT NULL,
-	"reply_parent_id" int  NOT NULL,
-    CONSTRAINT "pk_reply" PRIMARY KEY (
-        "reply_id"
-     )
-) INHERITS(cont);
-
 CREATE TABLE post (
-    "post_id" int  UNIQUE NOT NULL,
+    "post_id" int  PRIMARY KEY,
+    "title" varchar(1000)   NOT NULL,
     "topic_id" int   NOT NULL,
-    "title" varchar   NOT NULL,
     "sender_id" int   NOT NULL,
-    CONSTRAINT "pk_post" PRIMARY KEY (
-        "post_id"
-     )
+	"receiver_type" varchar,
+	"receiver_id" int NOT NULL,
+	CONSTRAINT fk_user
+		FOREIGN KEY("sender_id")
+			REFERENCES usertable(user_id)
 )  INHERITS(cont);
 
-CREATE TABLE "topic" (
-    "topic_id" int   NOT NULL,
-    "name" varchar   NOT NULL,
-    "description" varchar   NOT NULL,
-    CONSTRAINT "pk_topic" PRIMARY KEY (
-        "topic_id"
-     )
-);
+CREATE TABLE "reply" (
+    "reply_id" int  PRIMARY KEY,
+	"reply_parent_id" int  NOT NULL,
+	"sender_id" int NOT NULL,
+	CONSTRAINT fk_user
+		FOREIGN KEY("sender_id")
+			REFERENCES usertable("user_id"),
+	CONSTRAINT fk_post
+		FOREIGN KEY("reply_parent_id")
+			REFERENCES post("post_id")
+) INHERITS(cont);
 
 CREATE TABLE "group" (
-    "group_id" int   NOT NULL,
+    "group_id" int   PRIMARY KEY,
     "name" varchar   NOT NULL,
     "description" varchar   NOT NULL,
-    "is_private" boolean   NOT NULL,
-    CONSTRAINT "pk_group" PRIMARY KEY (
-        "group_id"
-     )
+    "is_private" boolean   NOT NULL
 );
 
-CREATE TABLE "groupMember" (
-    "group_id" int   NOT NULL,
-    "user_id" int   NOT NULL
-);
-
-CREATE TABLE "eventGroupInvite" (
-    "event_id" int   NOT NULL,
-    "group_id" int   NOT NULL
+CREATE TABLE group_member (
+	"group_id" int NOT NULL,
+	"user_id" int NOT NULL,
+	CONSTRAINT fk_group
+		FOREIGN KEY("group_id")
+			REFERENCES "group"("group_id"),
+	CONSTRAINT fk_usertable
+		FOREIGN KEY("user_id")
+			REFERENCES usertable("user_id")
 );
 
 CREATE TABLE "event" (
-    "event_id" int   NOT NULL,
+    "event_id" int   PRIMARY KEY,
     "topic_id" int   NOT NULL,
     "created_by" int   NOT NULL,
     "name" varchar   NOT NULL,
-    "description" varchar   NOT NULL,
+    "description" varchar(1000)   NOT NULL,
     "banner_img" varchar   NOT NULL,
     "start_time" date   NOT NULL,
-    "end_time" date   NOT NULL,
-    CONSTRAINT "pk_event" PRIMARY KEY (
-        "event_id"
-     )
+    "end_time" date   NOT NULL
 );
 
-CREATE TABLE "rsvp" (
+CREATE TABLE event_group (
+	"event_id" int NOT NULL,
+	"group_id" int NOT NULL,
+	CONSTRAINT fk_event
+		FOREIGN KEY("event_id")
+			REFERENCES "event"("event_id"),
+	CONSTRAINT fk_group
+		FOREIGN KEY("group_id")
+			REFERENCES "group"("group_id")
+);
+
+CREATE TABLE event_invite (
+	"user_id" int NOT NULL,
+	"event_id" int NOT NULL,
+	CONSTRAINT fk_usertable
+		FOREIGN KEY("user_id")
+			REFERENCES usertable("user_id"),
+	CONSTRAINT fk_event
+		FOREIGN KEY("event_id")
+			REFERENCES "event"("event_id")
+);
+
+CREATE TABLE RSVP (
     "last_updated" date   NOT NULL,
     "guest_count" int   NOT NULL,
     "user_id" int   NOT NULL,
-    "event_id" int   NOT NULL
+    "event_id" int   NOT NULL,
+	CONSTRAINT fk_usertable
+		FOREIGN KEY("user_id")
+			REFERENCES usertable("user_id"),
+	CONSTRAINT fk_event
+		FOREIGN KEY("event_id")
+			REFERENCES "event"("event_id")
 );
-
-ALTER TABLE post ADD CONSTRAINT "fk_post_topic_id" FOREIGN KEY("topic_id")
-REFERENCES "topic" ("topic_id");
-
-ALTER TABLE post ADD CONSTRAINT "fk_post_sender_id" FOREIGN KEY("sender_id")
-REFERENCES "usertable" ("user_id");
-
-ALTER TABLE "reply" ADD CONSTRAINT "fk_reply_reply_parent_id" FOREIGN KEY("reply_parent_id")
-REFERENCES post ("post_id");
-
-ALTER TABLE "groupMember" ADD CONSTRAINT "fk_groupMember_group_id" FOREIGN KEY("group_id")
-REFERENCES "group" ("group_id");
-
-ALTER TABLE "groupMember" ADD CONSTRAINT "fk_groupMember_user_id" FOREIGN KEY("user_id")
-REFERENCES "usertable" ("user_id");
-
-ALTER TABLE "eventGroupInvite" ADD CONSTRAINT "fk_eventGroupInvite_event_id" FOREIGN KEY("event_id")
-REFERENCES "event" ("event_id");
-
-ALTER TABLE "eventGroupInvite" ADD CONSTRAINT "fk_eventGroupInvite_group_id" FOREIGN KEY("group_id")
-REFERENCES "group" ("group_id");
-
-ALTER TABLE "event" ADD CONSTRAINT "fk_event_topic_id" FOREIGN KEY("topic_id")
-REFERENCES "topic" ("topic_id");
-
-ALTER TABLE "event" ADD CONSTRAINT "fk_event_created_by" FOREIGN KEY("created_by")
-REFERENCES "usertable" ("user_id");
-
-ALTER TABLE "rsvp" ADD CONSTRAINT "fk_rsvp_user_id" FOREIGN KEY("user_id")
-REFERENCES "usertable" ("user_id");
-
-ALTER TABLE "rsvp" ADD CONSTRAINT "fk_rsvp_event_id" FOREIGN KEY("event_id")
-REFERENCES "event" ("event_id");
