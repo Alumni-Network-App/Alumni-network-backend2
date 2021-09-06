@@ -10,7 +10,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "\"group\"")
-@Data
+@Getter
+@Setter
 public class Group {
 
     @Id
@@ -27,6 +28,7 @@ public class Group {
     @Column(name = "is_private")
     private boolean isPrivate;
 
+
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToMany
@@ -36,6 +38,7 @@ public class Group {
             inverseJoinColumns = {@JoinColumn(name = "event_id")}
     )
     private List<Event> events;
+
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)

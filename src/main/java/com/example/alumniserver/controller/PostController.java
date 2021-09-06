@@ -71,8 +71,16 @@ public class PostController {
     @PostMapping
     public ResponseEntity<Boolean> createPost(@RequestBody Post post) {
         long id = TEST_ID;
-        System.out.println(post);
         boolean posted = postService.makeAPost(post, id);
+        return new ResponseEntity<>(posted, statusCode.getForbiddenStatus(posted));
+    }
+
+    @PutMapping(value = "/{postId}")
+    public ResponseEntity<Boolean> updatePost(
+            @PathVariable long postId,
+            @RequestBody Post post
+    ) {
+        boolean posted = postService.updateAPost(post, postId);
         return new ResponseEntity<>(posted, statusCode.getForbiddenStatus(posted));
     }
 

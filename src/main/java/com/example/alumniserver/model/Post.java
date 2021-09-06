@@ -2,18 +2,18 @@ package com.example.alumniserver.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name="post")
-@Data
+@Getter
+@Setter
 public class Post<T> {
 
     @Id
@@ -45,9 +45,39 @@ public class Post<T> {
     @JoinColumn(name="reply_parent_id")
     private List<Reply> replies;
 
-    @Column(name = "receiver_type")
+    @Column(name = "receiver_type", updatable = false)
     private String receiverType;
 
-    @Column(name="receiver_id")
+    @Column(name="receiver_id", updatable = false)
     private long receiverId;
+
+    @JsonGetter("topic")
+    public String topic() {
+        if(topic != null) {
+            return "/api/v1/topic/" + topic.getId();
+        } else {
+            return null;
+        }
+    }
+
+    @JsonGetter("user")
+    public String user() {
+        if(user != null) {
+            return "/api/v1/user/" + user.getId();
+        } else {
+            return null;
+        }
+    }
+
+    @JsonGetter("replies")
+    public List<String> replies() {
+        if(replies != null) {
+            return replies.stream()
+                    .map(reply -> {
+                        return "/api/v1/replies/" + reply.getId();
+                    }).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
 }

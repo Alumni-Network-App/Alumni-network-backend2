@@ -1,5 +1,6 @@
 package com.example.alumniserver.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -7,10 +8,12 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name="usertable")
-@Data
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -54,6 +57,7 @@ public class User {
     @ManyToMany(mappedBy = "userRsvp")
     private List<Event> eventRsvp;
  */
+
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToMany
@@ -63,5 +67,41 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "event_id")}
     )
     private List<Event> events;
+
+    @JsonGetter("posts")
+    public List<String> posts() {
+        if(posts != null) {
+            return posts.stream()
+                    .map(post -> {
+                        return "/api/v1/posts/" + post.getId();
+                    }).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
+
+    @JsonGetter("events")
+    public List<String> events() {
+        if(events != null) {
+            return events.stream()
+                    .map(event -> {
+                        return "/api/v1/events/" + event.getId();
+                    }).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
+
+    @JsonGetter("groups")
+    public List<String> groups() {
+        if(groups != null) {
+            return groups.stream()
+                    .map(group -> {
+                        return "/api/v1/groups/" + group.getId();
+                    }).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
 
 }
