@@ -11,11 +11,13 @@ import java.util.List;
 
 @Entity
 @Table(name = "\"event\"")
-@Data
+@Getter
+@Setter
 public class Event {
 
     @Id
     @Column(name = "event_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @ManyToOne
@@ -45,5 +47,28 @@ public class Event {
     @Setter(AccessLevel.NONE)
     @ManyToMany(mappedBy = "events")
     private List<Group> groups;
+/*
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @ManyToMany
+    @JoinTable(
+            name="RSVP",
+            joinColumns = {@JoinColumn(name = "event_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    private List<User> userRsvp;
+*/
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @ManyToMany(mappedBy = "events")
+    private List<User> invitedUsers;
+
+    public boolean isUserInvited(long userId) {
+        for (User user : invitedUsers) {
+            if(user.getId() == userId)
+                return true;
+        }
+        return false;
+    }
 
 }

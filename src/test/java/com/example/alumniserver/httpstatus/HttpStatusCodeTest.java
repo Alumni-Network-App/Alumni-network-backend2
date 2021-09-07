@@ -16,27 +16,12 @@ class HttpStatusCodeTest {
 
     @Test
     void getForbiddenForGroupStatus_inGroupFalseIsPrivateFalse_okCode() {
-        assertEquals(HttpStatus.OK, statusCode.getForbiddenForGroupStatus(false, false));
+        assertEquals(HttpStatus.FORBIDDEN, statusCode.getForbiddenStatus(false));
     }
 
     @Test
     void getForbiddenForGroupStatus_inGroupTrueIsPrivateFalse_okCode() {
-        assertEquals(HttpStatus.OK, statusCode.getForbiddenForGroupStatus(true, false));
-    }
-
-    @Test
-    void getForbiddenForGroupStatus_inGroupTrueIsPrivateTrue_okCode() {
-        assertEquals(HttpStatus.OK, statusCode.getForbiddenForGroupStatus(true, true));
-    }
-
-    @Test
-    void getForbiddenForGroupStatus_inGroupFalseIsPrivateTrue_forbiddenCode() {
-        assertEquals(HttpStatus.FORBIDDEN, statusCode.getForbiddenForGroupStatus(false, true));
-    }
-
-    @Test
-    void getForbiddenStatus_isMemberFalse_forbiddenCode() {
-        assertEquals(HttpStatus.FORBIDDEN, statusCode.getForbiddenStatus(false));
+        assertEquals(HttpStatus.OK, statusCode.getFoundStatus(true));
     }
 
     @Test

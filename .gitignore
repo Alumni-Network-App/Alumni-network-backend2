@@ -38,3 +38,5 @@ out/
 
 ### Resource files ###
 application-user.properties
+
+data.sql

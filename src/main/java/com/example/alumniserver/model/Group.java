@@ -10,11 +10,13 @@ import java.util.List;
 
 @Entity
 @Table(name = "\"group\"")
-@Data
+@Getter
+@Setter
 public class Group {
 
     @Id
     @Column(name = "group_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column
@@ -26,6 +28,7 @@ public class Group {
     @Column(name = "is_private")
     private boolean isPrivate;
 
+
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToMany
@@ -36,9 +39,18 @@ public class Group {
     )
     private List<Event> events;
 
+
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToMany(mappedBy = "groups")
     private List<User> users;
+
+    public boolean isUserMember(long id) {
+        for (User user : users) {
+            if(user.getId() == id)
+                return true;
+        }
+        return false;
+    }
 
 }
