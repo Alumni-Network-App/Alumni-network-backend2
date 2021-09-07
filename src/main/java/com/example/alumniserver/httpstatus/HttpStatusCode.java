@@ -1,5 +1,8 @@
 package com.example.alumniserver.httpstatus;
 
+import com.example.alumniserver.model.Event;
+import com.example.alumniserver.model.Group;
+import com.example.alumniserver.model.User;
 import org.springframework.http.HttpStatus;
 
 public class HttpStatusCode<T> {
@@ -57,4 +60,14 @@ public class HttpStatusCode<T> {
         return (t == null) ? HttpStatus.NOT_FOUND : HttpStatus.OK;
     }
 
+
+    //TODO ingen aning hur jag ska kolla detta, har inte förstått hur modellerna funkar....
+    public HttpStatus getForbiddenIfNotGroupMember (Group group, User user){
+
+        return (true) ? HttpStatus.FORBIDDEN : HttpStatus.OK;
+    }
+
+    public HttpStatus getForbiddenForUpdateEventStatus(Event event, User user) {
+        return (event.getUser() != user) ? HttpStatus.FORBIDDEN : HttpStatus.OK;
+    }
 }
