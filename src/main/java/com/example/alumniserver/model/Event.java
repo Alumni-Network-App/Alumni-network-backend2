@@ -71,4 +71,12 @@ public class Event {
         return false;
     }
 
+    public boolean isUserCreator(long userId){
+        if(user.getId() == userId){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }

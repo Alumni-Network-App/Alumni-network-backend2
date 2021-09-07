@@ -1,6 +1,8 @@
 package com.example.alumniserver.httpstatus;
 
+import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Group;
+import com.example.alumniserver.model.User;
 import org.springframework.http.HttpStatus;
 
 public class HttpStatusCode<T> {
@@ -44,6 +46,11 @@ public class HttpStatusCode<T> {
      */
     public HttpStatus getFoundStatus(T t) {
         return (t == null) ? HttpStatus.NOT_FOUND : HttpStatus.OK;
+    }
+
+
+    public HttpStatus getForbiddenToUpdateEventStatus(boolean isInvited) {
+        return (!isInvited) ? HttpStatus.FORBIDDEN : HttpStatus.OK;
     }
 
 }
