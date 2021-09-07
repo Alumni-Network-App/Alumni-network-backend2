@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,13 +45,19 @@ public class User {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name="group_member",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "group_id")}
     )
     private List<Group> groups;
+
+    public void addGroup(Group group) {
+        if(groups == null)
+            groups = new ArrayList<>();
+        groups.add(group);
+    }
 /*
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
