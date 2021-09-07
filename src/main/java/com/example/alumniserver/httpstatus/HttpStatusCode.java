@@ -1,5 +1,6 @@
 package com.example.alumniserver.httpstatus;
 
+import com.example.alumniserver.model.Group;
 import org.springframework.http.HttpStatus;
 
 public class HttpStatusCode<T> {
