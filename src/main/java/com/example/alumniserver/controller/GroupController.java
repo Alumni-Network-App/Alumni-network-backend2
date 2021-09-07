@@ -38,15 +38,33 @@ public class GroupController {
         long id = TEST_ID;
         Group group = service.getGroup(groupId);
         HttpStatus httpStatus = (status.getFoundStatus(group) == HttpStatus.NOT_FOUND) ?
-                HttpStatus.NOT_FOUND : status.getForbiddenStatus(group.isUserMember(id));
-        if(httpStatus == HttpStatus.FORBIDDEN)
+                HttpStatus.NOT_FOUND : status.getForbiddenStatus((group.isPrivate() && group.isUserMember(id)) || !group.isPrivate());
+        if (httpStatus == HttpStatus.FORBIDDEN)
             group = null;
         return new ResponseEntity<>(group, httpStatus);
     }
 
-    /*@PostMapping
+    @PostMapping
     public ResponseEntity<Boolean> createGroup(@RequestBody Group group) {
+        long userId = TEST_ID;
+        boolean added = service.createGroup(group, userId);
+        return new ResponseEntity<>(added, status.getContentStatus());
+    }
 
-    }*/
+    @PostMapping(value = {"/{groupId}/join", "/{groupId}/join/{userId}"})
+    public ResponseEntity<Boolean> createGroupMembership(
+            @PathVariable long groupId,
+            @PathVariable(required = false) Long userId
+    ) {
+        boolean added;
+        if (userId == null) {
+            userId = TEST_ID;
+            added = service.createGroupMembership(groupId, userId);
+        } else {
+            long loggedInUserId = TEST_ID;
+            added = service.addUserToGroup(groupId, userId, loggedInUserId);
+        }
+        return new ResponseEntity<>(added, status.getForbiddenStatus(added));
+    }
 
 }

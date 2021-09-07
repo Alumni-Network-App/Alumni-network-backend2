@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -42,7 +43,7 @@ public class Group {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(mappedBy = "groups")
+    @ManyToMany(mappedBy = "groups", cascade = CascadeType.ALL)
     private List<User> users;
 
     public boolean isUserMember(long id) {
@@ -51,6 +52,13 @@ public class Group {
                 return true;
         }
         return false;
+    }
+
+    public void addUserAsMember(User user) {
+        if(users == null){
+            users = new ArrayList<>();
+        }
+        users.add(user);
     }
 
 }
