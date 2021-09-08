@@ -1,6 +1,7 @@
 package com.example.alumniserver.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,7 +45,7 @@ public class Post<T> {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="reply_parent_id")
     private List<Reply> replies;
 
@@ -89,4 +90,10 @@ public class Post<T> {
             return null;
         }
     }
+
+    @JsonProperty
+    public String getPostLink() {
+        return "/api/v1/post/" + getId();
+    }
+
 }

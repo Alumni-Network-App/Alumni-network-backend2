@@ -46,4 +46,7 @@ public class HttpStatusCode<T> {
         return (t == null) ? HttpStatus.NOT_FOUND : HttpStatus.OK;
     }
 
+    public HttpStatus getForbiddenPostingStatus(T t) {
+        return (t == null) ? HttpStatus.FORBIDDEN : HttpStatus.CREATED;
+    }
 }
