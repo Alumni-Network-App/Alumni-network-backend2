@@ -89,9 +89,9 @@ public class Event {
         }
     }
 
-    public boolean isUserInvited(long userId) {
+    public boolean isUserInvited(String userId) {
         for (User user : invitedUsers) {
-            if(user.getId() == userId)
+            if(user.getId().equals(userId))
                 return true;
         }
         return false;

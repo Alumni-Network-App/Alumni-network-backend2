@@ -29,7 +29,7 @@ public class ReplyController {
     }
 
     @GetMapping(value = "/user/{userId}")
-    public ResponseEntity<List<Reply>> getRepliesWithUserId(@PathVariable long userId) {
+    public ResponseEntity<List<Reply>> getRepliesWithUserId(@PathVariable String userId) {
         List<Reply> replies = service.getRepliesWithUserId(userId);
         return new ResponseEntity<>(replies, statusCode.getFoundStatus(replies));
     }
@@ -44,7 +44,7 @@ public class ReplyController {
     public ResponseEntity<Boolean> createReply(
             @PathVariable long postId,
             @RequestBody Reply reply) {
-        long userId = 2;
+        String userId = "2";
         boolean added = service.createReply(reply, postId, userId);
         return new ResponseEntity<>(added, statusCode.getForbiddenStatus(added));
     }

@@ -30,7 +30,7 @@ public class ReplyService {
         return repository.findReplyById(replyId);
     }
 
-    public List<Reply> getRepliesWithUserId(long userId) {
+    public List<Reply> getRepliesWithUserId(String userId) {
         return repository.findRepliesByUserId(userId);
     }
 
@@ -38,7 +38,7 @@ public class ReplyService {
         return repository.findAllByPostId(postId);
     }
 
-    public boolean createReply(Reply reply, long postId, long userId) {
+    public boolean createReply(Reply reply, long postId, String userId) {
         Post post = getPostInformation(postId);
         if (postService.isPostingAllowed(post, userId)) {
             updateReplyRelations(reply, post, userId);
@@ -62,7 +62,7 @@ public class ReplyService {
         return oldReply;
     }
 
-    private void updateReplyRelations(Reply reply, Post post, long userId) {
+    private void updateReplyRelations(Reply reply, Post post, String userId) {
         Post updatedPost = updatePostRelations(reply, post);
         User user = updateUserRelations(reply, userId);
         reply.setPost(updatedPost);
@@ -70,7 +70,7 @@ public class ReplyService {
         repository.save(reply);
     }
 
-    private User updateUserRelations(Reply reply, long userId) {
+    private User updateUserRelations(Reply reply, String userId) {
         User user = getUserInformation(userId);
         user.addReply(reply);
         userRepository.save(user);
@@ -83,7 +83,7 @@ public class ReplyService {
         return post;
     }
 
-    private User getUserInformation(long userId) {
+    private User getUserInformation(String userId) {
         return userRepository.findUserById(userId);
     }
 

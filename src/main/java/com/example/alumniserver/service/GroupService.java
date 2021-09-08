@@ -22,7 +22,7 @@ public class GroupService {
         this.userRepository = userRepository;
     }
 
-    public List<Group> getGroups(long userId) {
+    public List<Group> getGroups(String userId) {
         List<Group> nonPrivateGroups = repository.findGroupsByIsPrivate(false);
         List<Group> privateGroups = getPrivateGroups(userId);
         privateGroups.addAll(nonPrivateGroups);
@@ -33,11 +33,11 @@ public class GroupService {
         return repository.findGroupsById(groupId);
     }
 
-    private List<Group> getPrivateGroups(long userId) {
+    private List<Group> getPrivateGroups(String userId) {
         return filterOutGroupsNotMember(repository.findGroupsByIsPrivate(true), userId);
     }
 
-    private List<Group> filterOutGroupsNotMember(List<Group> groups, long userId) {
+    private List<Group> filterOutGroupsNotMember(List<Group> groups, String userId) {
         List<Group> returnGroups = new ArrayList<>();
         for(Group group : groups) {
             if(group.isUserMember(userId))
@@ -46,12 +46,12 @@ public class GroupService {
         return returnGroups;
     }
 
-    public boolean createGroup(Group group, long userId) {
+    public boolean createGroup(Group group, String userId) {
         User user = userRepository.findUserById(userId);
         return createMembership(group, user);
     }
 
-    public boolean createGroupMembership(long groupId, long userId) {
+    public boolean createGroupMembership(long groupId, String userId) {
         Group group = repository.findGroupsById(groupId);
         if(group.isPrivate() && !group.isUserMember(userId)) {
             return false;
@@ -63,7 +63,7 @@ public class GroupService {
         }
     }
 
-    public boolean addUserToGroup(long groupId, long userId, long loggedInUserId) {
+    public boolean addUserToGroup(long groupId, String userId, String loggedInUserId) {
         Group group = repository.findGroupsById(groupId);
         if(group.isUserMember(userId))
             return true;
@@ -77,10 +77,10 @@ public class GroupService {
 
     private boolean createMembership(Group group, User user) {
         group.addUserAsMember(user);
-        Group addedGroup = repository.save(group);
+        repository.save(group);
         user.addGroup(group);
         userRepository.save(user);
-        return addedGroup != null;
+        return true;
     }
 
 }

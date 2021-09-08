@@ -8,13 +8,15 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    List<Post> findAllByUserId(long id);
+    List<Post> findAllByUserId(String id);
 
-    List<Post> findAllByReceiverTypeAndReceiverId(String type, long id);
-
+    List<Post> findAllByReceiverTypeAndReceiverId(String type, String id);
+/*
     List<Post> findAllByReceiverTypeAndReceiverIdAndUserId(String type, long receiverId, long senderId);
+*/
+    List<Post> findAllByReceiverTypeAndReceiverIdAndUserId(String type, String receiverId, String senderId);
 
-    List<Post> findAllByUserIdAndTopicId(long userId, long topicId);
+    List<Post> findAllByUserIdAndTopicId(String userId, long topicId);
 
     Post findPostById(long postId);
 
