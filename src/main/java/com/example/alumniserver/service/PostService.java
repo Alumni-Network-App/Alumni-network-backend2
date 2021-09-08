@@ -53,7 +53,10 @@ public class PostService {
     public boolean makeAPost(Post post, long senderId) {
 
         if(isPostingAllowed(post, senderId)) {
-            post.setUser(getUserInformation(senderId));
+            User user = getUserInformation(senderId);
+            post.setUser(user);
+            user.addPost(post);
+            userRepository.save(user);
             repository.save(post);
             return true;
         } else {
@@ -62,7 +65,7 @@ public class PostService {
     }
 
     public boolean updateAPost(Post post, long postId) {
-        Post fetchedPost = repository.getById(postId);
+        Post fetchedPost = repository.findPostById(postId);
         post.setId(postId);
         if(fetchedPost.getReceiverType().equals(post.getReceiverType())) {
             repository.save(updateFields(post, fetchedPost));
@@ -72,7 +75,7 @@ public class PostService {
         }
     }
 
-    private boolean isPostingAllowed(Post post, long senderId) {
+    public boolean isPostingAllowed(Post post, long senderId) {
         switch (post.getReceiverType()) {
             case "group":
                 Group group = groupRepository.getById(post.getReceiverId());
@@ -88,7 +91,7 @@ public class PostService {
     }
 
     private User getUserInformation(long id) {
-        return userRepository.getById(id);
+        return userRepository.findUserById(id);
     }
 
     private Post updateFields(Post updatedPost, Post oldPost) {
