@@ -69,10 +69,11 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<Boolean> createPost(@RequestBody Post post) {
+    public ResponseEntity<String> createPost(@RequestBody Post post) {
         long id = TEST_ID;
-        boolean posted = postService.makeAPost(post, id);
-        return new ResponseEntity<>(posted, statusCode.getForbiddenStatus(posted));
+        post = postService.makeAPost(post, id);
+        return new ResponseEntity<>((post != null) ? post.getPostLink() : null,
+                statusCode.getForbiddenPostingStatus(post));
     }
 
     @PutMapping(value = "/{postId}")

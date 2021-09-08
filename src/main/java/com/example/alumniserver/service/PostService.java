@@ -50,17 +50,17 @@ public class PostService {
         return repository.findAllByUserIdAndTopicId(userId, topicId);
     }
 
-    public boolean makeAPost(Post post, long senderId) {
+    public Post makeAPost(Post post, long senderId) {
 
         if(isPostingAllowed(post, senderId)) {
             User user = getUserInformation(senderId);
             post.setUser(user);
             user.addPost(post);
+            post = repository.save(post);
             userRepository.save(user);
-            repository.save(post);
-            return true;
+            return post;
         } else {
-            return false;
+            return null;
         }
     }
 
