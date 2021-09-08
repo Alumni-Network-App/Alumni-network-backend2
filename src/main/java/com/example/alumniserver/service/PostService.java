@@ -4,11 +4,14 @@ import com.example.alumniserver.dao.EventRepository;
 import com.example.alumniserver.dao.GroupRepository;
 import com.example.alumniserver.dao.PostRepository;
 import com.example.alumniserver.dao.UserRepository;
+import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Group;
 import com.example.alumniserver.model.Post;
 import com.example.alumniserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +23,7 @@ public class PostService {
     private final GroupRepository groupRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final HttpStatusCode statusCode = new HttpStatusCode();
 
     @Autowired
     public PostService(
@@ -36,6 +40,16 @@ public class PostService {
 
     public List<Post> getAllPosts(long id) {
         return repository.findAllByUserId(id);
+    }
+
+    public ResponseEntity<Post> getPost(long postId, long userId) {
+        Post post = repository.findPostById(postId);
+        HttpStatus foundCode = statusCode.getFoundStatus(post);
+         if(foundCode == HttpStatus.NOT_FOUND || isPostingAllowed(post, userId)) {
+            return new ResponseEntity<>(post, foundCode);
+        } else {
+            return new ResponseEntity<>(null, statusCode.getForbiddenStatus(false));
+        }
     }
 
     public List<Post> getPostsSentToUser(String type, long id) {

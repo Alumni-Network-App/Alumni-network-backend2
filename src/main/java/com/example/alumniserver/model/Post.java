@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.*;
 import java.rmi.server.UID;
@@ -91,7 +92,7 @@ public class Post<T> {
         }
     }
 
-    @JsonProperty
+    @JsonGetter("selfLink")
     public String getPostLink() {
         return "/api/v1/post/" + getId();
     }
