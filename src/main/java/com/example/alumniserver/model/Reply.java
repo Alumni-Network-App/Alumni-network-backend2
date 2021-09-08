@@ -1,7 +1,6 @@
 package com.example.alumniserver.model;
 
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,10 +22,8 @@ public class Reply {
     private String content;
 
     @Column(name = "last_updated")
-    private LocalDateTime lastUpdated;
+    private LocalDateTime lastUpdated = LocalDateTime.now();
 
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     @ManyToOne
     @JoinColumn(name = "reply_parent_id")
     private Post post;
@@ -34,4 +31,5 @@ public class Reply {
     @ManyToOne
     @JoinColumn(name = "sender_id")
     private User user;
+
 }

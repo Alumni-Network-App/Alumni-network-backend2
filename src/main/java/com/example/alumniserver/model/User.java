@@ -45,6 +45,12 @@ public class User {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
+    @OneToMany
+    @JoinColumn(name = "sender_id")
+    private List<Reply> replies;
+
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name="group_member",
@@ -57,6 +63,18 @@ public class User {
         if(groups == null)
             groups = new ArrayList<>();
         groups.add(group);
+    }
+
+    public void addPost(Post post) {
+        if(posts == null)
+            posts = new ArrayList<>();
+        posts.add(post);
+    }
+
+    public void addReply(Reply reply) {
+        if(replies == null)
+            replies = new ArrayList<>();
+        replies.add(reply);
     }
 /*
     @Getter(AccessLevel.NONE)
@@ -80,7 +98,7 @@ public class User {
         if(posts != null) {
             return posts.stream()
                     .map(post -> {
-                        return "/api/v1/posts/" + post.getId();
+                        return "/api/v1/post/" + post.getId();
                     }).collect(Collectors.toList());
         } else {
             return null;
@@ -92,7 +110,7 @@ public class User {
         if(events != null) {
             return events.stream()
                     .map(event -> {
-                        return "/api/v1/events/" + event.getId();
+                        return "/api/v1/event/" + event.getId();
                     }).collect(Collectors.toList());
         } else {
             return null;
@@ -104,7 +122,7 @@ public class User {
         if(groups != null) {
             return groups.stream()
                     .map(group -> {
-                        return "/api/v1/groups/" + group.getId();
+                        return "/api/v1/group/" + group.getId();
                     }).collect(Collectors.toList());
         } else {
             return null;

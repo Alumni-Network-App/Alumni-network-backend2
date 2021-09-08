@@ -6,8 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.rmi.server.UID;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
@@ -51,6 +54,12 @@ public class Post<T> {
     @Column(name="receiver_id", updatable = false)
     private long receiverId;
 
+    public void addReply(Reply reply) {
+        if(replies == null)
+            replies = new ArrayList<>();
+        replies.add(reply);
+    }
+
     @JsonGetter("topic")
     public String topic() {
         if(topic != null) {
@@ -74,7 +83,7 @@ public class Post<T> {
         if(replies != null) {
             return replies.stream()
                     .map(reply -> {
-                        return "/api/v1/replies/" + reply.getId();
+                        return "/api/v1/reply/" + reply.getId();
                     }).collect(Collectors.toList());
         } else {
             return null;

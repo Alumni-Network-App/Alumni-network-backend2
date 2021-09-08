@@ -45,7 +45,7 @@ public class Topic {
         if(posts != null) {
             return posts.stream()
                     .map(post -> {
-                        return "/api/v1/posts/" + post.getId();
+                        return "/api/v1/post/" + post.getId();
                     }).collect(Collectors.toList());
         } else {
             return null;
@@ -57,7 +57,7 @@ public class Topic {
         if(events != null) {
             return events.stream()
                     .map(event -> {
-                        return "/api/v1/events/" + event.getId();
+                        return "/api/v1/event/" + event.getId();
                     }).collect(Collectors.toList());
         } else {
             return null;
