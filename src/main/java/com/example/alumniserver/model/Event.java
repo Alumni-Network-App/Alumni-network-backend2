@@ -1,5 +1,6 @@
 package com.example.alumniserver.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "\"event\"")
@@ -62,6 +64,30 @@ public class Event {
     @Setter(AccessLevel.NONE)
     @ManyToMany(mappedBy = "events")
     private List<User> invitedUsers;
+
+    @JsonGetter("groups")
+    public List<String> groups() {
+        if(groups != null) {
+            return groups.stream()
+                    .map(group -> {
+                        return "/api/v1/group/" + group.getId();
+                    }).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
+
+    @JsonGetter("users")
+    public List<String> users() {
+        if(invitedUsers != null) {
+            return invitedUsers.stream()
+                    .map(user -> {
+                        return "/api/v1/user/" + user.getId();
+                    }).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
 
     public boolean isUserInvited(long userId) {
         for (User user : invitedUsers) {
