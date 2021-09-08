@@ -21,7 +21,7 @@ public class HttpStatusCode<T> {
      * @return a status code indicating if a user is allowed to make a post.
      */
     public HttpStatus getForbiddenStatus(boolean isAdded) {
-        return (!isAdded) ? HttpStatus.FORBIDDEN : HttpStatus.NO_CONTENT;
+        return (!isAdded) ? HttpStatus.FORBIDDEN : HttpStatus.OK;
     }
 
     /**
