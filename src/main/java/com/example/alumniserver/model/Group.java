@@ -1,5 +1,6 @@
 package com.example.alumniserver.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "\"group\"")
@@ -45,6 +47,30 @@ public class Group {
     @Setter(AccessLevel.NONE)
     @ManyToMany(mappedBy = "groups", cascade = CascadeType.ALL)
     private List<User> users;
+
+    @JsonGetter("users")
+    public List<String> users() {
+        if(users != null) {
+            return users.stream()
+                    .map(user -> {
+                        return "/api/v1/user/" + user.getId();
+                    }).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
+
+    @JsonGetter("events")
+    public List<String> events() {
+        if(events != null) {
+            return events.stream()
+                    .map(event -> {
+                        return "/api/v1/event/" + event.getId();
+                    }).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
 
     public boolean isUserMember(long id) {
         for (User user : users) {

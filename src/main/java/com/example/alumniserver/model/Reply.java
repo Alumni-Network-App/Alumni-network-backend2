@@ -1,5 +1,6 @@
 package com.example.alumniserver.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,5 +32,23 @@ public class Reply {
     @ManyToOne
     @JoinColumn(name = "sender_id")
     private User user;
+
+    @JsonGetter("user")
+    public String user() {
+        if(user != null) {
+            return "/api/v1/user/" + user.getId();
+        } else {
+            return null;
+        }
+    }
+
+    @JsonGetter("post")
+    public String post() {
+        if(post != null) {
+            return "/api/v1/post/" + post.getId();
+        } else {
+            return null;
+        }
+    }
 
 }
