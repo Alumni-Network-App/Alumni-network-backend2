@@ -25,31 +25,32 @@ public class UserController {
         this.service = service;
     }
 
+    @PatchMapping(value = "/update/{userId}")
+    public ResponseEntity<User> UpdateUser(
+            @PathVariable String userId,
+            @RequestBody User user){
+        return new ResponseEntity<>(service.updateUser(userId, user), httpStatusCode.getContentStatus());
+    }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<User>> getAllUsers(){
+    // Detta är fel, behöver retunera en länk till den inloggade användaren + ett 303 status
+    @GetMapping
+    public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = service.getAllUsers();
-        return new ResponseEntity<>(users, httpStatusCode.getFoundStatus(users));
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable String userId) {
+        User user = service.getUserById(userId);
+        return new ResponseEntity<>(user, httpStatusCode.getFoundStatus(user));
     }
 
 
-    //TODO
-    //Fixa LÄNKEN
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.SEE_OTHER)
-    public ResponseEntity<String> getUserByQueryId(@RequestHeader int user_id){
-        return new ResponseEntity<>("/user", httpStatusCode.getSeeOtherCode());
-    }
-
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<User> addNewUser(@RequestBody User user){
-        return new ResponseEntity<>(service.addUser(user), httpStatusCode.getContentStatus());
-    }
-
-    @Modifying
-    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
-    public ResponseEntity<User> UpdateUser(@RequestBody int id, User user){
-        return new ResponseEntity<>(service.updateUser(user), httpStatusCode.getContentStatus());
+    @PostMapping
+    public ResponseEntity<User> addUser(@RequestBody User user) {
+        User addedUser =  service.addUser(user);
+        // Return a location -> url to get the new resource
+        return new ResponseEntity<>(addedUser, HttpStatus.CREATED);
     }
 
 

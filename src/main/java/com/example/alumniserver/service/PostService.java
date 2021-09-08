@@ -38,11 +38,11 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
-    public List<Post> getAllPosts(long id) {
+    public List<Post> getAllPosts(String id) {
         return repository.findAllByUserId(id);
     }
 
-    public ResponseEntity<Post> getPost(long postId, long userId) {
+    public ResponseEntity<Post> getPost(long postId, String userId) {
         Post post = repository.findPostById(postId);
         HttpStatus foundCode = statusCode.getFoundStatus(post);
          if(foundCode == HttpStatus.NOT_FOUND || isPostingAllowed(post, userId)) {
@@ -52,19 +52,19 @@ public class PostService {
         }
     }
 
-    public List<Post> getPostsSentToUser(String type, long id) {
+    public List<Post> getPostsSentToUser(String type, String id) {
         return repository.findAllByReceiverTypeAndReceiverId(type, id);
     }
 
-    public List<Post> getPostsWithToAndFromId(String type, long receiverId, long senderId) {
+    public List<Post> getPostsWithToAndFromId(String type, String receiverId, String senderId) {
         return repository.findAllByReceiverTypeAndReceiverIdAndUserId(type, receiverId, senderId);
     }
 
-    public List<Post> getPostsFromUserToTopic(long userId, long topicId) {
+    public List<Post> getPostsFromUserToTopic(String userId, long topicId) {
         return repository.findAllByUserIdAndTopicId(userId, topicId);
     }
 
-    public Post makeAPost(Post post, long senderId) {
+    public Post makeAPost(Post post, String senderId) {
 
         if(isPostingAllowed(post, senderId)) {
             User user = getUserInformation(senderId);
@@ -89,13 +89,13 @@ public class PostService {
         }
     }
 
-    public boolean isPostingAllowed(Post post, long senderId) {
+    public boolean isPostingAllowed(Post post, String senderId) {
         switch (post.getReceiverType()) {
             case "group":
-                Group group = groupRepository.getById(post.getReceiverId());
+                Group group = groupRepository.getById(Long.valueOf(post.getReceiverId()));
                 return (group.isPrivate() && !group.isUserMember(senderId)) ? false : true;
             case "event":
-                Event event = eventRepository.getById(post.getReceiverId());
+                Event event = eventRepository.getById(Long.valueOf(post.getReceiverId()));
                 return (event.isUserInvited(senderId)) ? true : false;
             case "user":
                 return true;
@@ -104,7 +104,7 @@ public class PostService {
         }
     }
 
-    private User getUserInformation(long id) {
+    private User getUserInformation(String id) {
         return userRepository.findUserById(id);
     }
 

@@ -1,5 +1,5 @@
 CREATE TABLE usertable (
-    "user_id" int   PRIMARY KEY,
+    "user_id" varchar   PRIMARY KEY,
     "name" varchar   NOT NULL,
     "picture" varchar   NOT NULL,
     "status" varchar   NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE post (
     "post_id" int  PRIMARY KEY,
     "title" varchar(1000)   NOT NULL,
     "topic_id" int   NOT NULL,
-    "sender_id" int   NOT NULL,
+    "sender_id" varchar   NOT NULL,
 	"receiver_type" varchar,
 	"receiver_id" int NOT NULL,
 	CONSTRAINT fk_user
@@ -33,7 +33,7 @@ CREATE TABLE post (
 CREATE TABLE "reply" (
     "reply_id" int  PRIMARY KEY,
 	"reply_parent_id" int  NOT NULL,
-	"sender_id" int NOT NULL,
+	"sender_id" varchar NOT NULL,
 	CONSTRAINT fk_user
 		FOREIGN KEY("sender_id")
 			REFERENCES usertable("user_id"),
@@ -51,7 +51,7 @@ CREATE TABLE "group" (
 
 CREATE TABLE group_member (
 	"group_id" int NOT NULL,
-	"user_id" int NOT NULL,
+	"user_id" varchar NOT NULL,
 	CONSTRAINT fk_group
 		FOREIGN KEY("group_id")
 			REFERENCES "group"("group_id"),
@@ -63,7 +63,7 @@ CREATE TABLE group_member (
 CREATE TABLE "event" (
     "event_id" int   PRIMARY KEY,
     "topic_id" int   NOT NULL,
-    "created_by" int   NOT NULL,
+    "created_by" varchar   NOT NULL,
     "name" varchar   NOT NULL,
     "description" varchar(1000)   NOT NULL,
     "banner_img" varchar   NOT NULL,
@@ -83,7 +83,7 @@ CREATE TABLE event_group (
 );
 
 CREATE TABLE event_invite (
-	"user_id" int NOT NULL,
+	"user_id" varchar NOT NULL,
 	"event_id" int NOT NULL,
 	CONSTRAINT fk_usertable
 		FOREIGN KEY("user_id")
@@ -96,7 +96,7 @@ CREATE TABLE event_invite (
 CREATE TABLE RSVP (
     "last_updated" date   NOT NULL,
     "guest_count" int   NOT NULL,
-    "user_id" int   NOT NULL,
+    "user_id" varchar   NOT NULL,
     "event_id" int   NOT NULL,
 	CONSTRAINT fk_usertable
 		FOREIGN KEY("user_id")

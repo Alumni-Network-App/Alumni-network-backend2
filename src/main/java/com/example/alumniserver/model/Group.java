@@ -72,9 +72,9 @@ public class Group {
         }
     }
 
-    public boolean isUserMember(long id) {
+    public boolean isUserMember(String id) {
         for (User user : users) {
-            if(user.getId() == id)
+            if(user.getId().equals(id))
                 return true;
         }
         return false;
