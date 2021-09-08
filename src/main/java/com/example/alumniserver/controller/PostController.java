@@ -33,6 +33,12 @@ public class PostController {
         return new ResponseEntity<>(posts, statusCode.getFoundStatus(posts));
     }
 
+    @GetMapping(value = "/{postId}")
+    public ResponseEntity<Post> getPost(@PathVariable long postId) {
+        long id = TEST_ID;
+        return postService.getPost(postId, id);
+    }
+
     @GetMapping(value = "/user")
     public ResponseEntity<List<Post>> getPostsToUser() {
         long id = TEST_ID;
@@ -69,10 +75,10 @@ public class PostController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createPost(@RequestBody Post post) {
+    public ResponseEntity<Post> createPost(@RequestBody Post post) {
         long id = TEST_ID;
         post = postService.makeAPost(post, id);
-        return new ResponseEntity<>((post != null) ? post.getPostLink() : null,
+        return new ResponseEntity<>((post != null) ? post : null,
                 statusCode.getForbiddenPostingStatus(post));
     }
 
