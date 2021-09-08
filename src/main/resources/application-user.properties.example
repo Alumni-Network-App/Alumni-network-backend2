@@ -5,7 +5,7 @@
 # (Never push the application-user.properties file to github, it should be by default in .gitignore).
 # 3. Add values to the missing fields below.
 
-user.database.username=
+user.database.username=postgres
 user.database.password=
 user.database.url=
 user.database.platform.dialect=org.hibernate.dialect.PostgreSQLDialect
