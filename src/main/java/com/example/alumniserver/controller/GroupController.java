@@ -53,7 +53,7 @@ public class GroupController {
         String userId = TEST_ID;
         Group addedGroup = service.createGroup(group, userId);
         return new ResponseEntity<>(getGroupLinkById(addedGroup.getId()),
-                status.getContentStatus());
+                status.getForbiddenPostingStatus(addedGroup));
     }
 
     @PostMapping(value = {"/{groupId}/join", "/{groupId}/join/{userId}"})

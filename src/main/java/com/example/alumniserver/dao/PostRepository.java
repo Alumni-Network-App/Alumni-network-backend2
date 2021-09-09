@@ -12,7 +12,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByReceiverTypeAndReceiverId(String type, String id);
 
-    List<Post> findAllByUserTypeAndReceiverIdAndUserId(String type, String receiverId, String senderId);
+    List<Post> findAllByReceiverTypeAndReceiverIdAndUserId(String type, String receiverId, String senderId);
 
     List<Post> findAllByReceiverTypeAndReceiverIdAndUserId(String type, long receiverId, String senderId);
 

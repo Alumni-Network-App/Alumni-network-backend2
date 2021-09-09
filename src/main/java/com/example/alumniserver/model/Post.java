@@ -54,7 +54,7 @@ public class Post<T> {
     private String receiverType;
 
     @Column(name="receiver_id", updatable = false)
-    private long receiverId;
+    private String receiverId;
 
     public void addReply(Reply reply) {
         if(replies == null)
