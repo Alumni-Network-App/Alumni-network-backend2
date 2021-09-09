@@ -57,7 +57,8 @@ public class PostService {
     }
 
     public List<Post> getPostsWithToAndFromId(String type, String receiverId, String senderId) {
-        return repository.findAllByReceiverTypeAndReceiverIdAndUserId(type, receiverId, senderId);
+        List<Post> posts = repository.findAllByReceiverTypeAndReceiverIdAndUserId(type, receiverId, senderId);
+        return posts;
     }
 
     public List<Post> getPostsFromUserToTopic(String userId, long topicId) {
@@ -78,14 +79,13 @@ public class PostService {
         }
     }
 
-    public boolean updateAPost(Post post, long postId) {
+    public Post updateAPost(Post post, long postId) {
         Post fetchedPost = repository.findPostById(postId);
         post.setId(postId);
         if(fetchedPost.getReceiverType().equals(post.getReceiverType())) {
-            repository.save(updateFields(post, fetchedPost));
-            return true;
+            return repository.save(updateFields(post, fetchedPost));
         } else {
-            return false;
+            return null;
         }
     }
 

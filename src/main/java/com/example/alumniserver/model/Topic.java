@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class Topic {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "topic_id")
     private long id;
 

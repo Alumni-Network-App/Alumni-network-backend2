@@ -54,7 +54,7 @@ public class Post<T> {
     private String receiverType;
 
     @Column(name="receiver_id", updatable = false)
-    private long receiverId;
+    private String receiverId;
 
     public void addReply(Reply reply) {
         if(replies == null)
@@ -90,11 +90,6 @@ public class Post<T> {
         } else {
             return null;
         }
-    }
-
-    @JsonGetter("selfLink")
-    public String getPostLink() {
-        return "/api/v1/post/" + getId();
     }
 
 }

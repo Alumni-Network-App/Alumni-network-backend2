@@ -30,7 +30,7 @@ public class GroupService {
     }
 
     public Group getGroup(long groupId) {
-        return repository.findGroupsById(groupId);
+        return repository.findGroupById(groupId);
     }
 
     private List<Group> getPrivateGroups(String userId) {
@@ -46,41 +46,33 @@ public class GroupService {
         return returnGroups;
     }
 
-    public boolean createGroup(Group group, String userId) {
+    public Group createGroup(Group group, String userId) {
         User user = userRepository.findUserById(userId);
         return createMembership(group, user);
     }
 
-    public boolean createGroupMembership(long groupId, String userId) {
-        Group group = repository.findGroupsById(groupId);
-        if(group.isPrivate() && !group.isUserMember(userId)) {
-            return false;
-        } else if(group.isUserMember(userId)) {
-            return true;
+    public Group createGroupMembership(Group group, String userId) {
+        if(group.isPrivate()) {
+            return null;
         } else {
             User user = userRepository.findUserById(userId);
             return createMembership(group, user);
         }
     }
 
-    public boolean addUserToGroup(long groupId, String userId, String loggedInUserId) {
-        Group group = repository.findGroupsById(groupId);
-        if(group.isUserMember(userId))
-            return true;
+    public Group addUserToGroup(Group group, String userId, String loggedInUserId) {
         if(group.isUserMember(loggedInUserId)) {
             User user = userRepository.findUserById(userId);
             return createMembership(group, user);
         } else {
-            return false;
+            return null;
         }
     }
 
-    private boolean createMembership(Group group, User user) {
-        group.addUserAsMember(user);
-        repository.save(group);
+    private Group createMembership(Group group, User user) {
         user.addGroup(group);
-        userRepository.save(user);
-        return true;
+        group.addUserAsMember(user);
+        return repository.save(group);
     }
 
 }
