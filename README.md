@@ -1,6 +1,6 @@
 # Alumni-network-backend2
 
-### Rest end points
+### REST endpoints
 
 #### Group
 - GET /api/v1/group
