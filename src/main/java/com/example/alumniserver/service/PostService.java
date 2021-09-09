@@ -57,7 +57,10 @@ public class PostService {
     }
 
     public List<Post> getPostsWithToAndFromId(String type, String receiverId, String senderId) {
-        return repository.findAllByReceiverTypeAndReceiverIdAndUserId(type, receiverId, senderId);
+        if(type.equals("user"))
+            return repository.findAllByUserTypeAndReceiverIdAndUserId(type, receiverId, senderId);
+        else
+            return repository.findAllByReceiverTypeAndReceiverIdAndUserId(type, Long.valueOf(receiverId), senderId);
     }
 
     public List<Post> getPostsFromUserToTopic(String userId, long topicId) {

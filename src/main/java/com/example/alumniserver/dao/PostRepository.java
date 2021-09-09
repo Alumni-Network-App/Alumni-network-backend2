@@ -11,10 +11,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByUserId(String id);
 
     List<Post> findAllByReceiverTypeAndReceiverId(String type, String id);
-/*
-    List<Post> findAllByReceiverTypeAndReceiverIdAndUserId(String type, long receiverId, long senderId);
-*/
-    List<Post> findAllByReceiverTypeAndReceiverIdAndUserId(String type, String receiverId, String senderId);
+
+    List<Post> findAllByUserTypeAndReceiverIdAndUserId(String type, String receiverId, String senderId);
+
+    List<Post> findAllByReceiverTypeAndReceiverIdAndUserId(String type, long receiverId, String senderId);
 
     List<Post> findAllByUserIdAndTopicId(String userId, long topicId);
 

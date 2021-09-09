@@ -58,10 +58,9 @@ public class PostController {
     }
 
     @GetMapping(value = "/group/{groupId}")
-    public ResponseEntity<List<Post>> getPostsToGroup(@PathVariable long groupId) {
+    public ResponseEntity<List<Post>> getPostsToGroup(@PathVariable String groupId) {
         String id = TEST_ID;
-
-        List<Post> posts = postService.getPostsWithToAndFromId("group", String.valueOf(groupId), id);
+        List<Post> posts = postService.getPostsWithToAndFromId("group", groupId, id);
         return new ResponseEntity<>(posts, statusCode.getFoundStatus(posts));
     }
 
@@ -73,9 +72,9 @@ public class PostController {
     }
 
     @GetMapping(value = "/event/{eventId}")
-    public ResponseEntity<List<Post>> getPostsToEvent(@PathVariable long eventId) {
+    public ResponseEntity<List<Post>> getPostsToEvent(@PathVariable String eventId) {
         String id = TEST_ID;
-        List<Post> posts = postService.getPostsWithToAndFromId("event", String.valueOf(eventId), id);
+        List<Post> posts = postService.getPostsWithToAndFromId("event", eventId, id);
         return new ResponseEntity<>(posts, statusCode.getFoundStatus(posts));
     }
 
