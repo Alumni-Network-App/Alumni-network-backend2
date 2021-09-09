@@ -4,12 +4,16 @@ import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.model.Group;
 import com.example.alumniserver.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Controller
 @RequestMapping("/api/v1/group")
@@ -45,26 +49,34 @@ public class GroupController {
     }
 
     @PostMapping
-    public ResponseEntity<Boolean> createGroup(@RequestBody Group group) {
+    public ResponseEntity<Link> createGroup(@RequestBody Group group) {
         String userId = TEST_ID;
-        boolean added = service.createGroup(group, userId);
-        return new ResponseEntity<>(added, status.getContentStatus());
+        Group addedGroup = service.createGroup(group, userId);
+        return new ResponseEntity<>(getGroupLinkById(addedGroup.getId()),
+                status.getContentStatus());
     }
 
     @PostMapping(value = {"/{groupId}/join", "/{groupId}/join/{userId}"})
-    public ResponseEntity<Boolean> createGroupMembership(
+    public ResponseEntity<Link> createGroupMembership(
             @PathVariable long groupId,
             @PathVariable(required = false) String userId
     ) {
-        boolean added;
+        Group group;
         if (userId == null) {
             userId = TEST_ID;
-            added = service.createGroupMembership(groupId, userId);
+            group = service.createGroupMembership(groupId, userId);
         } else {
             String loggedInUserId = TEST_ID;
-            added = service.addUserToGroup(groupId, userId, loggedInUserId);
+            group = service.addUserToGroup(groupId, userId, loggedInUserId);
         }
-        return new ResponseEntity<>(added, status.getForbiddenStatus(added));
+        return new ResponseEntity<>(getGroupLinkById(group.getId()),
+                status.getForbiddenStatus(group == null));
+    }
+
+    private Link getGroupLinkById(long groupId) {
+        return linkTo(methodOn(GroupController.class)
+                .getGroup(groupId))
+                .withSelfRel();
     }
 
 }

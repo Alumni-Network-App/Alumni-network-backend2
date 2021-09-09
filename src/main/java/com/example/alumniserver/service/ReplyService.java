@@ -38,21 +38,20 @@ public class ReplyService {
         return repository.findAllByPostId(postId);
     }
 
-    public boolean createReply(Reply reply, long postId, String userId) {
+    public Reply createReply(Reply reply, long postId, String userId) {
         Post post = getPostInformation(postId);
         if (postService.isPostingAllowed(post, userId)) {
-            updateReplyRelations(reply, post, userId);
-            return true;
+            return updateReplyRelations(reply, post, userId);
         } else {
-            return false;
+            return null;
         }
     }
 
-    public boolean updateReply(Reply reply, long replyId) {
+    //Check if logged in user is reply "owner"  if not return null.
+    public Reply updateReply(Reply reply, long replyId) {
         Reply fetchedReply = repository.findReplyById(replyId);
         reply.setId(replyId);
-        repository.save(updateFields(reply, fetchedReply));
-        return true;
+        return repository.save(updateFields(reply, fetchedReply));
     }
 
     private Reply updateFields(Reply updatedReply, Reply oldReply) {
@@ -62,12 +61,12 @@ public class ReplyService {
         return oldReply;
     }
 
-    private void updateReplyRelations(Reply reply, Post post, String userId) {
+    private Reply updateReplyRelations(Reply reply, Post post, String userId) {
         Post updatedPost = updatePostRelations(reply, post);
         User user = updateUserRelations(reply, userId);
         reply.setPost(updatedPost);
         reply.setUser(user);
-        repository.save(reply);
+        return repository.save(reply);
     }
 
     private User updateUserRelations(Reply reply, String userId) {

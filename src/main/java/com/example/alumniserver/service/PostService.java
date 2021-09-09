@@ -78,14 +78,13 @@ public class PostService {
         }
     }
 
-    public boolean updateAPost(Post post, long postId) {
+    public Post updateAPost(Post post, long postId) {
         Post fetchedPost = repository.findPostById(postId);
         post.setId(postId);
         if(fetchedPost.getReceiverType().equals(post.getReceiverType())) {
-            repository.save(updateFields(post, fetchedPost));
-            return true;
+            return repository.save(updateFields(post, fetchedPost));
         } else {
-            return false;
+            return null;
         }
     }
 

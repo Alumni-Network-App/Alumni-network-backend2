@@ -92,9 +92,4 @@ public class Post<T> {
         }
     }
 
-    @JsonGetter("selfLink")
-    public String getPostLink() {
-        return "/api/v1/post/" + getId();
-    }
-
 }

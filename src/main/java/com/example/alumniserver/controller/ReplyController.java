@@ -4,11 +4,15 @@ import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.model.Reply;
 import com.example.alumniserver.service.ReplyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Controller
 @RequestMapping("/api/v1/reply")
@@ -41,21 +45,29 @@ public class ReplyController {
     }
 
     @PostMapping(value = "/post/{postId}")
-    public ResponseEntity<Boolean> createReply(
+    public ResponseEntity<Link> createReply(
             @PathVariable long postId,
             @RequestBody Reply reply) {
         String userId = "2";
-        boolean added = service.createReply(reply, postId, userId);
-        return new ResponseEntity<>(added, statusCode.getForbiddenStatus(added));
+        Reply addedReply = service.createReply(reply, postId, userId);
+        return new ResponseEntity<>(getReplyLinkById(addedReply.getId()),
+                statusCode.getForbiddenStatus(addedReply == null));
     }
 
     //Put
     @PutMapping(value = "/{replyId}")
-    public ResponseEntity<Boolean> updateReply(
+    public ResponseEntity<Link> updateReply(
             @PathVariable long replyId,
             @RequestBody Reply reply
     ) {
-        boolean added = service.updateReply(reply, replyId);
-        return new ResponseEntity<>(added, statusCode.getForbiddenStatus(added));
+        Reply updateReply = service.updateReply(reply, replyId);
+        return new ResponseEntity<>(getReplyLinkById(updateReply.getId()),
+                statusCode.getForbiddenStatus(updateReply == null));
+    }
+
+    private Link getReplyLinkById(long replyId) {
+        return linkTo(methodOn(ReplyController.class)
+                .getReplyWithId(replyId))
+                .withSelfRel();
     }
 }

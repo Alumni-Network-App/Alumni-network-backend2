@@ -46,41 +46,43 @@ public class GroupService {
         return returnGroups;
     }
 
-    public boolean createGroup(Group group, String userId) {
+    public Group createGroup(Group group, String userId) {
         User user = userRepository.findUserById(userId);
         return createMembership(group, user);
     }
 
-    public boolean createGroupMembership(long groupId, String userId) {
+    public Group createGroupMembership(long groupId, String userId) {
         Group group = repository.findGroupsById(groupId);
         if(group.isPrivate() && !group.isUserMember(userId)) {
-            return false;
+            return null;
         } else if(group.isUserMember(userId)) {
-            return true;
+            //Detta är anledning till att ha en ResponseEntity skapas här.
+            // Då status kod 403 är fel, men det kommer sluta med det om vi gör på detta sätt.
+            return null;
         } else {
             User user = userRepository.findUserById(userId);
             return createMembership(group, user);
         }
     }
 
-    public boolean addUserToGroup(long groupId, String userId, String loggedInUserId) {
+    public Group addUserToGroup(long groupId, String userId, String loggedInUserId) {
         Group group = repository.findGroupsById(groupId);
         if(group.isUserMember(userId))
-            return true;
+            //Alla services kommer behöva ändras för att ta hänsyn till ResponseEntity
+            return null;
         if(group.isUserMember(loggedInUserId)) {
             User user = userRepository.findUserById(userId);
             return createMembership(group, user);
         } else {
-            return false;
+            return null;
         }
     }
 
-    private boolean createMembership(Group group, User user) {
+    private Group createMembership(Group group, User user) {
         group.addUserAsMember(user);
-        repository.save(group);
         user.addGroup(group);
         userRepository.save(user);
-        return true;
+        return repository.save(group);
     }
 
 }
