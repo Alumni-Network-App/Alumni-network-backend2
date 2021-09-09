@@ -19,7 +19,7 @@ public class Event {
 
     @Id
     @Column(name = "event_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @ManyToOne
