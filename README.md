@@ -35,7 +35,7 @@
 - POST /api/v1/group/{groupId}/join/{userId}
   - Returns a link to the group that the logged in user is trying to add the user to.
   - Statuscode
-    - 404 NOT FOUND -> When that group doesn't exist.
+    - 404 NOT FOUND -> When that group / user doesn't exist.
     - 303 SEE OTHER -> When the user is already a member, links to the group.
     - 403 FORBIDDEN -> If the logged in user can't add other users to that group.
     - 201 CREATED
