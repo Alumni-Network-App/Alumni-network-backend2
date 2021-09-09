@@ -49,4 +49,5 @@ public class HttpStatusCode<T> {
     public HttpStatus getForbiddenPostingStatus(T t) {
         return (t == null) ? HttpStatus.FORBIDDEN : HttpStatus.CREATED;
     }
+
 }

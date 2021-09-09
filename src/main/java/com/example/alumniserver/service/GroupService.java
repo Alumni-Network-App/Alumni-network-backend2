@@ -51,31 +51,16 @@ public class GroupService {
         return createMembership(group, user);
     }
 
-    public Group createGroupMembership(long groupId, String userId) {
-        Group group = repository.findGroupById(groupId);
-        if(group == null) {
-            // 404 not found
-            return null;
-        }
-        if(group.isPrivate() && !group.isUserMember(userId)) {
-            // 403 forbidden
-            return null;
-        } else if(group.isUserMember(userId)) {
-            //Detta är anledning till att ha en ResponseEntity skapas här.
-            // Då status kod 403 är fel, men det kommer sluta med det om vi gör på detta sätt.
+    public Group createGroupMembership(Group group, String userId) {
+        if(group.isPrivate()) {
             return null;
         } else {
-            // Created
             User user = userRepository.findUserById(userId);
             return createMembership(group, user);
         }
     }
 
-    public Group addUserToGroup(long groupId, String userId, String loggedInUserId) {
-        Group group = repository.findGroupById(groupId);
-        if(group.isUserMember(userId))
-            //Alla services kommer behöva ändras för att ta hänsyn till ResponseEntity
-            return null;
+    public Group addUserToGroup(Group group, String userId, String loggedInUserId) {
         if(group.isUserMember(loggedInUserId)) {
             User user = userRepository.findUserById(userId);
             return createMembership(group, user);

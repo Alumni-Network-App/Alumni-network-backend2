@@ -34,7 +34,7 @@ public class GroupController {
     public ResponseEntity<List<Group>> getGroups() {
         String id = TEST_ID;
         List<Group> groups = service.getGroups(id);
-        return new ResponseEntity<>(groups, status.getFoundStatus(groups));
+        return new ResponseEntity<>(groups, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{groupId}")
@@ -42,7 +42,8 @@ public class GroupController {
         String id = TEST_ID;
         Group group = service.getGroup(groupId);
         HttpStatus httpStatus = (status.getFoundStatus(group) == HttpStatus.NOT_FOUND) ?
-                HttpStatus.NOT_FOUND : status.getForbiddenStatus(!group.isPrivate() || group.isUserMember(id));
+                HttpStatus.NOT_FOUND : status.getForbiddenStatus(
+                        !group.isPrivate() || group.isUserMember(id));
         if (httpStatus == HttpStatus.FORBIDDEN)
             group = null;
         return new ResponseEntity<>(group, httpStatus);
@@ -52,8 +53,9 @@ public class GroupController {
     public ResponseEntity<Link> createGroup(@RequestBody Group group) {
         String userId = TEST_ID;
         Group addedGroup = service.createGroup(group, userId);
-        return new ResponseEntity<>(getGroupLinkById(addedGroup.getId()),
-                status.getForbiddenPostingStatus(addedGroup));
+        return new ResponseEntity<>(
+                getGroupLinkById(addedGroup.getId()),
+                HttpStatus.CREATED);
     }
 
     @PostMapping(value = {"/{groupId}/join", "/{groupId}/join/{userId}"})
@@ -61,14 +63,22 @@ public class GroupController {
             @PathVariable long groupId,
             @PathVariable(required = false) String userId
     ) {
-        Group group;
-        if (userId == null) {
+        Group group = service.getGroup(groupId);
+        String loggedInUserId = TEST_ID;
+        if(group == null)
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        else if(userId == null)
             userId = TEST_ID;
-            group = service.createGroupMembership(groupId, userId);
-        } else {
-            String loggedInUserId = TEST_ID;
-            group = service.addUserToGroup(groupId, userId, loggedInUserId);
-        }
+
+        if(group.isUserMember(userId))
+            return new ResponseEntity<>(
+                    getGroupLinkById(group.getId()),
+                    HttpStatus.SEE_OTHER);
+        else if(userId != loggedInUserId)
+            group = service.addUserToGroup(group, userId, loggedInUserId);
+        else
+            group = service.createGroupMembership(group, userId);
+
         Link link = (group != null) ? getGroupLinkById(group.getId()) : null;
         return new ResponseEntity<>(link,
                 status.getForbiddenPostingStatus(group));
