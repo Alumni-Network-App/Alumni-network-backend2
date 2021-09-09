@@ -67,11 +67,14 @@ public class GroupService {
 
     public Group addUserToGroup(long groupId, String userId, String loggedInUserId) {
         Group group = repository.findGroupById(groupId);
+        System.out.println("TEST1");
         if(group.isUserMember(userId))
             //Alla services kommer behöva ändras för att ta hänsyn till ResponseEntity
             return null;
         if(group.isUserMember(loggedInUserId)) {
+            System.out.println("TEST2");
             User user = userRepository.findUserById(userId);
+            System.out.println("TEST3");
             return createMembership(group, user);
         } else {
             return null;
