@@ -30,7 +30,7 @@ public class GroupService {
     }
 
     public Group getGroup(long groupId) {
-        return repository.findGroupsById(groupId);
+        return repository.findGroupById(groupId);
     }
 
     private List<Group> getPrivateGroups(String userId) {
@@ -52,7 +52,7 @@ public class GroupService {
     }
 
     public Group createGroupMembership(long groupId, String userId) {
-        Group group = repository.findGroupsById(groupId);
+        Group group = repository.findGroupById(groupId);
         if(group.isPrivate() && !group.isUserMember(userId)) {
             return null;
         } else if(group.isUserMember(userId)) {
@@ -66,7 +66,7 @@ public class GroupService {
     }
 
     public Group addUserToGroup(long groupId, String userId, String loggedInUserId) {
-        Group group = repository.findGroupsById(groupId);
+        Group group = repository.findGroupById(groupId);
         if(group.isUserMember(userId))
             //Alla services kommer behöva ändras för att ta hänsyn till ResponseEntity
             return null;

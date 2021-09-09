@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
     List<Group> findGroupsByIsPrivate(boolean isPrivate);
-    Group findGroupsById(long id);
+    Group findGroupById(long id);
 }
