@@ -69,8 +69,9 @@ public class GroupController {
             String loggedInUserId = TEST_ID;
             group = service.addUserToGroup(groupId, userId, loggedInUserId);
         }
-        return new ResponseEntity<>(getGroupLinkById(group.getId()),
-                status.getForbiddenStatus(group == null));
+        Link link = (group != null) ? getGroupLinkById(group.getId()) : null;
+        return new ResponseEntity<>(link,
+                status.getForbiddenPostingStatus(group));
     }
 
     private Link getGroupLinkById(long groupId) {
