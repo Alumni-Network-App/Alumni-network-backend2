@@ -2261,7 +2261,3 @@ insert into event_invite (user_id, event_id) values (68, 29);
 insert into event_invite (user_id, event_id) values (24, 17);
 
 ALTER SEQUENCE hibernate_sequence RESTART WITH 201;
-ALTER SEQUENCE group_group_id_seq RESTART WITH 51;
-ALTER SEQUENCE event_event_id_seq RESTART WITH 101;
-ALTER SEQUENCE reply_reply_id_seq RESTART WITH 601;
-ALTER SEQUENCE topic_topic_id_seq RESTART WITH 51;
