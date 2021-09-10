@@ -17,10 +17,6 @@ public class UserService {
         this.repository = repository;
     }
 
-    public List<User> getAllUsers() {
-        return repository.findAll();
-    }
-
     public User getUserById(String userId) {
         return repository.findUserById(userId);
     }
@@ -39,19 +35,19 @@ public class UserService {
     }
 
     private User updateUserInformation(User oldUser, User user) {
-        if (user.getBio() != "") {
+        if (!user.getBio().equals("")) {
             oldUser.setBio(user.getBio());
         }
-        if (user.getFunFact() != "") {
+        if (!user.getFunFact().equals("")) {
             oldUser.setBio(user.getFunFact());
         }
-        if (user.getName() != "") {
+        if (!user.getName().equals("")) {
             oldUser.setName(user.getName());
         }
-        if (user.getPicture() != "") {
+        if (!user.getPicture().equals("")) {
             oldUser.setPicture(user.getPicture());
         }
-        if(user.getStatus() != "") {
+        if(!user.getStatus().equals("")) {
             oldUser.setStatus(user.getStatus());
         }
 

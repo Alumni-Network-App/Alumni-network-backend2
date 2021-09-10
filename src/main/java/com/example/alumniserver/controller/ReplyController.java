@@ -2,9 +2,11 @@ package com.example.alumniserver.controller;
 
 import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.model.Reply;
+import com.example.alumniserver.service.PostService;
 import com.example.alumniserver.service.ReplyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,29 +21,41 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class ReplyController {
 
     private final ReplyService service;
+    private final PostService postService;
     private final HttpStatusCode statusCode = new HttpStatusCode();
 
     @Autowired
-    public ReplyController(ReplyService service) {
+    public ReplyController(ReplyService service, PostService postService) {
         this.service = service;
+        this.postService = postService;
     }
 
     @GetMapping(value = "/{replyId}")
     public ResponseEntity<Reply> getReplyWithId(@PathVariable long replyId) {
+        String userId = "2";
         Reply reply = service.getReplyWithId(replyId);
-        return new ResponseEntity<>(reply, statusCode.getFoundStatus(reply));
+        return (reply.getUser().getId().equals(userId)
+                ? new ResponseEntity<>(reply,
+                statusCode.getBadRequestStatus(reply))
+                : new ResponseEntity<>(null, HttpStatus.FORBIDDEN)
+        );
     }
 
-    @GetMapping(value = "/user/{userId}")
-    public ResponseEntity<List<Reply>> getRepliesWithUserId(@PathVariable String userId) {
+    @GetMapping(value = "/user")
+    public ResponseEntity<List<Reply>> getRepliesWithUserId() {
+        String userId = "2";
         List<Reply> replies = service.getRepliesWithUserId(userId);
-        return new ResponseEntity<>(replies, statusCode.getFoundStatus(replies));
+        return new ResponseEntity<>(replies, HttpStatus.OK);
     }
 
     @GetMapping(value = "/post/{postId}")
     public ResponseEntity<List<Reply>> getRepliesToPost(@PathVariable long postId) {
-        List<Reply> replies = service.getRepliesToPostId(postId);
-        return new ResponseEntity<>(replies, statusCode.getFoundStatus(replies));
+        if (postService.postExists(postId)) {
+            List<Reply> replies = service.getRepliesToPostId(postId);
+            return new ResponseEntity<>(replies, statusCode.getForbiddenStatus(replies == null));
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping(value = "/post/{postId}")
@@ -49,9 +63,14 @@ public class ReplyController {
             @PathVariable long postId,
             @RequestBody Reply reply) {
         String userId = "2";
-        Reply addedReply = service.createReply(reply, postId, userId);
-        return new ResponseEntity<>(getReplyLinkById(addedReply.getId()),
-                statusCode.getForbiddenStatus(addedReply == null));
+        if (postService.postExists(postId)) {
+            Reply addedReply = service.createReply(reply, postId, userId);
+            return new ResponseEntity<>(
+                    getReplyLinkById(addedReply.getId()),
+                    statusCode.getForbiddenPostingStatus(addedReply));
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     //Put
@@ -60,9 +79,14 @@ public class ReplyController {
             @PathVariable long replyId,
             @RequestBody Reply reply
     ) {
-        Reply updateReply = service.updateReply(reply, replyId);
-        return new ResponseEntity<>(getReplyLinkById(updateReply.getId()),
-                statusCode.getForbiddenStatus(updateReply == null));
+        if (service.replyExists(replyId)) {
+            String userId = "2";
+            Reply updateReply = service.updateReply(reply, replyId, userId);
+            return new ResponseEntity<>(getReplyLinkById(updateReply.getId()),
+                    statusCode.getForbiddenStatus(updateReply == null));
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
 
     private Link getReplyLinkById(long replyId) {

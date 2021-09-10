@@ -40,18 +40,29 @@ public class ReplyService {
 
     public Reply createReply(Reply reply, long postId, String userId) {
         Post post = getPostInformation(postId);
-        if (postService.isPostingAllowed(post, userId)) {
+        if (postService.isPostingAllowed(post, userId)
+            && reply.getUser().getId().equals(userId)
+        ) {
             return updateReplyRelations(reply, post, userId);
         } else {
             return null;
         }
     }
 
-    //Check if logged in user is reply "owner"  if not return null.
-    public Reply updateReply(Reply reply, long replyId) {
+    public Reply updateReply(Reply reply, long replyId, String senderId) {
         Reply fetchedReply = repository.findReplyById(replyId);
-        reply.setId(replyId);
-        return repository.save(updateFields(reply, fetchedReply));
+        if (fetchedReply.getUser().getId() != senderId
+                || reply.getPost().getId() != fetchedReply.getPost().getId()
+        )
+            return null;
+        else {
+            reply.setId(replyId);
+            return repository.save(updateFields(reply, fetchedReply));
+        }
+    }
+
+    public boolean replyExists(long replyId) {
+        return repository.existsById(replyId);
     }
 
     private Reply updateFields(Reply updatedReply, Reply oldReply) {

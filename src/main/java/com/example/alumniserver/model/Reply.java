@@ -1,7 +1,6 @@
 package com.example.alumniserver.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
