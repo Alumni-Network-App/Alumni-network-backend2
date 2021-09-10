@@ -1,12 +1,16 @@
 package com.example.alumniserver.httpstatus;
 
 import com.example.alumniserver.model.Group;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+
+import javax.persistence.Entity;
 
 public class HttpStatusCode<T> {
 
     /**
      * Used for redirecting a currently authenticated user to their info page.
+     *
      * @return the status for an authenticated user.
      */
     public HttpStatus getSeeOtherCode() {
@@ -46,7 +50,9 @@ public class HttpStatusCode<T> {
         return (t == null) ? HttpStatus.NOT_FOUND : HttpStatus.OK;
     }
 
-    public HttpStatus getBadRequestStatus(T t) { return (t == null) ? HttpStatus.BAD_REQUEST : HttpStatus.OK; }
+    public HttpStatus getBadRequestStatus(T t) {
+        return (t == null) ? HttpStatus.BAD_REQUEST : HttpStatus.OK;
+    }
 
     public HttpStatus getForbiddenPostingStatus(T t) {
         return (t == null) ? HttpStatus.FORBIDDEN : HttpStatus.CREATED;
