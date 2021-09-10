@@ -33,10 +33,16 @@ public class UserController {
     public ResponseEntity<Link> UpdateUser(
             @PathVariable String userId,
             @RequestBody User user) {
+        if (!service.userExists(userId)) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
         User updateUser = service.updateUser(userId, user);
-        return new ResponseEntity<>(
-                getUserLinkById(updateUser.getId()),
-                httpStatusCode.getContentStatus());
+        if (updateUser != null)
+            return new ResponseEntity<>(
+                    getUserLinkById(updateUser.getId()),
+                    HttpStatus.OK);
+        else
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
     }
 
     @GetMapping
@@ -48,10 +54,11 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable String userId) {
+        String loggedInUserId = "2";
         User user = service.getUserById(userId);
         return new ResponseEntity<>(
-                user,
-                httpStatusCode.getFoundStatus(user));
+                user, httpStatusCode.getBadRequestStatus(user)
+        );
     }
 
 
