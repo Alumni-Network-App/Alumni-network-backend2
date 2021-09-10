@@ -105,3 +105,37 @@
     - 403 FORBIDDEN -> If the logged in user is trying to update fields in a post that are not allowed to be changed (topic, receiverType, receiverId)
     - 400 BAD REQUEST -> If any of the body has a field which is malformed or if the entered postId doesn't link to a post.
     - 200 OK -> When a post is succesfully created, returns a link the new post.
+
+#### Reply
+- GET /api/v1/reply/{replyId}
+  - Returns a reply with the specified reply id.
+  - Statuscodes
+    - 403 FORBIDDEN -> If the logged in user attempts to access a reply which they haven't made.
+    - 400 BAD REQUEST -> If the specified reply id doesn't link to a reply.
+    - 200 OK
+
+- GET /api/v1/reply/user
+  - Returns a list of replies that the logged in user has made
+  - Statuscodes
+    - 200 OK
+
+- GET /api/v1/reply/post/{postId}
+  - Returns a collection of replies that are linked to the post with the post id.
+  - Statuscodes
+    - 403 FORBIDDEN -> If the logged in user attempts to access a post which they haven't made.
+    - 400 BAD REQUEST -> If the specified post id doesn't link to a post.
+    - 200 OK
+
+- POST /api/v1/reply/post/{postId}
+  - Returns a link to the newly created reply.
+  - Statuscodes
+    - 403 FORBIDDEN -> If the logged in user attempts to create a reply to a post they don't have access to.
+    - 400 BAD REQUEST -> If the specified post id doesn't link to a post.
+    - 201 CREATED
+
+- PUT /api/v1/reply/{replyId}
+  - Returns a link to the newly created reply.
+  - Statuscodes
+    - 403 FORBIDDEN -> If the logged in user attempts to edit a reply they haven't made.
+    - 400 BAD REQUEST -> If the specified reply id doesn't link to a reply.
+    - 200 OK
