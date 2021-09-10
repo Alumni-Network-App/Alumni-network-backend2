@@ -60,9 +60,8 @@ public class GroupService {
         }
     }
 
-    public Group addUserToGroup(Group group, String userId, String loggedInUserId) {
+    public Group addUserToGroup(Group group, User user, String loggedInUserId) {
         if(group.isUserMember(loggedInUserId)) {
-            User user = userRepository.findUserById(userId);
             return createMembership(group, user);
         } else {
             return null;
@@ -75,4 +74,7 @@ public class GroupService {
         return repository.save(group);
     }
 
+    public boolean groupExists(long groupId) {
+        return repository.existsById(groupId);
+    }
 }
