@@ -4,7 +4,7 @@
 
 #### Group
 - GET /api/v1/group
-  - Returns a list of groups connected to the logged in user.
+  - Returns a list of group that are non private or private group that the logged in user is a member of.
   - Statuscode
     - 200 OK
   
