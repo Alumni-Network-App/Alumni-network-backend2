@@ -82,3 +82,26 @@
   - Statuscodes
     - 400 BAD REQUEST -> If the specified event id doesn't connect to an event.
     - 200 OK
+
+- POST /api/v1/post
+  - Returns a link to the newly created post.
+  - Body (Required)
+    - topic -> the topic of the post, specified as ' "topic": { id: x } ' (where x can be any number).
+    - content -> The message content of the post.
+    - title -> The message title of the post.
+    - receiverType -> The receiver type of the post (can be "user", "group" or "event").
+    - receiverId -> A valid id for a receiver.
+  - Statuscodes
+    - 403 FORBIDDEN -> If the logged in user is trying to make a post to a receiver which they are not allowed to.
+    - 400 BAD REQUEST -> If any of the body has a field which is malformed.
+    - 201 CREATED -> When a post is succesfully created, returns a link the new post.
+
+- PUT /api/v1/post/{postId}
+  - Returns a link to the newly updated post.
+  - Body (Required)
+    - content -> The message content of the post.
+    - title -> The message title of the post.
+  - Statuscodes
+    - 403 FORBIDDEN -> If the logged in user is trying to update fields in a post that are not allowed to be changed (topic, receiverType, receiverId)
+    - 400 BAD REQUEST -> If any of the body has a field which is malformed or if the entered postId doesn't link to a post.
+    - 200 OK -> When a post is succesfully created, returns a link the new post.
