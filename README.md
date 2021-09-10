@@ -128,6 +128,8 @@
 
 - POST /api/v1/reply/post/{postId}
   - Returns a link to the newly created reply.
+  - Body (Required)
+    - content -> The message content of the reply.
   - Statuscodes
     - 403 FORBIDDEN -> If the logged in user attempts to create a reply to a post they don't have access to.
     - 400 BAD REQUEST -> If the specified post id doesn't link to a post.
@@ -138,4 +140,39 @@
   - Statuscodes
     - 403 FORBIDDEN -> If the logged in user attempts to edit a reply they haven't made.
     - 400 BAD REQUEST -> If the specified reply id doesn't link to a reply.
+    - 200 OK
+
+#### User
+- GET /api/v1/user
+  - Returns a link to the logged in user information.
+  - Statuscodes
+    - 303 SEE OTHER
+
+- GET /api/v1/user/{userId}
+  - Returns the user with the specified user id.
+  - Statuscodes
+    - 400 BAD REQUEST -> If the specified user id doesn't link to a user.
+    - 200 OK
+
+- POST /api/v1/user/
+  - Returns a link to the newly created user.
+  - Body (Required)
+    - name -> name / alias of the user.
+    - picture -> an img url
+    - status -> A description about the users current situation.
+    - bio -> Information about the users life.
+    - funFact -> Something funny about the user.
+  - Statuscodes
+    - 201 CREATED
+
+- PATCH /api/v1/reply/post/{postId}
+  - Returns a link to the newly created reply.
+  - Body (Required)
+    - picture -> an img url
+    - status -> A description about the users current situation.
+    - bio -> Information about the users life.
+    - funFact -> Something funny about the user.
+  - Statuscodes
+    - 403 FORBIDDEN -> If the logged in user attempts to change their name.
+    - 400 BAD REQUEST -> If the specified user id doesn't link to a user.
     - 200 OK
