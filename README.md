@@ -80,5 +80,5 @@
 - GET /api/v1/post/event/{eventId}
   - Returns a collection of posts sent to the specified event from the logged in user.
   - Statuscodes
-    - 400 BAD REQUEST -> If the specified event id doesn't connect to a event.
+    - 400 BAD REQUEST -> If the specified event id doesn't connect to an event.
     - 200 OK
