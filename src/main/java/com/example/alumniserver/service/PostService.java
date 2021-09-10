@@ -23,7 +23,6 @@ public class PostService {
     private final GroupRepository groupRepository;
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
-    private final HttpStatusCode statusCode = new HttpStatusCode();
 
     @Autowired
     public PostService(
@@ -42,14 +41,12 @@ public class PostService {
         return repository.findAllByUserId(id);
     }
 
-    public ResponseEntity<Post> getPost(long postId, String userId) {
-        Post post = repository.findPostById(postId);
-        HttpStatus foundCode = statusCode.getFoundStatus(post);
-         if(foundCode == HttpStatus.NOT_FOUND || isPostingAllowed(post, userId)) {
-            return new ResponseEntity<>(post, foundCode);
-        } else {
-            return new ResponseEntity<>(null, statusCode.getForbiddenStatus(false));
-        }
+    public Post getPost(long postId) {
+        return repository.findPostById(postId);
+    }
+
+    public boolean isUsersPost(String userId, Post post) {
+        return post.getUser().getId().equals(userId);
     }
 
     public List<Post> getPostsSentToUser(String type, String id) {
@@ -82,11 +79,16 @@ public class PostService {
     public Post updateAPost(Post post, long postId) {
         Post fetchedPost = repository.findPostById(postId);
         post.setId(postId);
-        if(fetchedPost.getReceiverType().equals(post.getReceiverType())) {
+        if(fetchedPost.getReceiverType().equals(post.getReceiverType())
+                && postExists(postId)) {
             return repository.save(updateFields(post, fetchedPost));
         } else {
             return null;
         }
+    }
+
+    public boolean postExists(long postId) {
+        return repository.existsById(postId);
     }
 
     public boolean isPostingAllowed(Post post, String senderId) {

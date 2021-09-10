@@ -29,6 +29,10 @@ public class UserService {
         return repository.save(user);
     }
 
+    public boolean userExists(String userId) {
+        return repository.existsById(userId);
+    }
+
     public User updateUser(String userId, User user) {
         User oldUser = repository.findUserById(userId);
         return updateUserInformation(oldUser, user);

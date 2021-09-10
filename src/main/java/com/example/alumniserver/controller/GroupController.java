@@ -2,7 +2,9 @@ package com.example.alumniserver.controller;
 
 import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.model.Group;
+import com.example.alumniserver.model.User;
 import com.example.alumniserver.service.GroupService;
+import com.example.alumniserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -20,14 +22,16 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class GroupController {
 
     private final GroupService service;
+    private final UserService userService;
 
     private static final String TEST_ID = "2";
 
     private HttpStatusCode status = new HttpStatusCode();
 
     @Autowired
-    public GroupController(GroupService service) {
+    public GroupController(GroupService service, UserService userService) {
         this.service = service;
+        this.userService = userService;
     }
 
     @GetMapping
@@ -41,8 +45,8 @@ public class GroupController {
     public ResponseEntity<Group> getGroup(@PathVariable long groupId) {
         String id = TEST_ID;
         Group group = service.getGroup(groupId);
-        HttpStatus httpStatus = (status.getFoundStatus(group) == HttpStatus.NOT_FOUND) ?
-                HttpStatus.NOT_FOUND : status.getForbiddenStatus(
+        HttpStatus httpStatus = (status.getBadRequestStatus(group) == HttpStatus.BAD_REQUEST) ?
+                HttpStatus.BAD_REQUEST : status.getForbiddenStatus(
                         !group.isPrivate() || group.isUserMember(id));
         if (httpStatus == HttpStatus.FORBIDDEN)
             group = null;
@@ -66,7 +70,7 @@ public class GroupController {
         Group group = service.getGroup(groupId);
         String loggedInUserId = TEST_ID;
         if(group == null)
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         else if(userId == null)
             userId = TEST_ID;
 
@@ -74,9 +78,12 @@ public class GroupController {
             return new ResponseEntity<>(
                     getGroupLinkById(group.getId()),
                     HttpStatus.SEE_OTHER);
-        else if(userId != loggedInUserId)
-            group = service.addUserToGroup(group, userId, loggedInUserId);
-        else
+        else if(userId != loggedInUserId) {
+            User user = userService.getUserById(userId);
+            if(user == null)
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            group = service.addUserToGroup(group, user, loggedInUserId);
+        } else
             group = service.createGroupMembership(group, userId);
 
         Link link = (group != null) ? getGroupLinkById(group.getId()) : null;
