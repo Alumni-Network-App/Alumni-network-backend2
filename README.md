@@ -59,4 +59,26 @@
   - Statuscodes
     - 200 OK
 
+- GET /api/v1/post/user/{userId}
+  - Returns a collection of posts sent to the logged in user from the specified user.
+  - Statuscodes
+    - 400 BAD REQUEST -> If the specified user id doesn't connect to a user.
+    - 200 OK
 
+- GET /api/v1/post/group/{groupId}
+  - Returns a collection of posts sent to the specified group from the logged in user.
+  - Statuscodes
+    - 400 BAD REQUEST -> If the specified group id doesn't connect to a group.
+    - 200 OK
+
+- GET /api/v1/post/topic/{topicId}
+  - Returns a collection of posts sent to the specified topic from the logged in user.
+  - Statuscodes
+    - 400 BAD REQUEST -> If the specified topic id doesn't connect to a topic.
+    - 200 OK
+
+- GET /api/v1/post/event/{eventId}
+  - Returns a collection of posts sent to the specified event from the logged in user.
+  - Statuscodes
+    - 400 BAD REQUEST -> If the specified event id doesn't connect to a event.
+    - 200 OK
