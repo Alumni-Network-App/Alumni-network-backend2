@@ -110,7 +110,7 @@ public class PostController {
     @PostMapping
     public ResponseEntity<Link> createPost(@RequestBody Post post) {
         String id = TEST_ID;
-        if(post.getReceiverType() == null
+        if (post.getReceiverType() == null
                 || post.getReceiverId() == null
                 || post.getTopic() == null
                 || !topicService.topicExists(post.getTopic().getId())
@@ -127,7 +127,7 @@ public class PostController {
             @PathVariable long postId,
             @RequestBody Post post
     ) {
-        if(post.getTopic() != null ||
+        if (post.getTopic() != null ||
                 post.getReceiverType() != null ||
                 post.getReceiverId() != null
         ) {

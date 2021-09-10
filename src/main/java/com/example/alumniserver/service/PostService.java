@@ -95,10 +95,10 @@ public class PostService {
         switch (post.getReceiverType()) {
             case "group":
                 Group group = groupRepository.getById(Long.valueOf(post.getReceiverId()));
-                return (group.isPrivate() && !group.isUserMember(senderId)) ? false : true;
+                return !group.isPrivate() || group.isUserMember(senderId);
             case "event":
                 Event event = eventRepository.getById(Long.valueOf(post.getReceiverId()));
-                return (event.isUserInvited(senderId)) ? true : false;
+                return event.isUserInvited(senderId);
             case "user":
                 return true;
             default:
