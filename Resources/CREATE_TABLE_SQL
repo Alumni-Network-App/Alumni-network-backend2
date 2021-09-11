@@ -93,6 +93,17 @@ CREATE TABLE event_invite (
 			REFERENCES "event"("event_id")
 );
 
+CREATE TABLE topic_subscription (
+	"topic_id" int NOT NULL,
+	"user_id" varchar NOT NULL,
+	CONSTRAINT fk_topic
+		FOREIGN KEY("topic_id")
+			REFERENCES "topic"("topic_id"),
+	CONSTRAINT fk_usertable
+		FOREIGN KEY("user_id")
+			REFERENCES usertable("user_id")
+);
+
 CREATE TABLE RSVP (
     "last_updated" date   NOT NULL,
     "guest_count" int   NOT NULL,
