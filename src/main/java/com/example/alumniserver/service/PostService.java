@@ -4,14 +4,11 @@ import com.example.alumniserver.dao.EventRepository;
 import com.example.alumniserver.dao.GroupRepository;
 import com.example.alumniserver.dao.PostRepository;
 import com.example.alumniserver.dao.UserRepository;
-import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Group;
 import com.example.alumniserver.model.Post;
 import com.example.alumniserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,7 +61,7 @@ public class PostService {
 
     public Post makeAPost(Post post, String senderId) {
 
-        if(isPostingAllowed(post, senderId)) {
+        if(isPostingAllowed(post, senderId) && post.getTopic() != null) {
             User user = getUserInformation(senderId);
             post.setUser(user);
             user.addPost(post);
