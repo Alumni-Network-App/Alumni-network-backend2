@@ -91,10 +91,10 @@ public class PostService {
     public boolean isPostingAllowed(Post post, String senderId) {
         switch (post.getReceiverType()) {
             case "group":
-                Group group = groupRepository.getById(Long.parseLong(post.getReceiverId()));
+                Group group = groupRepository.findGroupById(Long.parseLong(post.getReceiverId()));
                 return !group.isPrivate() || group.isUserMember(senderId);
             case "event":
-                Event event = eventRepository.getById(Long.parseLong(post.getReceiverId()));
+                Event event = eventRepository.findById(Long.parseLong(post.getReceiverId())).get();
                 return event.isUserInvited(senderId);
             case "user":
                 return true;
