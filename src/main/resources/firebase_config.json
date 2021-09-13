@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "alumni-network-experis-54ed8",
+  "private_key_id": "4e479eae9aa2c7a8cc86aff48d5511deb3533698",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEugIBADANBgkqhkiG9w0BAQEFAASCBKQwggSgAgEAAoIBAQCXVbkvbvv2SAdj\n2fyqGQttoqjLLVq01ZCt4l1fXsMnR1N+w8b7jmszvK6cx0pzKja680AVU1qPvEbG\nkcPyuQn0kdi+CC2iYvXiCqKlJFNsh7qd+EmF8VMVAX3WjWUKWph88+j3XADeAetk\neteuL2vgEQ6VMD6VCFudRnYbI2KKLnRJyxD4Va2AC0tWus1Jr4irdTLBQmHVcLzx\nFyMkQhcsjpy6MXgqDTb5wSKIOWiMjpip5eLteyLQU+Y5L4PlzIxb9JdJsiI/T38y\nmj/Pt16lBJ9FAb7UsbyG9v8QbG+3aezlKwebaB4hrLVbHcs3fR+VAzzg+1NRpPJr\nXotYtgUlAgMBAAECgf9m6zdE4iqANcKc6lFPGi/uRcc3h50DZej7PouXFSGqyL07\nQQs+pObe9v/YHalIzjFQdNdI93IsbA8D/+oHk/UP5HHYChDZ1Zwj5l44O21Qki5F\nkiKTduSH9U8zsO3orWn0bxzi96PTSSlHcuba6BdQC/CNUW6iYuPrTUpTDMxbSd8J\nG6xPOtsZj6nuWm/uhvZ383kpz/ip7oxHEsRUGZ1e216OwrMF/gzyMBhURNSKefXi\nce/suRZ15sZaAAEkFvfi4t047198/oWBKTV8CpLec2/10GDYEWeD6PAqcV0EqihG\nz4yGkGHjXF0SbRer2H6E+yWp+eaa10MeTsGuY+ECgYEAydXK85K2824aqkd26Kms\nmu6QpYndPLuogifse5SGuDYq1bBNd3cK3JBtm/Msr7t8j49UIsiOFIj3QmIy/69h\nB/p3ssUeWDEQeJXfJRcRifT3dEHFY64O2BNNSazBZvGuFdF1p+/NN8iVXin1d+M5\npKhX/Ktt4mGciD33l18hsckCgYEAv/KHSbR2H0GjFnVhUFAWHSNZ7cELS3DezjNQ\n10frkqwiHpbsMQzb6EH6WImleUsh1cT3aCSuBek1MIqkqd+iUMgIm3onTAsxDaLC\nfoFy1cHfijgOfSHYjHTiY0E+9YiCxNYlw8gJkkDrXqdP+fsxRbVqd8EUyH/fkRX5\ntXIbhn0CgYAKay3RyvYEtN9NgOjjc7bEPKJc2TQBaZJ2PYdYjb8yjSFC7JnjG9ME\ntbPiw/e/jocMhhKKxR2Ic9WHqLgHOM9icQxyvvglB0tZXispp/owy+NmLer5jUeY\n4c4wimllXf5lg+114MwQIBuNw863BJS6KjJ4iYTflbhV1BUOzEtZ+QKBgD/3Qr59\nNSAVb5P8agGprrTnIwDoZCsv4hA1aatUfFzUoEoxYWS3NFGiKxt2Q364Wv4yNYCv\nOI8fuGoEyfsSW7Uv9C5b9tyQnjg9FTOzT+GMSkJ1i96HePLVwNvy0lhgtbOC6fLk\npsvmdomEmFJmM3VXj7N41MQ8WPSwrhaZgDLBAoGADgM/Q1JoY+j8CxAT/zZgIKAI\nlw0IcBzaplBKvBq+IxytgzpYnL7uGdzNg9FcqAJp72nQm9qVCNDNoe8swrQPGVbn\nMGuBtBmPbZLBxhbTn0ngfxidyhyi3dIYqM86ZcyJuoCqAjSpz1uoh6tyFwcv/Qib\npJSPPlLbnEYDJPBjYV8=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-bb4dk@alumni-network-experis-54ed8.iam.gserviceaccount.com",
+  "client_id": "100683687534375858629",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-bb4dk%40alumni-network-experis-54ed8.iam.gserviceaccount.com"
+}
