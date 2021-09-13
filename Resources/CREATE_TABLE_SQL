@@ -24,7 +24,7 @@ CREATE TABLE post (
     "topic_id" int   NOT NULL,
     "sender_id" varchar   NOT NULL,
 	"receiver_type" varchar,
-	"receiver_id" int NOT NULL,
+	"receiver_id" varchar NOT NULL,
 	CONSTRAINT fk_user
 		FOREIGN KEY("sender_id")
 			REFERENCES usertable(user_id)
