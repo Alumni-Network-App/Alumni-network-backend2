@@ -114,11 +114,12 @@ public class PostController {
                 || post.getReceiverId() == null
                 || post.getTopic() == null
                 || !topicService.topicExists(post.getTopic().getId())
+                || !receiverExists(post.getReceiverType(), post.getReceiverId())
         ) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        post = postService.makeAPost(post, id);
-        return new ResponseEntity<>(getPostLinkById(post.getId()),
+        post = postService.createPost(post, id);
+        return new ResponseEntity<>((post != null) ? getPostLinkById(post.getId()) : null,
                 statusCode.getForbiddenPostingStatus(post));
     }
 
@@ -160,6 +161,15 @@ public class PostController {
         return linkTo(methodOn(PostController.class)
                 .getPost(postId))
                 .withSelfRel();
+    }
+
+    private boolean receiverExists(String type, String id) {
+        return switch (type.toLowerCase()) {
+            case "group" -> groupService.groupExists(Long.parseLong(id));
+            case "event" -> eventService.eventExists(Long.parseLong(id));
+            case "user" -> userService.userExists(id);
+            default -> false;
+        };
     }
 
 }

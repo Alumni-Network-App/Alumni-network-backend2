@@ -59,9 +59,9 @@ public class PostService {
         return repository.findAllByUserIdAndTopicId(userId, topicId);
     }
 
-    public Post makeAPost(Post post, String senderId) {
+    public Post createPost(Post post, String senderId) {
 
-        if(isPostingAllowed(post, senderId) && post.getTopic() != null) {
+        if(isPostingAllowed(post, senderId)) {
             User user = getUserInformation(senderId);
             post.setUser(user);
             user.addPost(post);
@@ -91,10 +91,10 @@ public class PostService {
     public boolean isPostingAllowed(Post post, String senderId) {
         switch (post.getReceiverType()) {
             case "group":
-                Group group = groupRepository.getById(Long.valueOf(post.getReceiverId()));
+                Group group = groupRepository.getById(Long.parseLong(post.getReceiverId()));
                 return !group.isPrivate() || group.isUserMember(senderId);
             case "event":
-                Event event = eventRepository.getById(Long.valueOf(post.getReceiverId()));
+                Event event = eventRepository.getById(Long.parseLong(post.getReceiverId()));
                 return event.isUserInvited(senderId);
             case "user":
                 return true;
