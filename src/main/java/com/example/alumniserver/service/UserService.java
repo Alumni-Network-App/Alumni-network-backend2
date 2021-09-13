@@ -40,7 +40,7 @@ public class UserService {
             oldUser.setBio(user.getBio());
         }
         if (user.getFunFact() != null) {
-            oldUser.setBio(user.getFunFact());
+            oldUser.setFunFact(user.getFunFact());
         }
         if (user.getPicture() != null) {
             oldUser.setPicture(user.getPicture());
