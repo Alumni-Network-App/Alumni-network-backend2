@@ -93,7 +93,7 @@
     - receiverId -> A valid id for a receiver.
   - Statuscodes
     - 403 FORBIDDEN -> If the logged in user is trying to make a post to a receiver which they are not allowed to.
-    - 400 BAD REQUEST -> If any of the body has a field which is malformed.
+    - 400 BAD REQUEST -> If any of the body has a field which is malformed / if the receiver doesn't exist.
     - 201 CREATED -> When a post is succesfully created, returns a link the new post.
 
 - PUT /api/v1/post/{postId}
