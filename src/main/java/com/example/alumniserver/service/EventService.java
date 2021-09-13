@@ -154,9 +154,15 @@ public class EventService {
     //TODO fixa denna skiten
     public boolean createRsvpRecord(Event event, Group group, Topic topic, String userId){
         User user = userRepository.getById(userId);
-        boolean isUserPartOfInvitedTopic;
-        boolean check = event.createEventRSVP(group, topic, user, false);
+        boolean isUserPartOfInvitedTopic = topic.isUserSubscribed(user);
+        boolean check = event.createEventRSVP(group, topic, user, isUserPartOfInvitedTopic);
 
+        if(check){
+            repository.save(event);
+            return true;
+        }else{
+            return false;
+        }
 
     }
 }

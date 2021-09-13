@@ -3,6 +3,7 @@ package com.example.alumniserver.controller;
 import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Group;
+import com.example.alumniserver.model.Topic;
 import com.example.alumniserver.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -101,7 +102,7 @@ public class EventController {
     @RequestMapping(value = "/{eventId}/invite/topic/{topicId}", method = RequestMethod.DELETE)
     public ResponseEntity<Event> DeleteEventTopicInvite(@PathVariable("eventId") long eventId, @PathVariable("topicId") long topicId){
         boolean checkIfDeleted;
-        long userId = TEST_ID;
+        String userId = TEST_ID;
 
         Event event = eventService.getEvent(topicId);
         if(event == null)
@@ -117,7 +118,7 @@ public class EventController {
     }
 
     @RequestMapping(value = "/{eventId}/invite/user/{userId}", method = RequestMethod.POST)
-    public ResponseEntity<Event> createEventInviteForUser(@PathVariable("eventId") long eventId, @PathVariable("invitedUserId") String invitedUserId){
+    public ResponseEntity<Event> createEventInviteForUser(@PathVariable("eventId") long eventId, @PathVariable("userId") String invitedUserId){
         boolean checkIfCreated;
         String userId = TEST_ID;
 
@@ -134,7 +135,7 @@ public class EventController {
     }
 
     @RequestMapping(value = "/{eventId}/invite/user/{userId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Event> deleteEventInviteForUser(@PathVariable("eventId") long eventId, @PathVariable("invitedUserId") String invitedUserId){
+    public ResponseEntity<Event> deleteEventInviteForUser(@PathVariable("eventId") long eventId, @PathVariable("userId") String invitedUserId){
         boolean checkIfDeleted;
         String userId = TEST_ID;
 
@@ -158,7 +159,7 @@ public class EventController {
     //If the requesting user is not part of an invited group or topic, or has not been invited
     //individually, the request will result in a 403 Forbidden response.
     @RequestMapping(value = "/{eventId}/rsvp", method = RequestMethod.POST)
-    public ResponseEntity<Event> createRsvpRecord(@PathVariable("eventId") long eventId){
+    public ResponseEntity<Event> createRsvpRecord(@PathVariable("eventId") long eventId, @RequestBody Group group, Topic topic){
         boolean checkIfCreated;
         String userId = TEST_ID;
         Event event = eventService.getEvent(eventId);
@@ -166,7 +167,8 @@ public class EventController {
         if(event == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
-
+        checkIfCreated = eventService.createRsvpRecord(event, group, event.getTopic(), userId);
+        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(checkIfCreated));
     }
 
 
