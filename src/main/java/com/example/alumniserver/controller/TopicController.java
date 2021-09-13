@@ -6,6 +6,7 @@ import com.example.alumniserver.model.User;
 import com.example.alumniserver.service.TopicService;
 import com.example.alumniserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +33,8 @@ public class TopicController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Topic>> getTopics() {
-        return new ResponseEntity<>(service.getTopics(), HttpStatus.OK);
+    public ResponseEntity<List<Topic>> getTopics(@RequestParam(required = false, defaultValue = "") String name, Pageable page) {
+        return new ResponseEntity<>(service.getTopics(page, name), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{topicId}")

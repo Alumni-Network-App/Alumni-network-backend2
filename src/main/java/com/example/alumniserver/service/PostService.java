@@ -9,6 +9,7 @@ import com.example.alumniserver.model.Group;
 import com.example.alumniserver.model.Post;
 import com.example.alumniserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,8 +35,10 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
-    public List<Post> getAllPosts(String id) {
-        return repository.findAllByUserId(id);
+    public List<Post> getPosts(String id, String receiverType, String search, Pageable pageable) {
+        return (receiverType.equals(""))
+                ? repository.getPosts(id, search, pageable).getContent()
+                : repository.getFilteredPosts(id, receiverType, search, pageable).getContent();
     }
 
     public Post getPost(long postId) {
@@ -46,17 +49,16 @@ public class PostService {
         return post.getUser().getId().equals(userId);
     }
 
-    public List<Post> getPostsSentToUser(String type, String id) {
-        return repository.findAllByReceiverTypeAndReceiverId(type, id);
+    public List<Post> getPostsSentToUser(String type, String id, String filter, Pageable page) {
+        return repository.getFilteredPostsToTypeWithId(type, id, filter, page).getContent();
     }
 
-    public List<Post> getPostsWithToAndFromId(String type, String receiverId, String senderId) {
-        List<Post> posts = repository.findAllByReceiverTypeAndReceiverIdAndUserId(type, receiverId, senderId);
-        return posts;
+    public List<Post> getPostsWithToAndFromId(String type, String receiverId, String senderId, String filter, Pageable page) {
+        return repository.getFilteredPostsToTypeWithIdFromUser(type, receiverId, senderId, filter, page).getContent();
     }
 
-    public List<Post> getPostsFromUserToTopic(String userId, long topicId) {
-        return repository.findAllByUserIdAndTopicId(userId, topicId);
+    public List<Post> getPostsFromUserToTopic(String userId, long topicId, String filter, Pageable page) {
+        return repository.getFilteredPostsToTopic(userId, topicId, filter, page).getContent();
     }
 
     public Post createPost(Post post, String senderId) {
