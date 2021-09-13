@@ -3,6 +3,7 @@ package com.example.alumniserver.service;
 import com.example.alumniserver.dao.*;
 import com.example.alumniserver.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,8 +31,8 @@ public class ReplyService {
         return repository.findReplyById(replyId);
     }
 
-    public List<Reply> getRepliesWithUserId(String userId) {
-        return repository.findRepliesByUserId(userId);
+    public List<Reply> getRepliesWithUserId(String userId, String searchTerm, Pageable page) {
+        return repository.findReplies(userId, searchTerm, page).getContent();
     }
 
     public List<Reply> getRepliesToPostId(long postId) {

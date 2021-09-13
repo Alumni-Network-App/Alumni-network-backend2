@@ -6,6 +6,8 @@ import com.example.alumniserver.model.User;
 import com.example.alumniserver.service.GroupService;
 import com.example.alumniserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +37,9 @@ public class GroupController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Group>> getGroups() {
+    public ResponseEntity<List<Group>> getGroups(Pageable page, @RequestParam(required = false, defaultValue = "") String name) {
         String id = TEST_ID;
-        List<Group> groups = service.getGroups(id);
-        return new ResponseEntity<>(groups, HttpStatus.OK);
+        return new ResponseEntity<>(service.getGroups(id, name, page), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{groupId}")
