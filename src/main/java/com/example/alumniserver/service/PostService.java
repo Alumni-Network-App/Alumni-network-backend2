@@ -34,52 +34,68 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
-    public List<Post> getAllPosts(long id) {
+    public List<Post> getAllPosts(String id) {
         return repository.findAllByUserId(id);
     }
 
-    public List<Post> getPostsSentToUser(String type, long id) {
+    public Post getPost(long postId) {
+        return repository.findPostById(postId);
+    }
+
+    public boolean isUsersPost(String userId, Post post) {
+        return post.getUser().getId().equals(userId);
+    }
+
+    public List<Post> getPostsSentToUser(String type, String id) {
         return repository.findAllByReceiverTypeAndReceiverId(type, id);
     }
 
-    public List<Post> getPostsWithToAndFromId(String type, long receiverId, long senderId) {
-        return repository.findAllByReceiverTypeAndReceiverIdAndUserId(type, receiverId, senderId);
+    public List<Post> getPostsWithToAndFromId(String type, String receiverId, String senderId) {
+        List<Post> posts = repository.findAllByReceiverTypeAndReceiverIdAndUserId(type, receiverId, senderId);
+        return posts;
     }
 
-    public List<Post> getPostsFromUserToTopic(long userId, long topicId) {
+    public List<Post> getPostsFromUserToTopic(String userId, long topicId) {
         return repository.findAllByUserIdAndTopicId(userId, topicId);
     }
 
-    public boolean makeAPost(Post post, long senderId) {
+    public Post createPost(Post post, String senderId) {
 
         if(isPostingAllowed(post, senderId)) {
-            post.setUser(getUserInformation(senderId));
-            repository.save(post);
-            return true;
+            User user = getUserInformation(senderId);
+            post.setUser(user);
+            user.addPost(post);
+            post = repository.save(post);
+            userRepository.save(user);
+            return post;
         } else {
-            return false;
+            return null;
         }
     }
 
-    public boolean updateAPost(Post post, long postId) {
-        Post fetchedPost = repository.getById(postId);
+    public Post updateAPost(Post post, long postId) {
+        Post fetchedPost = repository.findPostById(postId);
         post.setId(postId);
-        if(fetchedPost.getReceiverType().equals(post.getReceiverType())) {
-            repository.save(updateFields(post, fetchedPost));
-            return true;
+        if(fetchedPost.getReceiverType().equals(post.getReceiverType())
+                && postExists(postId)) {
+            return repository.save(updateFields(post, fetchedPost));
         } else {
-            return false;
+            return null;
         }
     }
 
-    private boolean isPostingAllowed(Post post, long senderId) {
+    public boolean postExists(long postId) {
+        return repository.existsById(postId);
+    }
+
+    public boolean isPostingAllowed(Post post, String senderId) {
         switch (post.getReceiverType()) {
             case "group":
-                Group group = groupRepository.getById(post.getReceiverId());
-                return (group.isPrivate() && !group.isUserMember(senderId)) ? false : true;
+                Group group = groupRepository.findGroupById(Long.parseLong(post.getReceiverId()));
+                return !group.isPrivate() || group.isUserMember(senderId);
             case "event":
-                Event event = eventRepository.getById(post.getReceiverId());
-                return (event.isUserInvited(senderId)) ? true : false;
+                Event event = eventRepository.findById(Long.parseLong(post.getReceiverId())).get();
+                return event.isUserInvited(senderId);
             case "user":
                 return true;
             default:
@@ -87,8 +103,8 @@ public class PostService {
         }
     }
 
-    private User getUserInformation(long id) {
-        return userRepository.getById(id);
+    private User getUserInformation(String id) {
+        return userRepository.findUserById(id);
     }
 
     private Post updateFields(Post updatedPost, Post oldPost) {

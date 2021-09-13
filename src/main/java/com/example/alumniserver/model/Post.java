@@ -1,13 +1,18 @@
 package com.example.alumniserver.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.*;
+import java.rmi.server.UID;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
@@ -41,7 +46,7 @@ public class Post<T> {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name="reply_parent_id")
     private List<Reply> replies;
 
@@ -49,7 +54,13 @@ public class Post<T> {
     private String receiverType;
 
     @Column(name="receiver_id", updatable = false)
-    private long receiverId;
+    private String receiverId;
+
+    public void addReply(Reply reply) {
+        if(replies == null)
+            replies = new ArrayList<>();
+        replies.add(reply);
+    }
 
     @JsonGetter("topic")
     public String topic() {
@@ -74,10 +85,11 @@ public class Post<T> {
         if(replies != null) {
             return replies.stream()
                     .map(reply -> {
-                        return "/api/v1/replies/" + reply.getId();
+                        return "/api/v1/reply/" + reply.getId();
                     }).collect(Collectors.toList());
         } else {
             return null;
         }
     }
+
 }

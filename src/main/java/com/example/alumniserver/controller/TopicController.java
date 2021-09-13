@@ -1,56 +1,76 @@
 package com.example.alumniserver.controller;
 
-
 import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.model.Topic;
 import com.example.alumniserver.model.User;
 import com.example.alumniserver.service.TopicService;
+import com.example.alumniserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Controller
 @RequestMapping("/api/v1/topic")
 public class TopicController {
 
-    private final HttpStatusCode httpStatusCode = new HttpStatusCode();
-    private final TopicService topicService;
+    private final TopicService service;
+    private final UserService userService;
+    private final HttpStatusCode status = new HttpStatusCode();
 
     @Autowired
-    public TopicController (TopicService topicService){
-        this.topicService=topicService;
+    public TopicController(TopicService service, UserService userService) {
+        this.service = service;
+        this.userService = userService;
     }
 
-    @RequestMapping(value = "/all",method = RequestMethod.GET)
-    public ResponseEntity<List<Topic>> getAllTopics(){
-        List<Topic> topics = topicService.getAllTopics();
-        return new ResponseEntity<>(topics, httpStatusCode.getFoundStatus(topics));
+    @GetMapping
+    public ResponseEntity<List<Topic>> getTopics() {
+        return new ResponseEntity<>(service.getTopics(), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Topic> getTopicByID (@PathVariable long id){
-        Topic topic = topicService.getTopic(id);
-        return new ResponseEntity<>(topic, httpStatusCode.getFoundStatus(topic));
+    @GetMapping(value = "/{topicId}")
+    public ResponseEntity<Topic> getTopic(@PathVariable long topicId) {
+        Topic topic = service.getTopic(topicId);
+        return new ResponseEntity<>(topic, status.getBadRequestStatus(topic));
     }
 
-    //TOdO
-    //This endpoint should simultaneously create a topic membership record, adding the
-    //topic’s creator as the first subscriber to that topic.
-    //Detta när vi fixat subscribe
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<Topic> createTopic (@RequestBody Topic topic){
-        return new ResponseEntity<>(topicService.createTopic(topic), httpStatusCode.getContentStatus());
+    @PostMapping
+    public ResponseEntity<Link> postTopic(@RequestBody Topic topic) {
+        Topic createdTopic = service.createTopic(topic);
+        return (createdTopic == null) ? new ResponseEntity<>
+                (getTopicLinkById(createdTopic.getId()), HttpStatus.CREATED)
+                : new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
-    //TODO
-    //Fixa metod för nedan krav
-    //POST /topic/:topic_id/join
-    //Create a new topic membership record. Accepts no parameters. user_id is taken as
-    //being that of the requesting user and topic_id is provided in the path.
+    @PostMapping(value = "/{topicId}/join")
+    public ResponseEntity<Link> postTopicSubscription(@PathVariable long topicId) {
+        String userId = "2";
+        Topic topic = service.getTopic(topicId);
+        User user = userService.getUserById(userId);
+        if(topic == null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        return (topic.isUserSubscribed(user)) ? new ResponseEntity<>(
+                getTopicLinkById(topicId), HttpStatus.SEE_OTHER)
+                : new ResponseEntity<>(getTopicLinkById(
+                        service.createTopicSubscription(topic, user).getId()),
+                        HttpStatus.CREATED);
 
+    }
+
+    private Link getTopicLinkById(long topicId) {
+        return linkTo(methodOn(TopicController.class)
+                .getTopic(topicId))
+                .withSelfRel();
+    }
 
 
 }

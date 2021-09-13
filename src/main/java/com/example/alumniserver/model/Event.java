@@ -1,5 +1,6 @@
 package com.example.alumniserver.model;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "\"event\"")
@@ -17,7 +19,7 @@ public class Event {
 
     @Id
     @Column(name = "event_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @ManyToOne
@@ -63,9 +65,33 @@ public class Event {
     @ManyToMany(mappedBy = "events")
     private List<User> invitedUsers;
 
-    public boolean isUserInvited(long userId) {
+    @JsonGetter("groups")
+    public List<String> groups() {
+        if(groups != null) {
+            return groups.stream()
+                    .map(group -> {
+                        return "/api/v1/group/" + group.getId();
+                    }).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
+
+    @JsonGetter("users")
+    public List<String> users() {
+        if(invitedUsers != null) {
+            return invitedUsers.stream()
+                    .map(user -> {
+                        return "/api/v1/user/" + user.getId();
+                    }).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
+
+    public boolean isUserInvited(String userId) {
         for (User user : invitedUsers) {
-            if(user.getId() == userId)
+            if(user.getId().equals(userId))
                 return true;
         }
         return false;
@@ -79,7 +105,7 @@ public class Event {
         return false;
     }
 
-    public boolean isUserCreator(long userId){
+    public boolean isUserCreator(String userId){
         if(user.getId() == userId){
             return true;
         }else{

@@ -16,7 +16,7 @@ public class EventController {
 
     private final HttpStatusCode statusCode = new HttpStatusCode();
     private final EventService eventService;
-    private static final long TEST_ID = 1;
+    private static final String TEST_ID = "1";
 
     public EventController(EventService eventService) {
         this.eventService = eventService;
@@ -25,20 +25,20 @@ public class EventController {
     //TODO Även topics som användaren är subscribad till ska returneras
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Event>> getAllEvents(){
-        long userId = TEST_ID;
+        String userId = TEST_ID;
         List<Event> events = eventService.getAllUserEvents(userId);
         return new ResponseEntity<>(events, statusCode.getFoundStatus(events));
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Event> createEvent(@RequestBody Event event, Group group){
-        long userId = TEST_ID;
+        String userId = TEST_ID;
         return new ResponseEntity<>(eventService.createEvent(event), statusCode.getForbiddenStatus(group.isUserMember(userId)));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Boolean> updateEvent(@PathVariable("id") long id, @RequestBody Event events){
-        long userId = TEST_ID;
+        String userId = TEST_ID;
         Event event = eventService.getEvent(id);
         Boolean updated = eventService.updateAnEvent(events, event.getId(), userId);
         HttpStatus httpStatus = (statusCode.getFoundStatus(event) == HttpStatus.NOT_FOUND)
@@ -50,7 +50,7 @@ public class EventController {
     @RequestMapping(value = "/{eventId}/invite/group/{groupId}", method = RequestMethod.POST)
     public ResponseEntity<Event> createGroupInvite(@PathVariable("eventId") long eventId, @PathVariable("groupId") long groupId){
         boolean checkIfAdded;
-        long userId = TEST_ID;
+        String userId = TEST_ID;
 
         Event event = eventService.getEvent(eventId);
         if(event == null)
@@ -67,7 +67,7 @@ public class EventController {
     @RequestMapping(value = "/{eventId}/invite/group/{groupId}", method = RequestMethod.DELETE)
     public ResponseEntity<Event> deleteGroupInvite(@PathVariable("eventId") long eventId, @PathVariable("groupId") long groupId){
         boolean checkIfDeleted;
-        long userId = TEST_ID;
+        String userId = TEST_ID;
 
         Event event = eventService.getEvent(eventId);
         if(event == null)
@@ -84,7 +84,7 @@ public class EventController {
     @RequestMapping(value = "/{eventId}/invite/topic/{topicId}", method = RequestMethod.POST)
     public ResponseEntity<Event> createEventTopicInvite(@PathVariable("eventId") long eventId, @PathVariable("topicId") long topicId){
         boolean checkIfCreated;
-        long userId = TEST_ID;
+        String userId = TEST_ID;
 
         Event event = eventService.getEvent(eventId);
         if(event == null)
@@ -117,9 +117,9 @@ public class EventController {
     }
 
     @RequestMapping(value = "/{eventId}/invite/user/{userId}", method = RequestMethod.POST)
-    public ResponseEntity<Event> createEventInviteForUser(@PathVariable("eventId") long eventId, @PathVariable("invitedUserId") long invitedUserId){
+    public ResponseEntity<Event> createEventInviteForUser(@PathVariable("eventId") long eventId, @PathVariable("invitedUserId") String invitedUserId){
         boolean checkIfCreated;
-        long userId = TEST_ID;
+        String userId = TEST_ID;
 
         Event event = eventService.getEvent(eventId);
         if(event == null)
@@ -134,9 +134,9 @@ public class EventController {
     }
 
     @RequestMapping(value = "/{eventId}/invite/user/{userId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Event> deleteEventInviteForUser(@PathVariable("eventId") long eventId, @PathVariable("invitedUserId") long invitedUserId){
+    public ResponseEntity<Event> deleteEventInviteForUser(@PathVariable("eventId") long eventId, @PathVariable("invitedUserId") String invitedUserId){
         boolean checkIfDeleted;
-        long userId = TEST_ID;
+        String userId = TEST_ID;
 
         Event event = eventService.getEvent(eventId);
         if(event == null)
@@ -160,7 +160,7 @@ public class EventController {
     @RequestMapping(value = "/{eventId}/rsvp", method = RequestMethod.POST)
     public ResponseEntity<Event> createRsvpRecord(@PathVariable("eventId") long eventId){
         boolean checkIfCreated;
-        long userId = TEST_ID;
+        String userId = TEST_ID;
         Event event = eventService.getEvent(eventId);
 
         if(event == null)

@@ -8,3 +8,6 @@
 user.database.username=postgres
 user.database.password=
 user.database.url=
+user.database.platform.dialect=org.hibernate.dialect.PostgreSQLDialect
+user.database.hibernate.ddl=create
+user.database.driver=org.postgresql.Driver

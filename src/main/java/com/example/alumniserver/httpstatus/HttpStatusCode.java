@@ -1,14 +1,16 @@
 package com.example.alumniserver.httpstatus;
 
-import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Group;
-import com.example.alumniserver.model.User;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
+
+import javax.persistence.Entity;
 
 public class HttpStatusCode<T> {
 
     /**
      * Used for redirecting a currently authenticated user to their info page.
+     *
      * @return the status for an authenticated user.
      */
     public HttpStatus getSeeOtherCode() {
@@ -19,11 +21,11 @@ public class HttpStatusCode<T> {
      * Used for checking if a topic / post allows a user to post to it,
      * depending on if the user is a member.
      *
-     * @param isAdded the value used for checking if the user is a member.
+     * @param isInteractionAllowed the value used for checking if the user is a member.
      * @return a status code indicating if a user is allowed to make a post.
      */
-    public HttpStatus getForbiddenStatus(boolean isAdded) {
-        return (!isAdded) ? HttpStatus.FORBIDDEN : HttpStatus.OK;
+    public HttpStatus getForbiddenStatus(boolean isInteractionAllowed) {
+        return (!isInteractionAllowed) ? HttpStatus.FORBIDDEN : HttpStatus.OK;
     }
 
     /**
@@ -48,9 +50,15 @@ public class HttpStatusCode<T> {
         return (t == null) ? HttpStatus.NOT_FOUND : HttpStatus.OK;
     }
 
+    public HttpStatus getBadRequestStatus(T t) {
+        return (t == null) ? HttpStatus.BAD_REQUEST : HttpStatus.OK;
+    }
+
+    public HttpStatus getForbiddenPostingStatus(T t) {
+        return (t == null) ? HttpStatus.FORBIDDEN : HttpStatus.CREATED;
+    }
 
     public HttpStatus getForbiddenToUpdateEventStatus(boolean isInvited) {
         return (!isInvited) ? HttpStatus.FORBIDDEN : HttpStatus.OK;
     }
-
 }

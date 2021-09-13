@@ -28,7 +28,11 @@ public class EventService {
         this.topicRepository = topicRepository;
     }
 
-    public List<Event> getAllUserEvents(long id) {
+    public boolean eventExists(long eventId) {
+        return repository.existsById(eventId);
+    }
+
+    public List<Event> getAllUserEvents(String id) {
         return repository.findAllByUserId(id);
     }
 
@@ -40,7 +44,7 @@ public class EventService {
         return repository.findEventByID(eventId);
     }
 
-    public boolean updateAnEvent(Event event, long postId, long userId) {
+    public boolean updateAnEvent(Event event, long postId, String userId) {
         Event fetchedEvent = repository.getById(postId);
         event.setId(postId);
         if(fetchedEvent.getId() == event.getId() && checkIfUserAllowedToUpdate(event, userId)) {
@@ -51,7 +55,7 @@ public class EventService {
         }
     }
 
-    public boolean checkIfUserAllowedToUpdate(Event event, long userId){
+    public boolean checkIfUserAllowedToUpdate(Event event, String userId){
         if(event.getUser().getId()==userId){
             return true;
         }else{
@@ -125,7 +129,7 @@ public class EventService {
         }
     }
 
-    public boolean createUserInvite(Event event, long userId){
+    public boolean createUserInvite(Event event, String userId){
         User user = userRepository.getById(userId);
         boolean check = event.setUserInvite(user);
         if(check){
@@ -136,7 +140,7 @@ public class EventService {
         }
     }
 
-    public boolean deleteUserInvite(Event event, long userId){
+    public boolean deleteUserInvite(Event event, String userId){
         User user = userRepository.getById(userId);
         boolean check = event.deleteUserInvite(user);
         if(check){
@@ -148,7 +152,7 @@ public class EventService {
     }
 
     //TODO fixa denna skiten
-    public boolean createRsvpRecord(Event event, Group group, Topic topic, long userId){
+    public boolean createRsvpRecord(Event event, Group group, Topic topic, String userId){
         User user = userRepository.getById(userId);
         boolean isUserPartOfInvitedTopic;
         boolean check = event.createEventRSVP(group, topic, user, false);

@@ -17,16 +17,40 @@ public class UserService {
         this.repository = repository;
     }
 
-    public List<User> getAllUsers() {
-        return repository.findAll();
+    public User getUserById(String userId) {
+        return repository.findUserById(userId);
     }
 
     public User addUser(User user) {
         return repository.save(user);
     }
 
-    public User updateUser(User user) {
-        return repository.save(user);
+    public boolean userExists(String userId) {
+        return repository.existsById(userId);
+    }
+
+    public User updateUser(String userId, User user) {
+        User oldUser = repository.findUserById(userId);
+        return (oldUser.getName().equals(user.getName()))
+                ? updateUserInformation(oldUser, user)
+                : null;
+    }
+
+    private User updateUserInformation(User oldUser, User user) {
+        if (!user.getBio().equals("")) {
+            oldUser.setBio(user.getBio());
+        }
+        if (!user.getFunFact().equals("")) {
+            oldUser.setBio(user.getFunFact());
+        }
+        if (!user.getPicture().equals("")) {
+            oldUser.setPicture(user.getPicture());
+        }
+        if(!user.getStatus().equals("")) {
+            oldUser.setStatus(user.getStatus());
+        }
+
+        return oldUser;
     }
 
 }

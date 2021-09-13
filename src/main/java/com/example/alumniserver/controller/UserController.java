@@ -6,12 +6,16 @@ import com.example.alumniserver.model.User;
 import com.example.alumniserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Controller
 @RequestMapping("/api/v1/user")
@@ -25,32 +29,52 @@ public class UserController {
         this.service = service;
     }
 
+    @PatchMapping(value = "/update/{userId}")
+    public ResponseEntity<Link> UpdateUser(
+            @PathVariable String userId,
+            @RequestBody User user) {
+        if (!service.userExists(userId)) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+        User updateUser = service.updateUser(userId, user);
+        if (updateUser != null)
+            return new ResponseEntity<>(
+                    getUserLinkById(updateUser.getId()),
+                    HttpStatus.OK);
+        else
+            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+    }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<User>> getAllUsers(){
-        List<User> users = service.getAllUsers();
-        return new ResponseEntity<>(users, httpStatusCode.getFoundStatus(users));
+    @GetMapping
+    public ResponseEntity<Link> getUserLink() {
+        String id = "2";
+        Link link = getUserLinkById(id);
+        return new ResponseEntity<>(link, HttpStatus.SEE_OTHER);
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUserById(@PathVariable String userId) {
+        String loggedInUserId = "2";
+        User user = service.getUserById(userId);
+        return new ResponseEntity<>(
+                user, httpStatusCode.getBadRequestStatus(user)
+        );
     }
 
 
-    //TODO
-    //Fixa LÄNKEN
-    @RequestMapping(value = "/user", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.SEE_OTHER)
-    public ResponseEntity<String> getUserByQueryId(@RequestHeader int user_id){
-        return new ResponseEntity<>("/user", httpStatusCode.getSeeOtherCode());
+    @PostMapping
+    public ResponseEntity<Link> addUser(@RequestBody User user) {
+        User addedUser = service.addUser(user);
+
+        return new ResponseEntity<>(getUserLinkById(
+                addedUser.getId()),
+                HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity<User> addNewUser(@RequestBody User user){
-        return new ResponseEntity<>(service.addUser(user), httpStatusCode.getContentStatus());
+    private Link getUserLinkById(String userId) {
+        return linkTo(methodOn(UserController.class)
+                .getUserById(userId))
+                .withSelfRel();
     }
-
-    @Modifying
-    @RequestMapping(value = "/update", method = RequestMethod.PATCH)
-    public ResponseEntity<User> UpdateUser(@RequestBody int id, User user){
-        return new ResponseEntity<>(service.updateUser(user), httpStatusCode.getContentStatus());
-    }
-
 
 }

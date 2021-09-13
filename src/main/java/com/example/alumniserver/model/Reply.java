@@ -1,7 +1,6 @@
 package com.example.alumniserver.model;
 
-import lombok.AccessLevel;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,17 +15,15 @@ public class Reply {
 
     @Id
     @Column(name="reply_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @Column(length = 1000)
     private String content;
 
     @Column(name = "last_updated")
-    private LocalDateTime lastUpdated;
+    private LocalDateTime lastUpdated = LocalDateTime.now();
 
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     @ManyToOne
     @JoinColumn(name = "reply_parent_id")
     private Post post;
@@ -34,4 +31,23 @@ public class Reply {
     @ManyToOne
     @JoinColumn(name = "sender_id")
     private User user;
+
+    @JsonGetter("user")
+    public String user() {
+        if(user != null) {
+            return "/api/v1/user/" + user.getId();
+        } else {
+            return null;
+        }
+    }
+
+    @JsonGetter("post")
+    public String post() {
+        if(post != null) {
+            return "/api/v1/post/" + post.getId();
+        } else {
+            return null;
+        }
+    }
+
 }
