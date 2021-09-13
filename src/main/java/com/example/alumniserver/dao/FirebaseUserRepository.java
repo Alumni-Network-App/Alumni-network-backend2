@@ -1,6 +1,6 @@
 package com.example.alumniserver.dao;
 
-import com.example.alumniserver.model.FirebaseUser;
+
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
 
-@Service
+/*@Service
 public class FirebaseUserRepository {
     private static final Logger logger = LoggerFactory.getLogger(FirebaseUserRepository.class);
 
@@ -40,3 +40,4 @@ public class FirebaseUserRepository {
         return null;
     }
 }
+*/

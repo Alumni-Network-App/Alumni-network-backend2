@@ -1,7 +1,9 @@
 package com.example.alumniserver.model;
 
+import javax.persistence.Entity;
 import javax.persistence.Id;
 
+/*@Entity
 public class FirebaseUser {
 
     @Id
@@ -34,3 +36,4 @@ public class FirebaseUser {
         this.name = name;
     }
 }
+*/
