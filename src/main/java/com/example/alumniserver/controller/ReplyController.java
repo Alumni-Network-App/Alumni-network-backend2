@@ -5,6 +5,7 @@ import com.example.alumniserver.model.Reply;
 import com.example.alumniserver.service.PostService;
 import com.example.alumniserver.service.ReplyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,9 +43,11 @@ public class ReplyController {
     }
 
     @GetMapping(value = "/user")
-    public ResponseEntity<List<Reply>> getRepliesWithUserId() {
+    public ResponseEntity<List<Reply>> getRepliesWithUserId(
+            @RequestParam(required = false, defaultValue = "") String search,
+            Pageable page) {
         String userId = "2";
-        List<Reply> replies = service.getRepliesWithUserId(userId);
+        List<Reply> replies = service.getRepliesWithUserId(userId, search, page);
         return new ResponseEntity<>(replies, HttpStatus.OK);
     }
 
@@ -94,4 +97,5 @@ public class ReplyController {
                 .getReplyWithId(replyId))
                 .withSelfRel();
     }
+
 }

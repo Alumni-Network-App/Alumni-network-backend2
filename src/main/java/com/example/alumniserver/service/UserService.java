@@ -30,23 +30,25 @@ public class UserService {
 
     public User updateUser(String userId, User user) {
         User oldUser = repository.findUserById(userId);
-        return (oldUser.getName().equals(user.getName()))
-                ? updateUserInformation(oldUser, user)
-                : null;
+        oldUser = updateUserInformation(oldUser, user);
+        return repository.save(oldUser);
     }
 
     private User updateUserInformation(User oldUser, User user) {
-        if (!user.getBio().equals("")) {
+        if (user.getBio() != null){
             oldUser.setBio(user.getBio());
         }
-        if (!user.getFunFact().equals("")) {
-            oldUser.setBio(user.getFunFact());
+        if (user.getFunFact() != null) {
+            oldUser.setFunFact(user.getFunFact());
         }
-        if (!user.getPicture().equals("")) {
+        if (user.getPicture() != null) {
             oldUser.setPicture(user.getPicture());
         }
-        if(!user.getStatus().equals("")) {
+        if(user.getStatus() != null) {
             oldUser.setStatus(user.getStatus());
+        }
+        if(user.getName() != null) {
+            oldUser.setName(user.getName());
         }
 
         return oldUser;

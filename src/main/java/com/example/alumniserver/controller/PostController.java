@@ -7,6 +7,7 @@ import com.example.alumniserver.model.Reply;
 import com.example.alumniserver.model.User;
 import com.example.alumniserver.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,9 +48,13 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Post>> getPostsForUser() {
+    public ResponseEntity<List<Post>> getPostsForUser(
+            @RequestParam(required = false, defaultValue = "") String type,
+            @RequestParam(required = false, defaultValue = "") String search,
+            Pageable page
+    ) {
         String id = TEST_ID;
-        List<Post> posts = postService.getAllPosts(id);
+        List<Post> posts = postService.getPosts(id, type, search, page);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
@@ -69,42 +74,57 @@ public class PostController {
     }
 
     @GetMapping(value = "/user")
-    public ResponseEntity<List<Post>> getPostsToUser() {
+    public ResponseEntity<List<Post>> getPostsToUser(
+            @RequestParam(required = false, defaultValue = "") String search,
+            Pageable page
+    ) {
         String id = TEST_ID;
-        List<Post> posts = postService.getPostsSentToUser("user", id);
+        List<Post> posts = postService.getPostsSentToUser("user", id, search, page);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @GetMapping(value = "/user/{userId}")
-    public ResponseEntity<List<Post>> getPostsToUserFromUser(@PathVariable String userId) {
+    public ResponseEntity<List<Post>> getPostsToUserFromUser(
+            @PathVariable String userId,
+            @RequestParam(required = false, defaultValue = "") String search,
+            Pageable page) {
         String id = TEST_ID;
         boolean userFound = userService.userExists(userId);
-        return getPostsToType(userFound, "user", id, userId);
+        return getPostsToType(userFound, "user", id, userId, search, page);
     }
 
     @GetMapping(value = "/group/{groupId}")
-    public ResponseEntity<List<Post>> getPostsToGroup(@PathVariable String groupId) {
+    public ResponseEntity<List<Post>> getPostsToGroup(
+            @PathVariable String groupId,
+            @RequestParam(required = false, defaultValue = "") String search,
+            Pageable page) {
         String id = TEST_ID;
-        boolean groupFound = groupService.groupExists(Long.valueOf(groupId));
-        return getPostsToType(groupFound, "group", groupId, id);
+        boolean groupFound = groupService.groupExists(Long.parseLong(groupId));
+        return getPostsToType(groupFound, "group", groupId, id, search, page);
     }
 
     @GetMapping(value = "/topic/{topicId}")
-    public ResponseEntity<List<Post>> getPostsWithTopic(@PathVariable long topicId) {
+    public ResponseEntity<List<Post>> getPostsWithTopic(
+            @PathVariable long topicId,
+            @RequestParam(required = false, defaultValue = "") String search,
+            Pageable page) {
         String id = TEST_ID;
         boolean topicExists = topicService.topicExists(topicId);
         return (!topicExists) ?
                 new ResponseEntity<>(null, HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>(postService
-                        .getPostsFromUserToTopic(id, topicId),
+                        .getPostsFromUserToTopic(id, topicId, search, page),
                         HttpStatus.OK);
     }
 
     @GetMapping(value = "/event/{eventId}")
-    public ResponseEntity<List<Post>> getPostsToEvent(@PathVariable String eventId) {
+    public ResponseEntity<List<Post>> getPostsToEvent(
+            @PathVariable String eventId,
+            @RequestParam(required = false, defaultValue = "") String search,
+            Pageable page) {
         String id = TEST_ID;
-        boolean eventExists = eventService.eventExists(Long.valueOf(eventId));
-        return getPostsToType(eventExists, "event", eventId, id);
+        boolean eventExists = eventService.eventExists(Long.parseLong(eventId));
+        return getPostsToType(eventExists, "event", eventId, id, search, page);
     }
 
     @PostMapping
@@ -145,7 +165,9 @@ public class PostController {
             boolean receiverExist,
             String receiverType,
             String receiverId,
-            String senderId
+            String senderId,
+            String search,
+            Pageable page
     ) {
         return (!receiverExist) ?
                 new ResponseEntity<>(null, HttpStatus.BAD_REQUEST) :
@@ -153,7 +175,9 @@ public class PostController {
                         .getPostsWithToAndFromId(
                                 receiverType,
                                 receiverId,
-                                senderId),
+                                senderId,
+                                search,
+                                page),
                         HttpStatus.OK);
     }
 

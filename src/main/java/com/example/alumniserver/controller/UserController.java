@@ -61,16 +61,15 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
     }
 
-//    @GetMapping
-//    public ResponseEntity<Link> getUserLink() {
-//        String id = "2";
-//        Link link = getUserLinkById(id);
-//        return new ResponseEntity<>(link, HttpStatus.SEE_OTHER);
-//    }
+    @GetMapping
+    public ResponseEntity<Link> getUserLink() {
+        String id = "2";
+        Link link = getUserLinkById(id);
+        return new ResponseEntity<>(link, HttpStatus.SEE_OTHER);
+    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable String userId) {
-        //String loggedInUserId = "2";
         User user = service.getUserById(userId);
         return new ResponseEntity<>(
                 user, httpStatusCode.getBadRequestStatus(user)

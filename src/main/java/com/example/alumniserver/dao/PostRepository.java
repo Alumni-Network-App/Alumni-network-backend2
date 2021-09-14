@@ -1,22 +1,51 @@
 package com.example.alumniserver.dao;
 
 import com.example.alumniserver.model.Post;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import java.util.List;
 
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    List<Post> findAllByUserId(String id);
+    @Query("SELECT p FROM Post p WHERE p.user.id = :userId AND CONCAT(p.content, p.title) LIKE %:search%")
+    Page<Post> getPosts(@Param("userId") String userId,
+                        @Param("search") String search,
+                        Pageable page);
 
-    List<Post> findAllByReceiverTypeAndReceiverId(String type, String id);
+    @Query("SELECT p FROM Post p WHERE p.user.id = :userId AND p.receiverType = :receiverType AND CONCAT(p.content, p.title) LIKE %:search%")
+    Page<Post> getFilteredPosts(
+            @Param("userId") String userId,
+            @Param("receiverType") String receiverType,
+            @Param("search") String search,
+            Pageable page);
 
-    List<Post> findAllByReceiverTypeAndReceiverIdAndUserId(String type, String receiverId, String senderId);
+    /*
+        Page<Post> findAllByUserId(String id, Pageable page);
 
-    List<Post> findAllByReceiverTypeAndReceiverIdAndUserId(String type, long receiverId, String senderId);
+        Page<Post> findAllByUserIdAndReceiverType(String userId, String receiverType, Pageable page);
+    */
+    @Query("SELECT p FROM Post p WHERE p.id = :id AND p.receiverType = :type AND CONCAT(p.content, p.title) LIKE %:filter%")
+    Page<Post> getFilteredPostsToTypeWithId(@Param("type") String type,
+                                            @Param("id") String id,
+                                            @Param("filter") String filter,
+                                            Pageable page);
 
-    List<Post> findAllByUserIdAndTopicId(String userId, long topicId);
+    @Query("SELECT p FROM Post p WHERE p.user.id = :senderId AND p.receiverType = :type AND p.receiverId = :receiverId AND CONCAT(p.content, p.title) LIKE %:filter%")
+    Page<Post> getFilteredPostsToTypeWithIdFromUser(@Param("type") String type,
+                                                             @Param("receiverId") String receiverId,
+                                                             @Param("senderId") String senderId,
+                                                             @Param("filter") String filter,
+                                                             Pageable page);
+
+    @Query("SELECT p FROM Post p WHERE p.user.id = :userId AND p.topic.id = :topicId AND CONCAT(p.content, p.title) LIKE %:filter%")
+    Page<Post> getFilteredPostsToTopic(@Param("userId") String userId,
+                                         @Param("topicId") long topicId,
+                                         @Param("filter") String filter,
+                                         Pageable page);
 
     Post findPostById(long postId);
 

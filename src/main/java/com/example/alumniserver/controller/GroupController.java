@@ -6,6 +6,8 @@ import com.example.alumniserver.model.User;
 import com.example.alumniserver.service.GroupService;
 import com.example.alumniserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,10 +37,9 @@ public class GroupController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Group>> getGroups() {
+    public ResponseEntity<List<Group>> getGroups(Pageable page, @RequestParam(required = false, defaultValue = "") String name) {
         String id = TEST_ID;
-        List<Group> groups = service.getGroups(id);
-        return new ResponseEntity<>(groups, HttpStatus.OK);
+        return new ResponseEntity<>(service.getGroups(id, name, page), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{groupId}")
@@ -47,7 +48,7 @@ public class GroupController {
         Group group = service.getGroup(groupId);
         HttpStatus httpStatus = (status.getBadRequestStatus(group) == HttpStatus.BAD_REQUEST) ?
                 HttpStatus.BAD_REQUEST : status.getForbiddenStatus(
-                        !group.isPrivate() || group.isUserMember(id));
+                !group.isPrivate() || group.isUserMember(id));
         if (httpStatus == HttpStatus.FORBIDDEN)
             group = null;
         return new ResponseEntity<>(group, httpStatus);
@@ -57,9 +58,12 @@ public class GroupController {
     public ResponseEntity<Link> createGroup(@RequestBody Group group) {
         String userId = TEST_ID;
         Group addedGroup = service.createGroup(group, userId);
-        return new ResponseEntity<>(
-                getGroupLinkById(addedGroup.getId()),
-                HttpStatus.CREATED);
+        if (group != null)
+            return new ResponseEntity<>(
+                    getGroupLinkById(addedGroup.getId()),
+                    HttpStatus.CREATED);
+        else
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(value = {"/{groupId}/join", "/{groupId}/join/{userId}"})
@@ -69,18 +73,18 @@ public class GroupController {
     ) {
         Group group = service.getGroup(groupId);
         String loggedInUserId = TEST_ID;
-        if(group == null)
+        if (group == null)
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        else if(userId == null)
+        else if (userId == null)
             userId = TEST_ID;
 
-        if(group.isUserMember(userId))
+        if (group.isUserMember(userId))
             return new ResponseEntity<>(
                     getGroupLinkById(group.getId()),
                     HttpStatus.SEE_OTHER);
-        else if(userId != loggedInUserId) {
+        else if (userId != loggedInUserId) {
             User user = userService.getUserById(userId);
-            if(user == null)
+            if (user == null)
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             group = service.addUserToGroup(group, user, loggedInUserId);
         } else

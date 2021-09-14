@@ -4,6 +4,7 @@ import com.example.alumniserver.dao.TopicRepository;
 import com.example.alumniserver.model.Topic;
 import com.example.alumniserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +22,8 @@ public class TopicService {
         this.userService = userService;
     }
 
-    public List<Topic> getTopics() {
-        return repository.findAll();
+    public List<Topic> getTopics(Pageable page, String name) {
+        return repository.findTopics(name, page).getContent();
     }
 
     public Topic getTopic(long topicId) {

@@ -1,10 +1,17 @@
 # Alumni-network-backend2
 
+## Api
+
+
 ### REST endpoints
 
 #### Group
 - GET /api/v1/group
   - Returns a list of group that are non private or private group that the logged in user is a member of.
+  - Optionally supports pagination / search
+    - size: default is 20
+    - page: default is page 0
+    - name: default is an empty string for full search. Search for a group name, doesn't need to be exact, but needs to contain the string.
   - Statuscode
     - 200 OK
   
@@ -22,6 +29,7 @@
     - description -> Describes the group
     - isPrivate -> If the group is private
   - Statuscode
+    - 400 BAD REQUEST -> When attempting to add a group without a name.
     - 201 CREATED
 
 - POST /api/v1/group/{groupId}/join
@@ -39,11 +47,48 @@
     - 400 BAD REQUEST -> When the specified group id / user id doesnt point to a group / user.
     - 303 SEE OTHER -> When the user is already a member, links to the group.
     - 201 CREATED
-    
+
+
+#### Topic
+- GET /api/v1/topic
+  - Returns a list of topics.
+  - Optionally supports pagination / search
+    - size: default is 20
+    - page: default is page 0
+    - name: default is an empty string for full search. Search for a topic name, doesn't need to be exact, but needs to contain the string.
+  - Statuscode
+    - 200 OK
+
+- GET /api/v1/topic/{topicId}
+  - Returns a specific topic bound to the specified topic id.
+  - Statuscode
+    - 400 BAD REQUEST -> When the requested topic bound to the id doesn't exist.
+    - 200 OK
+
+- POST /api/v1/topic
+  - Returns a link to the newly created topic.
+  - Body (Required)
+    - name -> Name of the topic.
+    - description -> Describes the topic.
+  - Statuscode
+    - 400 BAD REQUEST -> When the topic is missing a name and description.
+    - 201 CREATED
+
+- POST /api/v1/topic/{topicId}/join
+  - Returns a link to the topic which the user subscribes to.
+  - Statuscode
+    - 400 BAD REQUEST -> When the requested topic doesn't exist.
+    - 303 SEE OTHER -> If the user is already subscribed, returns a link to that topic.
+    - 201 CREATED -> When a subscription has been created for the logged in user.
 
 #### Post
 - GET /api/v1/post
   - Returns a collection of posts sent from the logged in user.
+  - Optionally supports pagination / search / filter
+    - size: default is 20
+    - page: default is page 0
+    - search: default is an empty string for full search. Search posts that contains the given string(title, content), doesn't need to be exact, but needs to contain the string.
+    - type: default is an empty string to ignore what receiver type a post has. Filters posts based on type (group, event, user), needs to be exact.
   - Statuscodes
     - 200 OK
 
@@ -56,29 +101,49 @@
 
 - GET /api/v1/post/user
   - Returns a collection of posts sent to the logged in user.
+  - Optionally supports pagination / search
+    - size: default is 20
+    - page: default is page 0
+    - search: default is an empty string for full search. Search posts that contains the given string(title, content), doesn't need to be exact, but needs to contain the string.
   - Statuscodes
     - 200 OK
 
 - GET /api/v1/post/user/{userId}
   - Returns a collection of posts sent to the logged in user from the specified user.
+  - Optionally supports pagination / search
+    - size: default is 20
+    - page: default is page 0
+    - search: default is an empty string for full search. Search posts that contains the given string(title, content), doesn't need to be exact, but needs to contain the string.
   - Statuscodes
     - 400 BAD REQUEST -> If the specified user id doesn't connect to a user.
     - 200 OK
 
 - GET /api/v1/post/group/{groupId}
   - Returns a collection of posts sent to the specified group from the logged in user.
+  - Optionally supports pagination / search
+    - size: default is 20
+    - page: default is page 0
+    - search: default is an empty string for full search. Search posts that contains the given string(title, content), doesn't need to be exact, but needs to contain the string.
   - Statuscodes
     - 400 BAD REQUEST -> If the specified group id doesn't connect to a group.
     - 200 OK
 
 - GET /api/v1/post/topic/{topicId}
   - Returns a collection of posts sent to the specified topic from the logged in user.
+  - Optionally supports pagination / search / filter
+    - size: default is 20
+    - page: default is page 0
+    - search: default is an empty string for full search. Search posts that contains the given string(title, content), doesn't need to be exact, but needs to contain the string.
   - Statuscodes
     - 400 BAD REQUEST -> If the specified topic id doesn't connect to a topic.
     - 200 OK
 
 - GET /api/v1/post/event/{eventId}
   - Returns a collection of posts sent to the specified event from the logged in user.
+  - Optionally supports pagination / search
+    - size: default is 20
+    - page: default is page 0
+    - search: default is an empty string for full search. Search posts that contains the given string(title, content), doesn't need to be exact, but needs to contain the string.
   - Statuscodes
     - 400 BAD REQUEST -> If the specified event id doesn't connect to an event.
     - 200 OK
@@ -116,6 +181,10 @@
 
 - GET /api/v1/reply/user
   - Returns a list of replies that the logged in user has made
+  - Optionally supports pagination / search
+    - size: default is 20
+    - page: default is page 0
+    - search: default is an empty string for full search. Search replies that contains the given string(content), doesn't need to be exact, but needs to contain the string.
   - Statuscodes
     - 200 OK
 
