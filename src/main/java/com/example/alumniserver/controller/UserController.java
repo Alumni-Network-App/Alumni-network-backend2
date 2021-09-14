@@ -35,7 +35,7 @@ public class UserController {
 
 
     @GetMapping
-    public ResponseEntity<User> ResponseEntity<Link> getUserLink() throws Exception {
+    public ResponseEntity<Link> getUserLink() throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String uid = authentication.getName();
