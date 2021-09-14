@@ -35,12 +35,12 @@ public class UserController {
 
 
     @GetMapping
-    public ResponseEntity<User> get() throws Exception {
+    public ResponseEntity<User> ResponseEntity<Link> getUserLink() throws Exception {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         String uid = authentication.getName();
-        User user = service.getUserById(uid);
-        return new ResponseEntity<>(user, HttpStatus.OK);
+        Link link = getUserLinkById(uid);
+        return new ResponseEntity<>(link, HttpStatus.SEE_OTHER);
     }
 
 
@@ -59,13 +59,6 @@ public class UserController {
                     HttpStatus.OK);
         else
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
-    }
-
-    @GetMapping
-    public ResponseEntity<Link> getUserLink() {
-        String id = "2";
-        Link link = getUserLinkById(id);
-        return new ResponseEntity<>(link, HttpStatus.SEE_OTHER);
     }
 
     @GetMapping("/{userId}")
