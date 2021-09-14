@@ -1,4 +1,9 @@
-# Alumni-network-backend2
+# Alumni-network-backend
+
+## Deploys
+Frontend: https://alumni-network-deluxe.herokuapp.com/
+
+Backend: https://alumni-network-backend.herokuapp.com/
 
 ## Api
 
