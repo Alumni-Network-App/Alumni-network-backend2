@@ -49,7 +49,7 @@ public class Event {
     @Setter(AccessLevel.NONE)
     @ManyToMany(mappedBy = "events")
     private List<Group> groups;
-/*
+
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToMany
@@ -59,7 +59,7 @@ public class Event {
             inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
     private List<User> userRsvp;
-*/
+
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToMany(mappedBy = "events")
@@ -77,13 +77,31 @@ public class Event {
         }
     }
 
-    @JsonGetter("users")
+    @JsonGetter("invitedUsers")
     public List<String> users() {
         if(invitedUsers != null) {
             return invitedUsers.stream()
                     .map(user -> {
                         return "/api/v1/user/" + user.getId();
                     }).collect(Collectors.toList());
+        } else {
+            return null;
+        }
+    }
+
+    @JsonGetter("creator")
+    public String user() {
+        if(user != null) {
+            return "/api/v1/user/" + user.getId();
+        } else {
+            return null;
+        }
+    }
+
+    @JsonGetter("topic")
+    public String topic() {
+        if(topic != null) {
+            return "/api/v1/topci/" + topic.getId();
         } else {
             return null;
         }
@@ -97,4 +115,84 @@ public class Event {
         return false;
     }
 
+    public boolean isGroupInvited(long groupId) {
+        for (Group group : groups) {
+            if(group.getId() == groupId)
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isUserCreator(String userId){
+        if(user.getId() == userId){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean inviteGroup(Group group){
+        if(!isGroupInvited(group.getId())){
+            groups.add(group);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean deleteGroupInvite(Group group){
+        if(isGroupInvited(group.getId())){
+            groups.remove(group);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean setInviteTopic(Topic topic){
+        if(this.topic==null){
+            this.topic=topic;
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean deleteInviteTopic(Topic topic){
+        if(this.topic==topic){
+            this.topic=null;
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean setUserInvite(User user){
+        if(!isUserInvited(user.getId())){
+            invitedUsers.add(user);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean deleteUserInvite(User user){
+        if(isUserInvited(user.getId())){
+            invitedUsers.remove(user);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    //TODO för RSVP event delen
+    public boolean createEventRSVP(Group group, Topic topic, User user, boolean isUserPartOfInvitedTopic){
+
+        if(isUserInvited(user.getId()) || (isGroupInvited(group.getId()) && group.isUserMember(user.getId())) || isUserPartOfInvitedTopic){
+            userRsvp.add(user);
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

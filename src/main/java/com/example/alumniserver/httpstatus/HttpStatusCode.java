@@ -58,4 +58,7 @@ public class HttpStatusCode<T> {
         return (t == null) ? HttpStatus.FORBIDDEN : HttpStatus.CREATED;
     }
 
+    public HttpStatus getForbiddenToUpdateEventStatus(boolean isInvited) {
+        return (!isInvited) ? HttpStatus.FORBIDDEN : HttpStatus.OK;
+    }
 }
