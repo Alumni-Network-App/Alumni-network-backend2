@@ -5,6 +5,8 @@ import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Group;
 import com.example.alumniserver.model.Topic;
 import com.example.alumniserver.service.EventService;
+import com.example.alumniserver.service.GroupService;
+import com.example.alumniserver.service.TopicService;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +23,16 @@ public class EventController {
 
     private final HttpStatusCode statusCode = new HttpStatusCode();
     private final EventService eventService;
+    private final GroupService groupService;
+    private final TopicService topicService;
     private static final String TEST_ID = "3";
 
-    public EventController(EventService eventService) {
+    public EventController(EventService eventService,
+                           GroupService groupService,
+                           TopicService topicService) {
         this.eventService = eventService;
+        this.groupService = groupService;
+        this.topicService = topicService;
     }
 
     @GetMapping(value = "/{eventId}")
@@ -71,118 +79,93 @@ public class EventController {
     }
 
     @PostMapping(value = "/{eventId}/invite/group/{groupId}")
-    public ResponseEntity<Event> createGroupInvite(
+    public ResponseEntity<Link> createGroupInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("groupId") long groupId) {
-        boolean checkIfAdded;
         String userId = TEST_ID;
 
-        Event event = eventService.getEvent(eventId);
-        if (event == null)
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if (!eventService.eventExists(eventId)
+                || !groupService.groupExists(groupId))
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 
-        if (!event.isUserCreator(userId))
-            return new ResponseEntity<>(event, HttpStatus.FORBIDDEN);
-        else
-            checkIfAdded = eventService.createEventInviteForGroup(event, groupId);
+        Event event = eventService.createEventInviteForGroup(userId, eventService.getEvent(eventId), groupId);
+        return new ResponseEntity<>(getEventLinkById(event),
+                statusCode.getForbiddenStatus(event != null));
 
-        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(checkIfAdded));
     }
 
     @DeleteMapping(value = "/{eventId}/invite/group/{groupId}")
     public ResponseEntity<Event> deleteGroupInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("groupId") long groupId) {
-        boolean checkIfDeleted;
         String userId = TEST_ID;
 
-        Event event = eventService.getEvent(eventId);
-        if (event == null)
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if (!eventService.eventExists(eventId)
+                || !groupService.groupExists(groupId))
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 
-        if (!event.isUserCreator(userId))
-            return new ResponseEntity<>(event, HttpStatus.FORBIDDEN);
-        else
-            checkIfDeleted = eventService.deleteEventInviteForGroup(event, groupId);
+        Event event = eventService.deleteEventInviteForGroup(userId, eventService.getEvent(eventId), groupId);
 
-        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(checkIfDeleted));
+        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(event != null));
     }
 
     @PostMapping(value = "/{eventId}/invite/topic/{topicId}")
-    public ResponseEntity<Event> createEventTopicInvite(
+    public ResponseEntity<Link> createEventTopicInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("topicId") long topicId) {
-        boolean checkIfCreated;
         String userId = TEST_ID;
 
-        Event event = eventService.getEvent(eventId);
-        if (event == null)
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if (!eventService.eventExists(eventId)
+                || !topicService.topicExists(topicId))
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        Event event = eventService.createEventTopicInvite(userId, eventService.getEvent(eventId), topicId);
 
-        if (!event.isUserCreator(userId))
-            return new ResponseEntity<>(event, HttpStatus.FORBIDDEN);
-        else
-            checkIfCreated = eventService.createEventTopicInvite(event, topicId);
-
-        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(checkIfCreated));
+        return new ResponseEntity<>(getEventLinkById(event), statusCode.getForbiddenStatus(event != null));
     }
 
     @DeleteMapping(value = "/{eventId}/invite/topic/{topicId}")
     public ResponseEntity<Event> DeleteEventTopicInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("topicId") long topicId) {
-        boolean checkIfDeleted;
         String userId = TEST_ID;
 
-        Event event = eventService.getEvent(topicId);
-        if (event == null)
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if (!eventService.eventExists(eventId))
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        Event event = eventService.deleteEventTopicInvite(userId, eventService.getEvent(eventId), topicId);
 
-        if (!event.isUserCreator(userId))
-            return new ResponseEntity<>(event, HttpStatus.FORBIDDEN);
-
-        else
-            checkIfDeleted = eventService.deleteEventTopicInvite(event, topicId);
-
-        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(checkIfDeleted));
+        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(event != null));
     }
 
     @PostMapping(value = "/{eventId}/invite/user/{userId}")
     public ResponseEntity<Event> createEventInviteForUser(
             @PathVariable("eventId") long eventId,
             @PathVariable("userId") String invitedUserId) {
-        boolean checkIfCreated;
         String userId = TEST_ID;
 
-        Event event = eventService.getEvent(eventId);
-        if (event == null)
+        if (!eventService.eventExists(eventId))
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
-        if (!event.isUserCreator(userId))
-            return new ResponseEntity<>(event, HttpStatus.FORBIDDEN);
-        else
-            checkIfCreated = eventService.createUserInvite(event, invitedUserId);
+        Event event = eventService.createUserInvite(userId,
+                eventService.getEvent(eventId), invitedUserId);
 
-        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(checkIfCreated));
+        return new ResponseEntity<>(event,
+                statusCode.getForbiddenStatus(event != null));
     }
 
     @DeleteMapping(value = "/{eventId}/invite/user/{userId}")
     public ResponseEntity<Event> deleteEventInviteForUser(
             @PathVariable("eventId") long eventId,
             @PathVariable("userId") String invitedUserId) {
-        boolean checkIfDeleted;
         String userId = TEST_ID;
 
-        Event event = eventService.getEvent(eventId);
-        if (event == null)
+        if (!eventService.eventExists(eventId))
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
-        if (!event.isUserCreator(userId))
-            return new ResponseEntity<>(event, HttpStatus.FORBIDDEN);
-        else
-            checkIfDeleted = eventService.deleteUserInvite(event, invitedUserId);
+        Event event = eventService.deleteUserInvite(
+                userId, eventService.getEvent(eventId), invitedUserId);
 
-        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(checkIfDeleted));
+        return new ResponseEntity<>(event,
+                statusCode.getForbiddenStatus(event != null));
     }
 
     //TODO fixa denna sen när tabellen är klar
@@ -208,7 +191,7 @@ public class EventController {
     }
 
     private Link getEventLinkById(Event event) {
-        if(event == null)
+        if (event == null)
             return null;
         return linkTo(methodOn(EventController.class)
                 .getEvent(event.getId()))

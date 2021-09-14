@@ -1,9 +1,6 @@
 package com.example.alumniserver.service;
 
 import com.example.alumniserver.dao.EventRepository;
-import com.example.alumniserver.dao.GroupRepository;
-import com.example.alumniserver.dao.TopicRepository;
-import com.example.alumniserver.dao.UserRepository;
 import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Group;
 import com.example.alumniserver.model.Topic;
@@ -16,16 +13,19 @@ import java.util.List;
 @Service
 public class EventService {
     private final EventRepository repository;
-    private final UserRepository userRepository;
-    private final GroupRepository groupRepository;
-    private final TopicRepository topicRepository;
+    private final UserService userService;
+    private final GroupService groupService;
+    private final TopicService topicService;
 
     @Autowired
-    public EventService (EventRepository repository, UserRepository userRepository, GroupRepository groupRepository, TopicRepository topicRepository){
+    public EventService (EventRepository repository,
+                         UserService userService,
+                         GroupService groupService,
+                         TopicService topicService){
         this.repository = repository;
-        this.userRepository = userRepository;
-        this.groupRepository = groupRepository;
-        this.topicRepository = topicRepository;
+        this.userService = userService;
+        this.groupService = groupService;
+        this.topicService = topicService;
     }
 
     public boolean eventExists(long eventId) {
@@ -45,7 +45,7 @@ public class EventService {
     }
 
     public Event updateAnEvent(Event newEvent, Event oldEvent, String userId) {
-        return (oldEvent.getUser().getId().equals(userId))
+        return (!oldEvent.isUserCreator(userId))
                 ? repository.save(updateFields(newEvent, oldEvent)) : null;
     }
 
@@ -69,79 +69,57 @@ public class EventService {
 
     }
 
-    public boolean createEventInviteForGroup(Event event, long groupId){
-        Group group = groupRepository.getById(groupId);
-        boolean check;
-        check = event.inviteGroup(group);
-        if(check){
-            repository.save(event);
-            return true;
-        }else{
-            return false;
-        }
+    public Event createEventInviteForGroup(String userId, Event event, long groupId){
+        if(!event.isUserCreator(userId))
+            return null;
+        Group group = groupService.getGroup(groupId);
+        return (event.inviteGroup(group)) ?
+                repository.save(event) : null;
     }
 
-    public boolean deleteEventInviteForGroup(Event event, long groupId){
-        Group group = groupRepository.getById(groupId);
-        boolean check;
-        check = event.deleteGroupInvite(group);
-        if(check){
-            repository.save(event);
-            return true;
-        }else{
-            return false;
-        }
+    public Event deleteEventInviteForGroup(String userId, Event event, long groupId){
+        if(!event.isUserCreator(userId))
+            return null;
+        Group group = groupService.getGroup(groupId);
+        return (event.deleteGroupInvite(group)) ?
+                repository.save(event) : null;
     }
 
-    public boolean createEventTopicInvite(Event event, long topicId){
-        Topic topic = topicRepository.getById(topicId);
-        boolean check;
-        check = event.setInviteTopic(topic);
-        if(check && topic!=null){
-            repository.save(event);
-            return true;
-        }else{
-            return false;
-        }
+    public Event createEventTopicInvite(String userId, Event event, long topicId){
+        if(!event.isUserCreator(userId))
+            return null;
+        Topic topic = topicService.getTopic(topicId);
+        return (event.setInviteTopic(topic)) ?
+                repository.save(event) : null;
     }
 
-    public boolean deleteEventTopicInvite(Event event, long topicId){
-        Topic topic = topicRepository.getById(topicId);
-        boolean check;
-        check = event.deleteInviteTopic(topic);
-        if(check){
-            repository.save(event);
-            return true;
-        }else{
-            return false;
-        }
+    public Event deleteEventTopicInvite(String userId, Event event, long topicId){
+        if(!event.isUserCreator(userId))
+            return null;
+        Topic topic = topicService.getTopic(topicId);
+        return (event.deleteInviteTopic(topic)) ?
+                repository.save(event) : null;
     }
 
-    public boolean createUserInvite(Event event, String userId){
-        User user = userRepository.getById(userId);
-        boolean check = event.setUserInvite(user);
-        if(check){
-            repository.save(event);
-            return true;
-        }else{
-            return false;
-        }
+    public Event createUserInvite(String creatorId, Event event, String userId){
+        if(!event.isUserCreator(creatorId))
+            return null;
+        User user = userService.getUserById(userId);
+        return (event.setUserInvite(user)) ?
+                repository.save(event): null;
     }
 
-    public boolean deleteUserInvite(Event event, String userId){
-        User user = userRepository.getById(userId);
-        boolean check = event.deleteUserInvite(user);
-        if(check){
-            repository.save(event);
-            return true;
-        }else{
-            return false;
-        }
+    public Event deleteUserInvite(String creatorId, Event event, String userId){
+        if(!event.isUserCreator(creatorId))
+            return null;
+        User user = userService.getUserById(userId);
+        return (event.deleteUserInvite(user)) ?
+                repository.save(event) : null;
     }
 
     //TODO fixa denna skiten
     public boolean createRsvpRecord(Event event, Group group, Topic topic, String userId){
-        User user = userRepository.getById(userId);
+        User user = userService.getUserById(userId);
         boolean isUserPartOfInvitedTopic = topic.isUserSubscribed(user);
         boolean check = event.createEventRSVP(group, topic, user, isUserPartOfInvitedTopic);
 
