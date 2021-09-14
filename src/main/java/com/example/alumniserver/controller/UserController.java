@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +20,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Controller
+@CrossOrigin
 @RequestMapping("/api/v1/user")
 public class UserController {
 
@@ -28,6 +31,19 @@ public class UserController {
     public UserController(UserService service) {
         this.service = service;
     }
+
+
+
+    @GetMapping
+    public ResponseEntity<User> get() throws Exception {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        String uid = authentication.getName();
+        User user = service.getUserById(uid);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+
 
     @PatchMapping(value = "/update/{userId}")
     public ResponseEntity<Link> UpdateUser(
