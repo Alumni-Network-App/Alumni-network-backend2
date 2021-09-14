@@ -49,8 +49,8 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<Post>> getPostsForUser(
-            @RequestParam(required = false, defaultValue = "")String type,
-            @RequestParam(required = false, defaultValue = "")String search,
+            @RequestParam(required = false, defaultValue = "") String type,
+            @RequestParam(required = false, defaultValue = "") String search,
             Pageable page
     ) {
         String id = TEST_ID;
@@ -123,7 +123,7 @@ public class PostController {
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
         String id = TEST_ID;
-        boolean eventExists = eventService.eventExists(Long.valueOf(eventId));
+        boolean eventExists = eventService.eventExists(Long.parseLong(eventId));
         return getPostsToType(eventExists, "event", eventId, id, search, page);
     }
 
@@ -166,7 +166,7 @@ public class PostController {
             String receiverType,
             String receiverId,
             String senderId,
-            String filter,
+            String search,
             Pageable page
     ) {
         return (!receiverExist) ?
@@ -176,7 +176,7 @@ public class PostController {
                                 receiverType,
                                 receiverId,
                                 senderId,
-                                filter,
+                                search,
                                 page),
                         HttpStatus.OK);
     }

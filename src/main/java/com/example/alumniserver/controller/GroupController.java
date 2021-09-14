@@ -48,7 +48,7 @@ public class GroupController {
         Group group = service.getGroup(groupId);
         HttpStatus httpStatus = (status.getBadRequestStatus(group) == HttpStatus.BAD_REQUEST) ?
                 HttpStatus.BAD_REQUEST : status.getForbiddenStatus(
-                        !group.isPrivate() || group.isUserMember(id));
+                !group.isPrivate() || group.isUserMember(id));
         if (httpStatus == HttpStatus.FORBIDDEN)
             group = null;
         return new ResponseEntity<>(group, httpStatus);
@@ -58,9 +58,12 @@ public class GroupController {
     public ResponseEntity<Link> createGroup(@RequestBody Group group) {
         String userId = TEST_ID;
         Group addedGroup = service.createGroup(group, userId);
-        return new ResponseEntity<>(
-                getGroupLinkById(addedGroup.getId()),
-                HttpStatus.CREATED);
+        if (group != null)
+            return new ResponseEntity<>(
+                    getGroupLinkById(addedGroup.getId()),
+                    HttpStatus.CREATED);
+        else
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(value = {"/{groupId}/join", "/{groupId}/join/{userId}"})
@@ -70,18 +73,18 @@ public class GroupController {
     ) {
         Group group = service.getGroup(groupId);
         String loggedInUserId = TEST_ID;
-        if(group == null)
+        if (group == null)
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        else if(userId == null)
+        else if (userId == null)
             userId = TEST_ID;
 
-        if(group.isUserMember(userId))
+        if (group.isUserMember(userId))
             return new ResponseEntity<>(
                     getGroupLinkById(group.getId()),
                     HttpStatus.SEE_OTHER);
-        else if(userId != loggedInUserId) {
+        else if (userId != loggedInUserId) {
             User user = userService.getUserById(userId);
-            if(user == null)
+            if (user == null)
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             group = service.addUserToGroup(group, user, loggedInUserId);
         } else
