@@ -48,9 +48,12 @@ public class GroupService {
     }
 
     private Group createMembership(Group group, User user) {
-        user.addGroup(group);
-        group.addUserAsMember(user);
-        return repository.save(group);
+        if(!group.getName().equals("")) {
+            user.addGroup(group);
+            group.addUserAsMember(user);
+            return repository.save(group);
+        } else
+            return null;
     }
 
     public boolean groupExists(long groupId) {
