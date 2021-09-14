@@ -5,11 +5,15 @@ import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Group;
 import com.example.alumniserver.model.Topic;
 import com.example.alumniserver.service.EventService;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/v1/event")
@@ -21,6 +25,20 @@ public class EventController {
 
     public EventController(EventService eventService) {
         this.eventService = eventService;
+    }
+
+    @GetMapping(value = "/{eventId}")
+    public ResponseEntity<Event> getEvent(@PathVariable long eventId) {
+        String userId = TEST_ID;
+        if (!eventService.eventExists(eventId))
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        else {
+            Event event = eventService.getEvent(eventId);
+            return (event.getUser().getId().equals(userId)) ?
+                    new ResponseEntity<>(event, HttpStatus.OK) :
+                    new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        }
+
     }
 
     //TODO Även topics som användaren är subscribad till ska returneras
@@ -39,14 +57,17 @@ public class EventController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Boolean> updateEvent(@PathVariable("id") long id, @RequestBody Event events) {
+    public ResponseEntity<Link> updateEvent(@PathVariable long id,
+                                            @RequestBody Event event) {
         String userId = TEST_ID;
-        Event event = eventService.getEvent(id);
-        Boolean updated = eventService.updateAnEvent(events, event.getId(), userId);
-        HttpStatus httpStatus = (statusCode.getFoundStatus(event) == HttpStatus.NOT_FOUND)
-                ? httpStatus = HttpStatus.NOT_FOUND : statusCode.getForbiddenToUpdateEventStatus(event.isUserCreator(userId));
+        if (!eventService.eventExists(id))
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        else {
+            Event oldEvent = eventService.updateAnEvent(event, eventService.getEvent(id), userId);
+            return new ResponseEntity<>(getEventLinkById(oldEvent),
+                    statusCode.getForbiddenStatus(oldEvent != null));
 
-        return new ResponseEntity<>(updated, httpStatus);
+        }
     }
 
     @PostMapping(value = "/{eventId}/invite/group/{groupId}")
@@ -186,5 +207,12 @@ public class EventController {
         return new ResponseEntity<>(event, statusCode.getForbiddenStatus(checkIfCreated));
     }
 
+    private Link getEventLinkById(Event event) {
+        if(event == null)
+            return null;
+        return linkTo(methodOn(EventController.class)
+                .getEvent(event.getId()))
+                .withSelfRel();
+    }
 
 }

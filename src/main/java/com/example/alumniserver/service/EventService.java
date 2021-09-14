@@ -44,37 +44,25 @@ public class EventService {
         return repository.findEventById(eventId);
     }
 
-    public boolean updateAnEvent(Event event, long postId, String userId) {
-        Event fetchedEvent = repository.getById(postId);
-        event.setId(postId);
-        if(fetchedEvent.getId() == event.getId() && checkIfUserAllowedToUpdate(event, userId)) {
-            repository.save(updateFields(event, fetchedEvent));
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean checkIfUserAllowedToUpdate(Event event, String userId){
-        if(event.getUser().getId()==userId){
-            return true;
-        }else{
-            return false;
-        }
+    public Event updateAnEvent(Event newEvent, Event oldEvent, String userId) {
+        return (oldEvent.getUser().getId().equals(userId))
+                ? repository.save(updateFields(newEvent, oldEvent)) : null;
     }
 
     private Event updateFields(Event updatedEvent, Event oldEvent) {
-        if(!updatedEvent.getName().equals(""))
+        if(updatedEvent.getName() != null)
             oldEvent.setName(updatedEvent.getName());
 
-        if(!updatedEvent.getDescription().equals(""))
+        if(updatedEvent.getDescription() != null)
             oldEvent.setDescription(updatedEvent.getDescription());
 
-        if(!updatedEvent.getStartTime().equals("") && !updatedEvent.getEndTime().equals(""))
+        if(updatedEvent.getStartTime() != null)
             oldEvent.setStartTime(updatedEvent.getStartTime());
-        oldEvent.setEndTime(updatedEvent.getEndTime());
 
-        if (!updatedEvent.getBannerImg().equals(""))
+        if(updatedEvent.getEndTime() != null)
+            oldEvent.setEndTime(updatedEvent.getEndTime());
+
+        if (updatedEvent.getBannerImg() != null)
             oldEvent.setBannerImg(updatedEvent.getBannerImg());
 
         return oldEvent;
