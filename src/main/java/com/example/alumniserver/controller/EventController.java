@@ -90,7 +90,6 @@ public class EventController {
             Event event = eventService.getEvent(eventId);
             if (!event.isGroupInvited(groupId)) {
                 event = eventService.createEventInviteForGroup(userId, event, groupId);
-
                 return new ResponseEntity<>(getEventLinkById(event),
                         statusCode.getForbiddenStatus(event != null));
             }
@@ -122,12 +121,16 @@ public class EventController {
             @PathVariable("topicId") long topicId) {
         String userId = TEST_ID;
 
-        if (!eventService.eventExists(eventId)
-                || !topicService.topicExists(topicId))
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        Event event = eventService.createEventTopicInvite(userId, eventService.getEvent(eventId), topicId);
-
-        return new ResponseEntity<>(getEventLinkById(event), statusCode.getForbiddenStatus(event != null));
+        if (eventService.eventExists(eventId)
+                && topicService.topicExists(topicId)) {
+            Event event = eventService.getEvent(eventId);
+            if (!event.isTopicInvited(topicId)) {
+                event = eventService.createEventTopicInvite(userId, event, topicId);
+                return new ResponseEntity<>(getEventLinkById(event),
+                        statusCode.getForbiddenStatus(event != null));
+            }
+        }
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping(value = "/{eventId}/invite/topic/{topicId}")
@@ -136,11 +139,17 @@ public class EventController {
             @PathVariable("topicId") long topicId) {
         String userId = TEST_ID;
 
-        if (!eventService.eventExists(eventId))
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        Event event = eventService.deleteEventTopicInvite(userId, eventService.getEvent(eventId), topicId);
 
-        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(event != null));
+        if (eventService.eventExists(eventId)
+                && groupService.groupExists(topicId)) {
+            Event event = eventService.getEvent(eventId);
+            if (event.isTopicInvited(topicId)) {
+                eventService.deleteEventTopicInvite(userId, event, topicId);
+                return new ResponseEntity<>(event, statusCode.getForbiddenStatus(event != null));
+            }
+        }
+
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(value = "/{eventId}/invite/user/{userId}")

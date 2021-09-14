@@ -73,75 +73,54 @@ public class EventService {
         if (!event.isUserCreator(userId))
             return null;
         Group group = groupService.getGroup(groupId);
-        if (event.inviteGroup(group, userId)) {
-            groupService.addEventToGroup(event, group);
-            return repository.save(event);
-        } else
-            return null;
+        return (event.inviteGroup(group, userId)
+                && groupService.addEventToGroup(event, group) != null)
+                ? repository.save(event) : null;
     }
 
     public Event deleteEventInviteForGroup(String userId, Event event, long groupId) {
         if (!event.isUserCreator(userId))
             return null;
         Group group = groupService.getGroup(groupId);
-        if (event.deleteGroupInvite(group)) {
-            groupService.removeEventFromGroup(event, group);
-            return repository.save(event);
-        } else {
-            return null;
-        }
+        return (event.deleteGroupInvite(group)
+                && groupService.removeEventFromGroup(event, group) != null)
+                ? repository.save(event) : null;
     }
 
     public Event createEventTopicInvite(String userId, Event event, long topicId) {
         if (!event.isUserCreator(userId))
             return null;
         Topic topic = topicService.getTopic(topicId);
-        if(event.setInviteTopic(topic)){
-            topicService.addEventToTopic(event);
-            repository.save(event);
-            return event;
-        }else {
-            return null;
-        }
+        return (event.setInviteTopic(topic)
+                && topicService.addEventToTopic(event, topic) != null)
+                ? repository.save(event) : null;
     }
 
     public Event deleteEventTopicInvite(String userId, Event event, long topicId) {
         if (!event.isUserCreator(userId))
             return null;
         Topic topic = topicService.getTopic(topicId);
-        if(event.deleteInviteTopic(topic)){
-            topicService.deleteEventToTopic(event);
-            repository.save(event);
-            return event;
-        }else {
-            return null;
-        }
+        return (event.deleteInviteTopic(topic)
+                && topicService.deleteEventFromTopic(event, topic) != null)
+                ? repository.save(event) : null;
     }
 
     public Event createUserInvite(String creatorId, Event event, String userId) {
         if (!event.isUserCreator(creatorId))
             return null;
         User user = userService.getUserById(userId);
-        if(event.setUserInvite(user)){
-            userService.addEventToUser(event);
-            repository.save(event);
-            return event;
-        }else{
-            return null;
-        }
+        return (event.setUserInvite(user)
+                && userService.addEventToUser(event, user) != null)
+                ? repository.save(event) : null;
     }
 
     public Event deleteUserInvite(String creatorId, Event event, String userId) {
         if (!event.isUserCreator(creatorId))
             return null;
         User user = userService.getUserById(userId);
-        if(event.deleteUserInvite(user)){
-            userService.deleteEventToUser(event);
-            repository.save(event);
-            return event;
-        }else{
-            return null;
-        }
+        return (event.deleteUserInvite(user)
+                && userService.deleteEventFromUser(event, user) != null)
+                ? repository.save(event) : null;
     }
 
     //TODO fixa denna skiten

@@ -101,7 +101,7 @@ public class Event {
     @JsonGetter("topic")
     public String topic() {
         if(topic != null) {
-            return "/api/v1/topci/" + topic.getId();
+            return "/api/v1/topic/" + topic.getId();
         } else {
             return null;
         }
@@ -123,12 +123,12 @@ public class Event {
         return false;
     }
 
+    public boolean isTopicInvited(long topicId) {
+        return topic != null && topic.getId() == topicId;
+    }
+
     public boolean isUserCreator(String userId){
-        if(user.getId().equals(userId)){
-            return true;
-        }else{
-            return false;
-        }
+        return user.getId().equals(userId);
     }
 
     public boolean inviteGroup(Group group, String userId){
@@ -180,7 +180,8 @@ public class Event {
         }
     }
 
-    //TODO för RSVP event delen
+    //TODO Kommer behöva göras om, behöver vara sin egna modell + ha ett repo och service. (ingen kontroller behövs)
+    //TODO Sen måste du kolla om user är med i en av de invitna grupperna / subscribad till invitad topic.
     public boolean createEventRSVP(Group group, Topic topic, User user, boolean isUserPartOfInvitedTopic){
 
         if(isUserInvited(user.getId()) || (isGroupInvited(group.getId()) && group.isUserMember(user.getId())) || isUserPartOfInvitedTopic){

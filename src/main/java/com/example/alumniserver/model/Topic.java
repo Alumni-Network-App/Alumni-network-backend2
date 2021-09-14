@@ -62,7 +62,7 @@ public class Topic {
         return events.add(event);
     }
 
-    public boolean deleteEventToTopic(Event event) {
+    public boolean deleteEventFromTopic(Event event) {
         if(events == null)
             return true;
         return events.remove(event);

@@ -36,7 +36,7 @@ public class UserService {
     }
 
     private User updateUserInformation(User oldUser, User user) {
-        if (user.getBio() != null){
+        if (user.getBio() != null) {
             oldUser.setBio(user.getBio());
         }
         if (user.getFunFact() != null) {
@@ -45,32 +45,22 @@ public class UserService {
         if (user.getPicture() != null) {
             oldUser.setPicture(user.getPicture());
         }
-        if(user.getStatus() != null) {
+        if (user.getStatus() != null) {
             oldUser.setStatus(user.getStatus());
         }
-        if(user.getName() != null) {
+        if (user.getName() != null) {
             oldUser.setName(user.getName());
         }
 
         return oldUser;
     }
 
-    public boolean addEventToUser(Event event) {
-        boolean isAdded;
-        isAdded = event.getUser().addEventToUser(event);
-        if(isAdded)
-            return true;
-        else
-            return false;
+    public User addEventToUser(Event event, User user) {
+        return (user.addEventToUser(event)) ? repository.save(user) : null;
     }
 
-    public boolean deleteEventToUser(Event event) {
-        boolean isDeleted;
-        isDeleted = event.getUser().deleteEventToUser(event);
-        if(isDeleted)
-            return true;
-        else
-            return false;
+    public User deleteEventFromUser(Event event, User user) {
+        return (user.deleteEventToUser(event)) ? repository.save(user) : null;
     }
 
 }

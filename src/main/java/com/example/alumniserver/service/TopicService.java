@@ -56,21 +56,12 @@ public class TopicService {
                 && !topic.getDescription().equals("");
     }
 
-    public boolean addEventToTopic(Event event) {
-        boolean isAdded;
-        isAdded = event.getTopic().addEventToTopic(event);
-        if(isAdded)
-            return true;
-        else
-            return false;
+    public Topic addEventToTopic(Event event, Topic topic) {
+        return (topic.addEventToTopic(event)) ? repository.save(topic) : null;
     }
 
-    public boolean deleteEventToTopic(Event event) {
-        boolean isDeleted;
-        isDeleted = event.getTopic().deleteEventToTopic(event);
-        if(isDeleted)
-            return true;
-        else
-            return false;
+    public Topic deleteEventFromTopic(Event event, Topic topic) {
+        return (topic != null && topic.deleteEventFromTopic(event))
+                ? repository.save(topic) : null;
     }
 }

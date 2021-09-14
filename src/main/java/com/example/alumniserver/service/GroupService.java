@@ -49,13 +49,12 @@ public class GroupService {
     }
 
     public Group removeEventFromGroup(Event event, Group group) {
-        group.removeEventFromGroup(event);
-        return repository.save(group);
+        return (group.removeEventFromGroup(event))
+                ? repository.save(group) : null;
     }
 
     public Group addEventToGroup(Event event, Group group) {
-        group.addEventToGroup(event);
-        return repository.save(group);
+        return (group.addEventToGroup(event)) ? repository.save(group) : null;
     }
 
     private Group createMembership(Group group, User user) {
