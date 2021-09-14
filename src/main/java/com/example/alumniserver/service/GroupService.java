@@ -2,6 +2,7 @@ package com.example.alumniserver.service;
 
 import com.example.alumniserver.dao.GroupRepository;
 import com.example.alumniserver.dao.UserRepository;
+import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Group;
 import com.example.alumniserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,11 @@ public class GroupService {
     public Group addUserToGroup(Group group, User user, String loggedInUserId) {
         return (group.isUserMember(loggedInUserId))
                 ? createMembership(group, user) : null;
+    }
+
+    public Group removeEventFromGroup(Event event, Group group) {
+        group.removeEventFromGroup(event);
+        return repository.save(group);
     }
 
     private Group createMembership(Group group, User user) {

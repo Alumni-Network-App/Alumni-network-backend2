@@ -47,12 +47,12 @@ public class Event {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(mappedBy = "events")
+    @ManyToMany(mappedBy = "events", cascade = CascadeType.ALL)
     private List<Group> groups;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name="RSVP",
             joinColumns = {@JoinColumn(name = "event_id")},
@@ -62,7 +62,7 @@ public class Event {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(mappedBy = "events")
+    @ManyToMany(mappedBy = "events", cascade = CascadeType.ALL)
     private List<User> invitedUsers;
 
     @JsonGetter("groups")
@@ -124,15 +124,15 @@ public class Event {
     }
 
     public boolean isUserCreator(String userId){
-        if(user.getId() == userId){
+        if(user.getId().equals(userId)){
             return true;
         }else{
             return false;
         }
     }
 
-    public boolean inviteGroup(Group group){
-        if(!isGroupInvited(group.getId())){
+    public boolean inviteGroup(Group group, String userId){
+        if(!isGroupInvited(group.getId()) && (!group.isPrivate() || group.isUserMember(userId))){
             groups.add(group);
             return true;
         }else{
@@ -141,12 +141,7 @@ public class Event {
     }
 
     public boolean deleteGroupInvite(Group group){
-        if(isGroupInvited(group.getId())){
-            groups.remove(group);
-            return true;
-        }else{
-            return false;
-        }
+        return groups.remove(group);
     }
 
     public boolean setInviteTopic(Topic topic){

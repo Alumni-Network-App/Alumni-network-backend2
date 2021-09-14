@@ -73,7 +73,7 @@ public class EventService {
         if(!event.isUserCreator(userId))
             return null;
         Group group = groupService.getGroup(groupId);
-        return (event.inviteGroup(group)) ?
+        return (event.inviteGroup(group, userId)) ?
                 repository.save(event) : null;
     }
 
@@ -81,8 +81,12 @@ public class EventService {
         if(!event.isUserCreator(userId))
             return null;
         Group group = groupService.getGroup(groupId);
-        return (event.deleteGroupInvite(group)) ?
-                repository.save(event) : null;
+        if (event.deleteGroupInvite(group)) {
+            groupService.removeEventFromGroup(event, group);
+            return repository.save(event);
+        } else {
+            return null;
+        }
     }
 
     public Event createEventTopicInvite(String userId, Event event, long topicId){

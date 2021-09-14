@@ -26,7 +26,7 @@ public class GroupController {
     private final GroupService service;
     private final UserService userService;
 
-    private static final String TEST_ID = "2";
+    private static final String TEST_ID = "3";
 
     private HttpStatusCode status = new HttpStatusCode();
 

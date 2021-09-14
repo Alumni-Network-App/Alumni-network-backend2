@@ -34,7 +34,7 @@ public class Group {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name="event_group",
             joinColumns = {@JoinColumn(name = "group_id")},
@@ -87,4 +87,7 @@ public class Group {
         users.add(user);
     }
 
+    public boolean removeEventFromGroup(Event event) {
+        return events.remove(event);
+    }
 }
