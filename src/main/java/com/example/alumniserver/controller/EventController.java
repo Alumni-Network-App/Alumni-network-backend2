@@ -84,14 +84,18 @@ public class EventController {
             @PathVariable("groupId") long groupId) {
         String userId = TEST_ID;
 
-        if (!eventService.eventExists(eventId)
-                || !groupService.groupExists(groupId))
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        if (eventService.eventExists(eventId)
+                && groupService.groupExists(groupId)) {
 
-        Event event = eventService.createEventInviteForGroup(userId, eventService.getEvent(eventId), groupId);
-        return new ResponseEntity<>(getEventLinkById(event),
-                statusCode.getForbiddenStatus(event != null));
+            Event event = eventService.getEvent(eventId);
+            if (!event.isGroupInvited(groupId)) {
+                event = eventService.createEventInviteForGroup(userId, event, groupId);
 
+                return new ResponseEntity<>(getEventLinkById(event),
+                        statusCode.getForbiddenStatus(event != null));
+            }
+        }
+        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @DeleteMapping(value = "/{eventId}/invite/group/{groupId}")
