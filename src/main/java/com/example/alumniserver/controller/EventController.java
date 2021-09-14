@@ -32,9 +32,10 @@ public class EventController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Event> createEvent(@RequestBody Event event, Group group){
+    public ResponseEntity<Event> createEvent(@RequestBody Event event, Group group, Topic topic){
         String userId = TEST_ID;
-        return new ResponseEntity<>(eventService.createEvent(event), statusCode.getForbiddenStatus(group.isUserMember(userId)));
+        boolean isCreated = eventService.createEvent(event, group, userId);
+        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(isCreated));
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)

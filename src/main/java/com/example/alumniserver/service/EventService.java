@@ -36,8 +36,19 @@ public class EventService {
         return repository.findAllByUserId(id);
     }
 
-    public Event createEvent(Event event){
-        return repository.save(event);
+    public boolean createEvent(Event event, Group group, String userId){
+        boolean isCreated;
+        boolean check;
+
+        if(event.isGroupsNull() && event.getTopic()==null){
+            return false;
+        }else if(event.isGroupInvited(group.getId()) && group.isUserMember(userId)){
+            repository.save(event);
+            return true;
+        }else{
+            return false;
+        }
+
     }
 
     public Event getEvent(long eventId) {

@@ -177,4 +177,10 @@ public class Event {
             return false;
         }
     }
+
+    public boolean isGroupsNull(){
+        return groups==null;
+    }
+
+
 }
