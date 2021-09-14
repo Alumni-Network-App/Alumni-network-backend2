@@ -1,6 +1,6 @@
 package com.example.alumniserver.controller;
 
-
+/*
 import com.example.alumniserver.dao.UserRepository;
 import com.example.alumniserver.model.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 
-/*@RestController
+@RestController
 @RequestMapping("api/v1/firebase/user")
 public class FirebaseController {
 

@@ -23,11 +23,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("search") String search,
             Pageable page);
 
-    /*
-        Page<Post> findAllByUserId(String id, Pageable page);
-
-        Page<Post> findAllByUserIdAndReceiverType(String userId, String receiverType, Pageable page);
-    */
     @Query("SELECT p FROM Post p WHERE p.id = :id AND p.receiverType = :type AND CONCAT(p.content, p.title) LIKE %:filter%")
     Page<Post> getFilteredPostsToTypeWithId(@Param("type") String type,
                                             @Param("id") String id,

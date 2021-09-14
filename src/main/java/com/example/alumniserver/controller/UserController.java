@@ -8,10 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity;/*
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
+*/import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,10 +35,11 @@ public class UserController {
 
 
     @GetMapping
-    public ResponseEntity<Link> getUserLink() throws Exception {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<Link> getUserLink() {
+        //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        String uid = authentication.getName();
+        //String uid = authentication.getName();
+        String uid = "2";
         Link link = getUserLinkById(uid);
         return new ResponseEntity<>(link, HttpStatus.SEE_OTHER);
     }
