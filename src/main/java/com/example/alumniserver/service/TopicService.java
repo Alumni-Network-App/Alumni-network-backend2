@@ -1,12 +1,14 @@
 package com.example.alumniserver.service;
 
 import com.example.alumniserver.dao.TopicRepository;
+import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Topic;
 import com.example.alumniserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,4 +56,21 @@ public class TopicService {
                 && !topic.getDescription().equals("");
     }
 
+    public boolean addEventToTopic(Event event) {
+        boolean isAdded;
+        isAdded = event.getTopic().addEventToTopic(event);
+        if(isAdded)
+            return true;
+        else
+            return false;
+    }
+
+    public boolean deleteEventToTopic(Event event) {
+        boolean isDeleted;
+        isDeleted = event.getTopic().deleteEventToTopic(event);
+        if(isDeleted)
+            return true;
+        else
+            return false;
+    }
 }

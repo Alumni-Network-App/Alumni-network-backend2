@@ -62,6 +62,12 @@ public class Topic {
         return events.add(event);
     }
 
+    public boolean deleteEventToTopic(Event event) {
+        if(events == null)
+            return true;
+        return events.remove(event);
+    }
+
     public boolean addUserToTopic(User user) {
         if(users == null)
             users = new ArrayList<>();

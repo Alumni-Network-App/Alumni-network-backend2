@@ -1,6 +1,7 @@
 package com.example.alumniserver.service;
 
 import com.example.alumniserver.dao.UserRepository;
+import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,24 @@ public class UserService {
         }
 
         return oldUser;
+    }
+
+    public boolean addEventToUser(Event event) {
+        boolean isAdded;
+        isAdded = event.getUser().addEventToUser(event);
+        if(isAdded)
+            return true;
+        else
+            return false;
+    }
+
+    public boolean deleteEventToUser(Event event) {
+        boolean isDeleted;
+        isDeleted = event.getUser().deleteEventToUser(event);
+        if(isDeleted)
+            return true;
+        else
+            return false;
     }
 
 }
