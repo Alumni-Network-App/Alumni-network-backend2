@@ -1,13 +1,16 @@
 package com.example.alumniserver.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,11 +25,14 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+    @Column(name = "last_updated")
+    private LocalDateTime lastUpdated = LocalDateTime.now().withNano(0);
+
     @ManyToOne
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "created_by")
     private User user;
 
@@ -45,9 +51,7 @@ public class Event {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    @ManyToMany(mappedBy = "events", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "events")
     private List<Group> groups;
 
     @Getter(AccessLevel.NONE)
@@ -60,7 +64,6 @@ public class Event {
     )
     private List<User> userRsvp;
 
-    @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToMany(mappedBy = "events", cascade = CascadeType.ALL)
     private List<User> invitedUsers;
@@ -144,6 +147,15 @@ public class Event {
         return groups.remove(group);
     }
 
+    public Group getGroupInvite(int groupNumber) {
+        return groups.get(groupNumber);
+    }
+
+    public void setGroupInvite(Group group, int groupNumber) {
+        if(groups != null)
+            groups.set(groupNumber, group);
+    }
+
     public boolean setInviteTopic(Topic topic){
         if(this.topic==null){
             this.topic=topic;
@@ -178,6 +190,11 @@ public class Event {
         }else{
             return false;
         }
+    }
+
+    @JsonIgnore
+    public int getNumberOfGroupInvites() {
+        return (groups == null) ? 0 : groups.size();
     }
 
     //TODO Kommer behöva göras om, behöver vara sin egna modell + ha ett repo och service. (ingen kontroller behövs)

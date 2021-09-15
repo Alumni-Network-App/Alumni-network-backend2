@@ -39,7 +39,7 @@ public class UserController {
         //Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         //String uid = authentication.getName();
-        String uid = "2";
+        String uid = "3";
         Link link = getUserLinkById(uid);
         return new ResponseEntity<>(link, HttpStatus.SEE_OTHER);
     }

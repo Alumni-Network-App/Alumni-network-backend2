@@ -34,7 +34,7 @@ public class Group {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name="event_group",
             joinColumns = {@JoinColumn(name = "group_id")},

@@ -22,7 +22,7 @@ public class Reply {
     private String content;
 
     @Column(name = "last_updated")
-    private LocalDateTime lastUpdated = LocalDateTime.now();
+    private LocalDateTime date = LocalDateTime.now().withNano(0);
 
     @ManyToOne
     @JoinColumn(name = "reply_parent_id")

@@ -69,7 +69,7 @@ public class ReplyService {
     private Reply updateFields(Reply updatedReply, Reply oldReply) {
         if (!updatedReply.getContent().equals(""))
             oldReply.setContent(updatedReply.getContent());
-        oldReply.setLastUpdated(oldReply.getLastUpdated());
+        oldReply.setDate(updatedReply.getDate());
         return oldReply;
     }
 

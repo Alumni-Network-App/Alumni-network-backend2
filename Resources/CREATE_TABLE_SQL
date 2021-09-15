@@ -62,6 +62,7 @@ CREATE TABLE group_member (
 
 CREATE TABLE "event" (
     "event_id" int   PRIMARY KEY,
+    "last_updated" date,
     "topic_id" int   NOT NULL,
     "created_by" varchar   NOT NULL,
     "name" varchar   NOT NULL,

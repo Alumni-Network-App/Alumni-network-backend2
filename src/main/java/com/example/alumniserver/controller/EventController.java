@@ -59,9 +59,11 @@ public class EventController {
 
     //Behövs uppdateras, ta bort group då det kan postas i event, och kolla att group / topic är satt.
     @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody Event event, Group group) {
+    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
         String userId = TEST_ID;
-        return new ResponseEntity<>(eventService.createEvent(event), statusCode.getForbiddenStatus(group.isUserMember(userId)));
+        event = eventService.createEvent(event, userId);
+        return new ResponseEntity<>(event,
+                statusCode.getForbiddenStatus(event != null));
     }
 
     @PutMapping(value = "/{id}")
@@ -144,7 +146,7 @@ public class EventController {
                 && groupService.groupExists(topicId)) {
             Event event = eventService.getEvent(eventId);
             if (event.isTopicInvited(topicId)) {
-                eventService.deleteEventTopicInvite(userId, event, topicId);
+                event = eventService.deleteEventTopicInvite(userId, event, topicId);
                 return new ResponseEntity<>(event, statusCode.getForbiddenStatus(event != null));
             }
         }
