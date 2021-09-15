@@ -56,7 +56,7 @@ public class Rsvp {
 
     @Id
     @ManyToOne
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    @JoinColumn(name = "eventId", referencedColumnName = "eventId")
     private Event event;
 
 }

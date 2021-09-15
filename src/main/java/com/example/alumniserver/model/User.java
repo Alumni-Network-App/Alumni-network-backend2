@@ -8,7 +8,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -57,6 +59,9 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "group_id")}
     )
     private List<Group> groups;
+
+    @OneToMany(mappedBy = "userId")
+    private Set<Rsvp> rsvpHashSet = new HashSet<Rsvp>();
 
     public void addGroup(Group group) {
         if(groups == null)

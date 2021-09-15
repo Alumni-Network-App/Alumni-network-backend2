@@ -8,7 +8,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -64,6 +66,9 @@ public class Event {
     @Setter(AccessLevel.NONE)
     @ManyToMany(mappedBy = "events", cascade = CascadeType.ALL)
     private List<User> invitedUsers;
+
+    @OneToMany(mappedBy = "eventId")
+    private Set<Rsvp> rsvpHashSet = new HashSet<Rsvp>();
 
     @JsonGetter("groups")
     public List<String> groups() {
