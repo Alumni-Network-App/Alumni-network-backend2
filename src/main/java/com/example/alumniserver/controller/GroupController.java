@@ -58,7 +58,7 @@ public class GroupController {
     public ResponseEntity<Link> createGroup(@RequestBody Group group) {
         String userId = TEST_ID;
         Group addedGroup = service.createGroup(group, userId);
-        if (group != null)
+        if (addedGroup != null)
             return new ResponseEntity<>(
                     getGroupLinkById(addedGroup.getId()),
                     HttpStatus.CREATED);
