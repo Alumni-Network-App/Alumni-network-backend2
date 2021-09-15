@@ -45,7 +45,7 @@ public class EventService {
     }
 
     public Event updateAnEvent(Event newEvent, Event oldEvent, String userId) {
-        return (!oldEvent.isUserCreator(userId))
+        return (oldEvent.isUserCreator(userId))
                 ? repository.save(updateFields(newEvent, oldEvent)) : null;
     }
 

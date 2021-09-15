@@ -187,7 +187,7 @@ public class Event {
         if(isUserInvited(user.getId()) || (isGroupInvited(group.getId()) && group.isUserMember(user.getId())) || isUserPartOfInvitedTopic){
             userRsvp.add(user);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
