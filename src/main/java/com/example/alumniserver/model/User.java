@@ -60,8 +60,11 @@ public class User {
     )
     private List<Group> groups;
 
-    @OneToMany(mappedBy = "userId")
-    private Set<Rsvp> rsvpHashSet = new HashSet<Rsvp>();
+    @OneToMany(mappedBy = "event")
+    private Set<Rsvp> rsvpHashSetEvent = new HashSet<Rsvp>();
+
+    @OneToMany(mappedBy = "user")
+    private Set<Rsvp> rsvpHashSetUser;
 
     public void addGroup(Group group) {
         if(groups == null)

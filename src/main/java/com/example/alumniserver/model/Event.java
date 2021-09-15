@@ -67,8 +67,11 @@ public class Event {
     @ManyToMany(mappedBy = "events", cascade = CascadeType.ALL)
     private List<User> invitedUsers;
 
-    @OneToMany(mappedBy = "eventId")
-    private Set<Rsvp> rsvpHashSet = new HashSet<Rsvp>();
+    @OneToMany(mappedBy = "user")
+    private Set<Rsvp> rsvpHashSetUser = new HashSet<Rsvp>();
+
+    @OneToMany(mappedBy = "event")
+    private Set<Rsvp> rsvpHashSetEvent;
 
     @JsonGetter("groups")
     public List<String> groups() {

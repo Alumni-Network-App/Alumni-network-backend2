@@ -25,11 +25,13 @@ public class Rsvp {
 
     @Id
     @ManyToOne
+    @MapsId("id")
     @JoinColumn(name = "userId", referencedColumnName = "userId")
     private User user;
 
     @Id
     @ManyToOne
+    @MapsId("id")
     @JoinColumn(name = "eventId", referencedColumnName = "eventId")
     private Event event;
 
