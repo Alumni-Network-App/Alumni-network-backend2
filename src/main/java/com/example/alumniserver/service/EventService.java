@@ -1,7 +1,6 @@
 package com.example.alumniserver.service;
 
 import com.example.alumniserver.dao.EventRepository;
-import com.example.alumniserver.dao.RsvpRepository;
 import com.example.alumniserver.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,19 +13,19 @@ public class EventService {
     private final UserService userService;
     private final GroupService groupService;
     private final TopicService topicService;
-    private final RsvpRepository rsvpRepository;
+    private final RsvpService rsvpService;
 
     @Autowired
     public EventService(EventRepository repository,
                         UserService userService,
                         GroupService groupService,
                         TopicService topicService,
-                        RsvpRepository rsvpRepository) {
+                        RsvpService rsvpService) {
         this.repository = repository;
         this.userService = userService;
         this.groupService = groupService;
         this.topicService = topicService;
-        this.rsvpRepository = rsvpRepository;
+        this.rsvpService = rsvpService;
     }
 
     public boolean eventExists(long eventId) {
@@ -124,7 +123,7 @@ public class EventService {
             return null;
         User user = userService.getUserById(userId);
         if(event.setUserInvite(user)){
-            userService.addEventToUser(event);
+            userService.addEventInviteToUser(event);
             repository.save(event);
             return event;
         }else{
@@ -137,7 +136,7 @@ public class EventService {
             return null;
         User user = userService.getUserById(userId);
         if(event.deleteUserInvite(user)){
-            userService.deleteEventToUser(event);
+            userService.deleteEventInviteToUser(event);
             repository.save(event);
             return event;
         }else{
@@ -153,7 +152,7 @@ public class EventService {
 
         if (check) {
             repository.save(event);
-            rsvpRepository.save(rsvp);
+            rsvpService.saveRsvp(rsvp);
             return true;
         } else {
             return false;

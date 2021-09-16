@@ -55,18 +55,18 @@ public class UserService {
         return oldUser;
     }
 
-    public boolean addEventToUser(Event event) {
+    public boolean addEventInviteToUser(Event event) {
         boolean isAdded;
-        isAdded = event.getUser().addEventToUser(event);
+        isAdded = event.getUser().addEventInviteToUser(event);
         if(isAdded)
             return true;
         else
             return false;
     }
 
-    public boolean deleteEventToUser(Event event) {
+    public boolean deleteEventInviteToUser(Event event) {
         boolean isDeleted;
-        isDeleted = event.getUser().deleteEventToUser(event);
+        isDeleted = event.getUser().deleteEventInviteToUser(event);
         if(isDeleted)
             return true;
         else

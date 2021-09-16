@@ -35,4 +35,9 @@ public class RsvpService {
     }
 
 
+    public Rsvp saveRsvp(Rsvp rsvp){
+
+        return rsvpRepository.save(rsvp);
+    }
+
 }

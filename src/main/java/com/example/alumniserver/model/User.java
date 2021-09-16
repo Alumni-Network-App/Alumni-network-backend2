@@ -164,13 +164,13 @@ public class User {
         }
     }
 
-    public boolean addEventToUser(Event event) {
+    public boolean addEventInviteToUser(Event event) {
         if(events == null)
             events = new ArrayList<>();
         return events.add(event);
     }
 
-    public boolean deleteEventToUser(Event event) {
+    public boolean deleteEventInviteToUser(Event event) {
         if(events == null)
             return true;
         return events.remove(event);

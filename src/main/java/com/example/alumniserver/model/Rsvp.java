@@ -17,6 +17,11 @@ public class Rsvp {
     @Column(name = "user_id")
     private String id;
 
+    @PreUpdate
+    protected void onUpdate(){
+        last_updated = new Date();
+    }
+
     @Column(name = "guest_count")
     private int guest_count;
 
