@@ -14,5 +14,11 @@ public interface RsvpRepository extends JpaRepository<Rsvp, Long> {
     Page<Rsvp> getRsvps(@Param("eventId") long eventId,
                         @Param("userId") String userId,
                         Pageable page);
-    List<Rsvp> getRsvpById(long id);
+    Rsvp getRsvpById(String rsvpId);
+
+
+
+
+
+
 }

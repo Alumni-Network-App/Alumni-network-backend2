@@ -16,22 +16,23 @@ import java.util.List;
 public class RsvpService {
 
     private final RsvpRepository rsvpRepository;
-    private final ReplyRepository replyRepository;
-    private final UserRepository userRepository;
-    private final PostRepository postRepository;
-    private final PostService postService;
+
 
     @Autowired
-    public RsvpService(ReplyRepository repository, UserRepository userRepository, PostRepository postRepository, PostService postService, RsvpRepository rsvpRepository) {
-        this.replyRepository = repository;
-        this.userRepository = userRepository;
-        this.postRepository = postRepository;
-        this.postService = postService;
+    public RsvpService(RsvpRepository rsvpRepository) {
+
         this.rsvpRepository = rsvpRepository;
+
     }
 
 
     public List<Rsvp> getRsvps(Long eventId, String userId, Pageable page) {
         return rsvpRepository.getRsvps(eventId, userId, page).getContent();
     }
+
+    public Rsvp getRsvpById(String rsvpId){
+        return rsvpRepository.getRsvpById(rsvpId);
+    }
+
+
 }

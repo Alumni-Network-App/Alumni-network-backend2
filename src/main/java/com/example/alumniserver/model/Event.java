@@ -189,10 +189,11 @@ public class Event {
     }
 
     //TODO för RSVP event delen
-    public boolean createEventRSVP(Group group, Topic topic, User user, boolean isUserPartOfInvitedTopic){
+    public boolean createEventRSVP(Group group, User user, boolean isUserPartOfInvitedTopic){
 
         if(isUserInvited(user.getId()) || (isGroupInvited(group.getId()) && group.isUserMember(user.getId())) || isUserPartOfInvitedTopic){
             userRsvp.add(user);
+
             return true;
         }else{
             return false;

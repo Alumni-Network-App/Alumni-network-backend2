@@ -1,10 +1,8 @@
 package com.example.alumniserver.service;
 
 import com.example.alumniserver.dao.EventRepository;
-import com.example.alumniserver.model.Event;
-import com.example.alumniserver.model.Group;
-import com.example.alumniserver.model.Topic;
-import com.example.alumniserver.model.User;
+import com.example.alumniserver.dao.RsvpRepository;
+import com.example.alumniserver.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +14,19 @@ public class EventService {
     private final UserService userService;
     private final GroupService groupService;
     private final TopicService topicService;
+    private final RsvpRepository rsvpRepository;
 
     @Autowired
     public EventService(EventRepository repository,
                         UserService userService,
                         GroupService groupService,
-                        TopicService topicService) {
+                        TopicService topicService,
+                        RsvpRepository rsvpRepository) {
         this.repository = repository;
         this.userService = userService;
         this.groupService = groupService;
         this.topicService = topicService;
+        this.rsvpRepository = rsvpRepository;
     }
 
     public boolean eventExists(long eventId) {
@@ -145,13 +146,14 @@ public class EventService {
     }
 
     //TODO fixa denna skiten
-    public boolean createRsvpRecord(Event event, Group group, Topic topic, String userId) {
+    public boolean createRsvpRecord(Event event, Group group, Topic topic, String userId, Rsvp rsvp) {
         User user = userService.getUserById(userId);
         boolean isUserPartOfInvitedTopic = topic.isUserSubscribed(user);
-        boolean check = event.createEventRSVP(group, topic, user, isUserPartOfInvitedTopic);
+        boolean check = event.createEventRSVP(group, user, isUserPartOfInvitedTopic);
 
         if (check) {
             repository.save(event);
+            rsvpRepository.save(rsvp);
             return true;
         } else {
             return false;

@@ -3,6 +3,7 @@ package com.example.alumniserver.controller;
 import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Group;
+import com.example.alumniserver.model.Rsvp;
 import com.example.alumniserver.model.Topic;
 import com.example.alumniserver.service.EventService;
 import com.example.alumniserver.service.GroupService;
@@ -185,7 +186,8 @@ public class EventController {
     @PostMapping(value = "/{eventId}/rsvp")
     public ResponseEntity<Event> createRsvpRecord(
             @PathVariable("eventId") long eventId,
-            @RequestBody Group group, Topic topic) {
+            @RequestBody Group group, Topic topic,
+            @RequestBody Rsvp rsvp) {
         boolean checkIfCreated;
         String userId = TEST_ID;
         Event event = eventService.getEvent(eventId);
@@ -193,7 +195,7 @@ public class EventController {
         if (event == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
-        checkIfCreated = eventService.createRsvpRecord(event, group, event.getTopic(), userId);
+        checkIfCreated = eventService.createRsvpRecord(event, group, event.getTopic(), userId, rsvp);
         return new ResponseEntity<>(event, statusCode.getForbiddenStatus(checkIfCreated));
     }
 
