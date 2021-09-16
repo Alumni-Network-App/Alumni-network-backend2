@@ -24,21 +24,33 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             @Param("search") String search,
             Pageable page);
 
-    @Query("SELECT p FROM Post p WHERE p.id = :id AND p.receiverType = :type AND CONCAT(p.content, p.title) LIKE %:filter% ORDER BY p.date DESC")
+    @Query("SELECT DISTINCT p FROM Post p " +
+            "WHERE p.user.id = :senderId " +
+            "AND p.receiverType = :type " +
+            "AND p.receiverId = :receiverId " +
+            "AND CONCAT(p.content, p.title) LIKE %:filter% " +
+            "ORDER BY p.date DESC")
     Page<Post> getFilteredPostsToTypeWithId(@Param("type") String type,
-                                            @Param("id") String id,
+                                            @Param("receiverId") String receiverId,
+                                            @Param("senderId") String senderId,
                                             @Param("filter") String filter,
                                             Pageable page);
 
-    @Query("SELECT p FROM Post p WHERE p.user.id = :senderId AND p.receiverType = :type AND p.receiverId = :receiverId AND CONCAT(p.content, p.title) LIKE %:filter% ORDER BY p.date DESC")
+    @Query("SELECT DISTINCT p FROM Post p WHERE p.receiverType = :type AND p.receiverId = :receiverId AND CONCAT(p.content, p.title) LIKE %:filter% ORDER BY p.date DESC")
     Page<Post> getFilteredPostsToTypeWithIdFromUser(@Param("type") String type,
                                                     @Param("receiverId") String receiverId,
-                                                    @Param("senderId") String senderId,
                                                     @Param("filter") String filter,
                                                     Pageable page);
 
-    @Query("SELECT p FROM Post p WHERE p.topic.id = :topicId AND CONCAT(p.content, p.title) LIKE %:filter% ORDER BY p.date DESC")
+
+
+    @Query("SELECT DISTINCT p " +
+            "FROM Post p INNER JOIN p.topic.users u " +
+            "WHERE u.id = :senderId AND p.topic.id = :topicId " +
+            "AND CONCAT(p.content, p.title) LIKE %:filter% " +
+            "ORDER BY p.date DESC")
     Page<Post> getFilteredPostsToTopic(@Param("topicId") long topicId,
+                                       @Param("senderId") String userId,
                                        @Param("filter") String filter,
                                        Pageable page);
 

@@ -33,9 +33,17 @@ public class TopicService {
         return topic.orElse(null);
     }
 
-    // Kom ihåg lägga till skaparen id
-    public Topic createTopic(Topic topic) {
-        return (isValidTopic(topic)) ? repository.save(topic) : null;
+    public Topic createTopic(Topic topic, String userId) {
+        if(isValidTopic(topic)) {
+            User user = userService.getUserById(userId);
+            topic.addUserToTopic(user);
+            topic = repository.save(topic);
+            user.addTopicToSubscription(topic);
+            userService.updateUserRelations(user);
+            return topic;
+        } else {
+            return null;
+        }
     }
 
     public Topic createTopicSubscription(Topic topic, User user) {
@@ -53,8 +61,8 @@ public class TopicService {
     }
 
     private boolean isValidTopic(Topic topic) {
-        return !topic.getName().equals("")
-                && !topic.getDescription().equals("");
+        return topic.getName() != null
+                && topic.getDescription() != null;
     }
 
     public Topic addEventToTopic(Event event, Topic topic) {

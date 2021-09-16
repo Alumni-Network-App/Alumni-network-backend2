@@ -48,10 +48,9 @@ public class TopicController {
     @PostMapping
     public ResponseEntity<Link> postTopic(@RequestBody Topic topic) {
         String userId = IdHelper.getLoggedInUserId();
-        Topic createdTopic = service.createTopic(topic);
-        return (createdTopic == null) ? new ResponseEntity<>
-                (getTopicLinkById(createdTopic.getId()), HttpStatus.CREATED)
-                : new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        topic = service.createTopic(topic, userId);
+        return new ResponseEntity<>
+                (getTopicLinkById(topic), status.getForbiddenPostingStatus(topic));
     }
 
     @PostMapping(value = "/{topicId}/join")
@@ -63,16 +62,17 @@ public class TopicController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         return (topic.isUserSubscribed(user)) ? new ResponseEntity<>(
-                getTopicLinkById(topicId), HttpStatus.SEE_OTHER)
+                getTopicLinkById(topic), HttpStatus.SEE_OTHER)
                 : new ResponseEntity<>(getTopicLinkById(
-                        service.createTopicSubscription(topic, user).getId()),
+                        service.createTopicSubscription(topic, user)),
                         HttpStatus.CREATED);
 
     }
 
-    private Link getTopicLinkById(long topicId) {
-        return linkTo(methodOn(TopicController.class)
-                .getTopic(topicId))
+    private Link getTopicLinkById(Topic topic) {
+        return (topic == null) ? null :
+        linkTo(methodOn(TopicController.class)
+                .getTopic(topic.getId()))
                 .withSelfRel();
     }
 
