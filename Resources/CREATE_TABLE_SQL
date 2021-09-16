@@ -1,10 +1,10 @@
 CREATE TABLE usertable (
     "user_id" varchar   PRIMARY KEY,
     "name" varchar   NOT NULL,
-    "picture" varchar   NOT NULL,
-    "status" varchar   NOT NULL,
-    "bio" varchar   NOT NULL,
-    "fun_fact" varchar   NOT NULL
+    "picture" varchar,
+    "status" varchar,
+    "bio" varchar,
+    "fun_fact" varchar
 );
 
 CREATE TABLE "topic" (

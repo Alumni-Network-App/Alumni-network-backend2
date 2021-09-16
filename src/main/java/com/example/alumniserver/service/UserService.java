@@ -55,6 +55,10 @@ public class UserService {
         return oldUser;
     }
 
+    public User updateUserRelations(User user) {
+        return repository.save(user);
+    }
+
     public User addEventToUser(Event event, User user) {
         return (user.addEventToUser(event)) ? repository.save(user) : null;
     }

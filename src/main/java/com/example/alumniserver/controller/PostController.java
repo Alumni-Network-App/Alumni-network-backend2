@@ -47,7 +47,7 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Post>> getPostsForUser(
+    public ResponseEntity<List<Post>> getPostsFromLoggedInUser(
             @RequestParam(required = false, defaultValue = "") String type,
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page
@@ -73,23 +73,25 @@ public class PostController {
     }
 
     @GetMapping(value = "/user")
-    public ResponseEntity<List<Post>> getPostsToUser(
+    public ResponseEntity<List<Post>> getPostsToLoggedInUser(
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page
     ) {
         String id = IdHelper.getLoggedInUserId();
-        List<Post> posts = postService.getPostsSentToUser("user", id, search, page);
-        return new ResponseEntity<>(posts, HttpStatus.OK);
+        return getPostsToType(true, "user", id, id, search, page);
     }
 
     @GetMapping(value = "/user/{userId}")
-    public ResponseEntity<List<Post>> getPostsToUserFromUser(
+    public ResponseEntity<List<Post>> getPostsToUserFromSpecificUser(
             @PathVariable String userId,
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
         String id = IdHelper.getLoggedInUserId();
-        boolean userFound = userService.userExists(userId);
-        return getPostsToType(userFound, "user", id, userId, search, page);
+        if(userService.userExists(userId)) {
+            List<Post> posts = postService.getPostsSentToUser("user", id, userId, search, page);
+            return new ResponseEntity<>(posts, HttpStatus.OK);
+        } else
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping(value = "/group/{groupId}")
@@ -108,10 +110,11 @@ public class PostController {
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
         boolean topicExists = topicService.topicExists(topicId);
+        String userId = IdHelper.getLoggedInUserId();
         return (!topicExists) ?
                 new ResponseEntity<>(null, HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>(postService
-                        .getPostsFromUserToTopic(topicId, search, page),
+                        .getPostsFromUserToTopic(topicId, userId, search, page),
                         HttpStatus.OK);
     }
 
