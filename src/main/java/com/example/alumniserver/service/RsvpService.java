@@ -38,6 +38,7 @@ public class RsvpService {
     public Rsvp saveRsvp(Rsvp rsvp){
         rsvp.addUserToRsvp(rsvp.getUser());
         rsvp.addEventToRsvp(rsvp.getEvent());
+
         return rsvpRepository.save(rsvp);
     }
 
