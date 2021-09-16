@@ -33,6 +33,7 @@ public class TopicService {
         return topic.orElse(null);
     }
 
+    // Kom ihåg lägga till skaparen id
     public Topic createTopic(Topic topic) {
         return (isValidTopic(topic)) ? repository.save(topic) : null;
     }

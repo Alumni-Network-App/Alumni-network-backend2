@@ -9,6 +9,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -81,12 +82,9 @@ public class User {
             topicSubscriptions = new ArrayList<>();
         return topicSubscriptions.add(topic);
     }
-/*
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    @ManyToMany(mappedBy = "userRsvp")
-    private List<Event> eventRsvp;
- */
+
+    @OneToMany(mappedBy = "user")
+    private Set<Rsvp> rsvps;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)

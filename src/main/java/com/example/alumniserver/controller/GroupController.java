@@ -1,12 +1,12 @@
 package com.example.alumniserver.controller;
 
 import com.example.alumniserver.httpstatus.HttpStatusCode;
+import com.example.alumniserver.idhelper.IdHelper;
 import com.example.alumniserver.model.Group;
 import com.example.alumniserver.model.User;
 import com.example.alumniserver.service.GroupService;
 import com.example.alumniserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -26,8 +26,6 @@ public class GroupController {
     private final GroupService service;
     private final UserService userService;
 
-    private static final String TEST_ID = "3";
-
     private HttpStatusCode status = new HttpStatusCode();
 
     @Autowired
@@ -38,17 +36,17 @@ public class GroupController {
 
     @GetMapping
     public ResponseEntity<List<Group>> getGroups(Pageable page, @RequestParam(required = false, defaultValue = "") String name) {
-        String id = TEST_ID;
-        return new ResponseEntity<>(service.getGroups(id, name, page), HttpStatus.OK);
+        String userId = IdHelper.getLoggedInUserId();
+        return new ResponseEntity<>(service.getGroups(userId, name, page), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{groupId}")
     public ResponseEntity<Group> getGroup(@PathVariable long groupId) {
-        String id = TEST_ID;
+        String userId = IdHelper.getLoggedInUserId();
         Group group = service.getGroup(groupId);
         HttpStatus httpStatus = (status.getBadRequestStatus(group) == HttpStatus.BAD_REQUEST) ?
                 HttpStatus.BAD_REQUEST : status.getForbiddenStatus(
-                !group.isPrivate() || group.isUserMember(id));
+                !group.isPrivate() || group.isUserMember(userId));
         if (httpStatus == HttpStatus.FORBIDDEN)
             group = null;
         return new ResponseEntity<>(group, httpStatus);
@@ -56,7 +54,7 @@ public class GroupController {
 
     @PostMapping
     public ResponseEntity<Link> createGroup(@RequestBody Group group) {
-        String userId = TEST_ID;
+        String userId = IdHelper.getLoggedInUserId();
         Group addedGroup = service.createGroup(group, userId);
         if (addedGroup != null)
             return new ResponseEntity<>(
@@ -72,11 +70,11 @@ public class GroupController {
             @PathVariable(required = false) String userId
     ) {
         Group group = service.getGroup(groupId);
-        String loggedInUserId = TEST_ID;
+        String loggedInUserId = IdHelper.getLoggedInUserId();
         if (group == null)
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         else if (userId == null)
-            userId = TEST_ID;
+            userId = IdHelper.getLoggedInUserId();
 
         if (group.isUserMember(userId))
             return new ResponseEntity<>(

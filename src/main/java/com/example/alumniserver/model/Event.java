@@ -12,6 +12,7 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -67,6 +68,9 @@ public class Event {
     @Setter(AccessLevel.NONE)
     @ManyToMany(mappedBy = "events", cascade = CascadeType.ALL)
     private List<User> invitedUsers;
+
+    @OneToMany(mappedBy = "event")
+    private Set<Rsvp> rsvps;
 
     @JsonGetter("groups")
     public List<String> groups() {

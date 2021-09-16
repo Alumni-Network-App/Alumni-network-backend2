@@ -1,6 +1,7 @@
 package com.example.alumniserver.config;
-/*
+
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,12 +15,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api/**")
-                .authenticated()
-                .anyRequest()
+                .antMatchers(HttpMethod.GET,"/api/v1/topic", "/api/v1/topic/{id}")
                 .permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .oauth2ResourceServer()
                 .jwt();
     }
-}*/
+}

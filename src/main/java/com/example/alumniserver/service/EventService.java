@@ -32,8 +32,12 @@ public class EventService {
         return repository.existsById(eventId);
     }
 
-    public List<Event> getAllUserEvents(String id) {
-        return repository.findAllByUserId(id);
+    public List<Event> getAllUserEvents(String userId) {
+        return repository.selectUserSubscribedEvents(userId);
+    }
+
+    public Event getEvent(long eventId) {
+        return repository.findEventById(eventId);
     }
 
     public Event createEvent(Event event, String userId) {
@@ -82,10 +86,6 @@ public class EventService {
         if (event.topic() != null)
             addRelationWithTopic(event);
         addRelationWithUser(event, user);
-    }
-
-    public Event getEvent(long eventId) {
-        return repository.findEventById(eventId);
     }
 
     public Event updateAnEvent(Event newEvent, Event oldEvent, String userId) {
@@ -168,12 +168,11 @@ public class EventService {
     }
 
     //TODO fixa denna skiten
-    public boolean createRsvpRecord(Event event, Group group, Topic topic, String userId) {
+    public boolean createRsvpRecord(Event event, String userId) {
         User user = userService.getUserById(userId);
-        boolean isUserPartOfInvitedTopic = topic.isUserSubscribed(user);
-        boolean check = event.createEventRSVP(group, topic, user, isUserPartOfInvitedTopic);
+        boolean isUserPartOfInvitedTopic = event.getTopic().isUserSubscribed(user);
 
-        if (check) {
+        if (isUserPartOfInvitedTopic) {
             repository.save(event);
             return true;
         } else {

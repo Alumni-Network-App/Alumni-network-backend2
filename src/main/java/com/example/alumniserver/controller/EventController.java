@@ -1,15 +1,19 @@
 package com.example.alumniserver.controller;
 
 import com.example.alumniserver.httpstatus.HttpStatusCode;
+import com.example.alumniserver.idhelper.IdHelper;
 import com.example.alumniserver.model.Event;
 import com.example.alumniserver.model.Group;
+import com.example.alumniserver.model.Rsvp;
 import com.example.alumniserver.model.Topic;
 import com.example.alumniserver.service.EventService;
 import com.example.alumniserver.service.GroupService;
 import com.example.alumniserver.service.TopicService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +21,7 @@ import java.util.List;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-@RestController
+@Controller
 @RequestMapping("/api/v1/event")
 public class EventController {
 
@@ -25,8 +29,8 @@ public class EventController {
     private final EventService eventService;
     private final GroupService groupService;
     private final TopicService topicService;
-    private static final String TEST_ID = "3";
 
+    @Autowired
     public EventController(EventService eventService,
                            GroupService groupService,
                            TopicService topicService) {
@@ -37,7 +41,7 @@ public class EventController {
 
     @GetMapping(value = "/{eventId}")
     public ResponseEntity<Event> getEvent(@PathVariable long eventId) {
-        String userId = TEST_ID;
+        String userId = IdHelper.getLoggedInUserId();
         if (!eventService.eventExists(eventId))
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         else {
@@ -49,27 +53,25 @@ public class EventController {
 
     }
 
-    //TODO Även topics som användaren är subscribad till ska returneras
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents() {
-        String userId = TEST_ID;
+        String userId = IdHelper.getLoggedInUserId();
         List<Event> events = eventService.getAllUserEvents(userId);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
-    //Behövs uppdateras, ta bort group då det kan postas i event, och kolla att group / topic är satt.
     @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
-        String userId = TEST_ID;
+    public ResponseEntity<Link> createEvent(@RequestBody Event event) {
+        String userId = IdHelper.getLoggedInUserId();
         event = eventService.createEvent(event, userId);
-        return new ResponseEntity<>(event,
-                statusCode.getForbiddenStatus(event != null));
+        return new ResponseEntity<>(getEventLinkById(event),
+                statusCode.getForbiddenPostingStatus(event));
     }
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<Link> updateEvent(@PathVariable long id,
                                             @RequestBody Event event) {
-        String userId = TEST_ID;
+        String userId = IdHelper.getLoggedInUserId();
         if (!eventService.eventExists(id))
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         else {
@@ -81,10 +83,10 @@ public class EventController {
     }
 
     @PostMapping(value = "/{eventId}/invite/group/{groupId}")
-    public ResponseEntity<Link> createGroupInvite(
+    public ResponseEntity<Event> createGroupInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("groupId") long groupId) {
-        String userId = TEST_ID;
+        String userId = IdHelper.getLoggedInUserId();
 
         if (eventService.eventExists(eventId)
                 && groupService.groupExists(groupId)) {
@@ -92,8 +94,8 @@ public class EventController {
             Event event = eventService.getEvent(eventId);
             if (!event.isGroupInvited(groupId)) {
                 event = eventService.createEventInviteForGroup(userId, event, groupId);
-                return new ResponseEntity<>(getEventLinkById(event),
-                        statusCode.getForbiddenStatus(event != null));
+                return new ResponseEntity<>(event,
+                        statusCode.getForbiddenPostingStatus(event));
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -103,7 +105,7 @@ public class EventController {
     public ResponseEntity<Event> deleteGroupInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("groupId") long groupId) {
-        String userId = TEST_ID;
+        String userId = IdHelper.getLoggedInUserId();
 
         if (eventService.eventExists(eventId)
                 && groupService.groupExists(groupId)) {
@@ -111,25 +113,26 @@ public class EventController {
             Event event = eventService.getEvent(eventId);
             if (event.isGroupInvited(groupId)) {
                 event = eventService.deleteEventInviteForGroup(userId, event, groupId);
-                return new ResponseEntity<>(event, statusCode.getForbiddenStatus(event != null));
+                return new ResponseEntity<>(
+                        event, statusCode.getForbiddenStatus(event != null));
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping(value = "/{eventId}/invite/topic/{topicId}")
-    public ResponseEntity<Link> createEventTopicInvite(
+    public ResponseEntity<Event> createEventTopicInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("topicId") long topicId) {
-        String userId = TEST_ID;
+        String userId = IdHelper.getLoggedInUserId();
 
         if (eventService.eventExists(eventId)
                 && topicService.topicExists(topicId)) {
             Event event = eventService.getEvent(eventId);
             if (!event.isTopicInvited(topicId)) {
                 event = eventService.createEventTopicInvite(userId, event, topicId);
-                return new ResponseEntity<>(getEventLinkById(event),
-                        statusCode.getForbiddenStatus(event != null));
+                return new ResponseEntity<>(event,
+                        statusCode.getForbiddenPostingStatus(event));
             }
         }
         return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -139,7 +142,7 @@ public class EventController {
     public ResponseEntity<Event> DeleteEventTopicInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("topicId") long topicId) {
-        String userId = TEST_ID;
+        String userId = IdHelper.getLoggedInUserId();
 
 
         if (eventService.eventExists(eventId)
@@ -158,7 +161,7 @@ public class EventController {
     public ResponseEntity<Event> createEventInviteForUser(
             @PathVariable("eventId") long eventId,
             @PathVariable("userId") String invitedUserId) {
-        String userId = TEST_ID;
+        String userId = IdHelper.getLoggedInUserId();
 
         if (!eventService.eventExists(eventId))
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -167,14 +170,14 @@ public class EventController {
                 eventService.getEvent(eventId), invitedUserId);
 
         return new ResponseEntity<>(event,
-                statusCode.getForbiddenStatus(event != null));
+                statusCode.getForbiddenPostingStatus(event));
     }
 
     @DeleteMapping(value = "/{eventId}/invite/user/{userId}")
     public ResponseEntity<Event> deleteEventInviteForUser(
             @PathVariable("eventId") long eventId,
             @PathVariable("userId") String invitedUserId) {
-        String userId = TEST_ID;
+        String userId = IdHelper.getLoggedInUserId();
 
         if (!eventService.eventExists(eventId))
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -195,16 +198,15 @@ public class EventController {
     //individually, the request will result in a 403 Forbidden response.
     @PostMapping(value = "/{eventId}/rsvp")
     public ResponseEntity<Event> createRsvpRecord(
-            @PathVariable("eventId") long eventId,
-            @RequestBody Group group, Topic topic) {
+            @PathVariable("eventId") long eventId) {
         boolean checkIfCreated;
-        String userId = TEST_ID;
+        String userId = "3";
         Event event = eventService.getEvent(eventId);
 
         if (event == null)
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 
-        checkIfCreated = eventService.createRsvpRecord(event, group, event.getTopic(), userId);
+        checkIfCreated = eventService.createRsvpRecord(event, userId);
         return new ResponseEntity<>(event, statusCode.getForbiddenStatus(checkIfCreated));
     }
 

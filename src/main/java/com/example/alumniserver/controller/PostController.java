@@ -2,6 +2,7 @@ package com.example.alumniserver.controller;
 
 
 import com.example.alumniserver.httpstatus.HttpStatusCode;
+import com.example.alumniserver.idhelper.IdHelper;
 import com.example.alumniserver.model.Post;
 import com.example.alumniserver.model.Reply;
 import com.example.alumniserver.model.User;
@@ -30,8 +31,6 @@ public class PostController {
     private final TopicService topicService;
     private final EventService eventService;
 
-    private static final String TEST_ID = "1";
-
     @Autowired
     public PostController(
             PostService postService,
@@ -53,14 +52,14 @@ public class PostController {
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page
     ) {
-        String id = TEST_ID;
+        String id = IdHelper.getLoggedInUserId();
         List<Post> posts = postService.getPosts(id, type, search, page);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{postId}")
     public ResponseEntity<Post> getPost(@PathVariable long postId) {
-        String id = TEST_ID;
+        String id = IdHelper.getLoggedInUserId();
 
         Post post = postService.getPost(postId);
         if (post != null) {
@@ -78,7 +77,7 @@ public class PostController {
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page
     ) {
-        String id = TEST_ID;
+        String id = IdHelper.getLoggedInUserId();
         List<Post> posts = postService.getPostsSentToUser("user", id, search, page);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
@@ -88,7 +87,7 @@ public class PostController {
             @PathVariable String userId,
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
-        String id = TEST_ID;
+        String id = IdHelper.getLoggedInUserId();
         boolean userFound = userService.userExists(userId);
         return getPostsToType(userFound, "user", id, userId, search, page);
     }
@@ -98,7 +97,7 @@ public class PostController {
             @PathVariable String groupId,
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
-        String id = TEST_ID;
+        String id = IdHelper.getLoggedInUserId();
         boolean groupFound = groupService.groupExists(Long.parseLong(groupId));
         return getPostsToType(groupFound, "group", groupId, id, search, page);
     }
@@ -108,12 +107,11 @@ public class PostController {
             @PathVariable long topicId,
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
-        String id = TEST_ID;
         boolean topicExists = topicService.topicExists(topicId);
         return (!topicExists) ?
                 new ResponseEntity<>(null, HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>(postService
-                        .getPostsFromUserToTopic(id, topicId, search, page),
+                        .getPostsFromUserToTopic(topicId, search, page),
                         HttpStatus.OK);
     }
 
@@ -122,14 +120,14 @@ public class PostController {
             @PathVariable String eventId,
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
-        String id = TEST_ID;
+        String id = IdHelper.getLoggedInUserId();
         boolean eventExists = eventService.eventExists(Long.parseLong(eventId));
         return getPostsToType(eventExists, "event", eventId, id, search, page);
     }
 
     @PostMapping
     public ResponseEntity<Link> createPost(@RequestBody Post post) {
-        String id = TEST_ID;
+        String id = IdHelper.getLoggedInUserId();
         if (post.getReceiverType() == null
                 || post.getReceiverId() == null
                 || post.getTopic() == null
@@ -150,8 +148,7 @@ public class PostController {
     ) {
         if (post.getTopic() != null ||
                 post.getReceiverType() != null ||
-                post.getReceiverId() != null
-        ) {
+                post.getReceiverId() != null) {
             return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
         } else {
             Post updatedPost = postService.updateAPost(post, postId);

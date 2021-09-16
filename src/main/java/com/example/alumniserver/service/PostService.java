@@ -42,7 +42,7 @@ public class PostService {
     }
 
     public Post getPost(long postId) {
-        return repository.findPostById(postId);
+        return repository.findPostByIdOrderByDateDesc(postId);
     }
 
     public boolean isUsersPost(String userId, Post post) {
@@ -57,8 +57,8 @@ public class PostService {
         return repository.getFilteredPostsToTypeWithIdFromUser(type, receiverId, senderId, filter, page).getContent();
     }
 
-    public List<Post> getPostsFromUserToTopic(String userId, long topicId, String filter, Pageable page) {
-        return repository.getFilteredPostsToTopic(userId, topicId, filter, page).getContent();
+    public List<Post> getPostsFromUserToTopic(long topicId, String filter, Pageable page) {
+        return repository.getFilteredPostsToTopic(topicId, filter, page).getContent();
     }
 
     public Post createPost(Post post, String senderId) {
@@ -76,7 +76,7 @@ public class PostService {
     }
 
     public Post updateAPost(Post post, long postId) {
-        Post fetchedPost = repository.findPostById(postId);
+        Post fetchedPost = repository.findPostByIdOrderByDateDesc(postId);
         post.setId(postId);
         if(fetchedPost.getReceiverType().equals(post.getReceiverType())
                 && postExists(postId)) {

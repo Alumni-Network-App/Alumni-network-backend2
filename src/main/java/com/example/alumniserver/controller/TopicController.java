@@ -1,6 +1,7 @@
 package com.example.alumniserver.controller;
 
 import com.example.alumniserver.httpstatus.HttpStatusCode;
+import com.example.alumniserver.idhelper.IdHelper;
 import com.example.alumniserver.model.Topic;
 import com.example.alumniserver.model.User;
 import com.example.alumniserver.service.TopicService;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +47,7 @@ public class TopicController {
 
     @PostMapping
     public ResponseEntity<Link> postTopic(@RequestBody Topic topic) {
+        String userId = IdHelper.getLoggedInUserId();
         Topic createdTopic = service.createTopic(topic);
         return (createdTopic == null) ? new ResponseEntity<>
                 (getTopicLinkById(createdTopic.getId()), HttpStatus.CREATED)
@@ -53,7 +56,7 @@ public class TopicController {
 
     @PostMapping(value = "/{topicId}/join")
     public ResponseEntity<Link> postTopicSubscription(@PathVariable long topicId) {
-        String userId = "2";
+        String userId = IdHelper.getLoggedInUserId();
         Topic topic = service.getTopic(topicId);
         User user = userService.getUserById(userId);
         if(topic == null) {

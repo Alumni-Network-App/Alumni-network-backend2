@@ -2,13 +2,13 @@ package com.example.alumniserver.controller;
 
 
 import com.example.alumniserver.httpstatus.HttpStatusCode;
+import com.example.alumniserver.idhelper.IdHelper;
 import com.example.alumniserver.model.User;
 import com.example.alumniserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Controller
-@CrossOrigin
 @RequestMapping("/api/v1/user")
 public class UserController {
 
@@ -32,10 +31,10 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Link> getUserLink() {
-        if(System.getProperty("alumni.my.uid") == null) {
-           // System.setProperty("alumni.my.uid", SecurityContextHolder.getContext().getAuthentication().getName());
+        if(IdHelper.getLoggedInUserId() == null) {
+            IdHelper.setLoggedInUserId();
         }
-        String uid = System.getProperty("alumni.my.uid");
+        String uid = IdHelper.getLoggedInUserId();
         Link link = getUserLinkById(uid);
         return new ResponseEntity<>(link, HttpStatus.SEE_OTHER);
     }
@@ -69,8 +68,8 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Link> addUser(@RequestBody User user) {
-        if(System.getProperty("alumni.my.uid") == null) {
-           // System.setProperty("alumni.my.uid", SecurityContextHolder.getContext().getAuthentication().getName());
+        if(IdHelper.getLoggedInUserId() == null) {
+            IdHelper.setLoggedInUserId();
         }
         User addedUser = service.addUser(user);
         return new ResponseEntity<>(getUserLinkById(

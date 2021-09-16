@@ -1,6 +1,7 @@
 package com.example.alumniserver.controller;
 
 import com.example.alumniserver.httpstatus.HttpStatusCode;
+import com.example.alumniserver.idhelper.IdHelper;
 import com.example.alumniserver.model.Reply;
 import com.example.alumniserver.service.PostService;
 import com.example.alumniserver.service.ReplyService;
@@ -33,7 +34,7 @@ public class ReplyController {
 
     @GetMapping(value = "/{replyId}")
     public ResponseEntity<Reply> getReplyWithId(@PathVariable long replyId) {
-        String userId = "2";
+        String userId = IdHelper.getLoggedInUserId();
         Reply reply = service.getReplyWithId(replyId);
         return (reply.getUser().getId().equals(userId)
                 ? new ResponseEntity<>(reply,
@@ -46,7 +47,7 @@ public class ReplyController {
     public ResponseEntity<List<Reply>> getRepliesWithUserId(
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
-        String userId = "2";
+        String userId = IdHelper.getLoggedInUserId();
         List<Reply> replies = service.getRepliesWithUserId(userId, search, page);
         return new ResponseEntity<>(replies, HttpStatus.OK);
     }
@@ -65,7 +66,7 @@ public class ReplyController {
     public ResponseEntity<Link> createReply(
             @PathVariable long postId,
             @RequestBody Reply reply) {
-        String userId = "2";
+        String userId = IdHelper.getLoggedInUserId();
         if (postService.postExists(postId)) {
             Reply addedReply = service.createReply(reply, postId, userId);
             return new ResponseEntity<>(
@@ -83,7 +84,7 @@ public class ReplyController {
             @RequestBody Reply reply
     ) {
         if (service.replyExists(replyId)) {
-            String userId = "2";
+            String userId = IdHelper.getLoggedInUserId();
             Reply updateReply = service.updateReply(reply, replyId, userId);
             return new ResponseEntity<>(getReplyLinkById(updateReply.getId()),
                     statusCode.getForbiddenStatus(updateReply == null));
