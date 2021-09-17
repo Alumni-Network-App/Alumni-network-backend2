@@ -191,14 +191,16 @@ public class EventController {
 
     @PostMapping(value = "/{eventId}/rsvp")
     public ResponseEntity<Rsvp> createRsvpRecord(
-            @PathVariable("eventId") long eventId) {
+            @PathVariable("eventId") long eventId,
+            @RequestBody Rsvp rsvp) {
         String userId = IdHelper.getLoggedInUserId();
         Event event = eventService.getEvent(eventId);
 
         if (event == null)
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-
-        Rsvp rsvp = eventService.createRsvpRecord(event, userId);
+        if(rsvp == null)
+            rsvp = new Rsvp();
+        rsvp = eventService.createRsvpRecord(event, rsvp, userId);
         return new ResponseEntity<>(rsvp, statusCode.getForbiddenPostingStatus(rsvp));
     }
 
