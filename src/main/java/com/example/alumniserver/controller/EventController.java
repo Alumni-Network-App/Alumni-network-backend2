@@ -3,9 +3,7 @@ package com.example.alumniserver.controller;
 import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.idhelper.IdHelper;
 import com.example.alumniserver.model.Event;
-import com.example.alumniserver.model.Group;
 import com.example.alumniserver.model.Rsvp;
-import com.example.alumniserver.model.Topic;
 import com.example.alumniserver.service.EventService;
 import com.example.alumniserver.service.GroupService;
 import com.example.alumniserver.service.TopicService;
@@ -61,22 +59,22 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<Link> createEvent(@RequestBody Event event) {
+    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
         String userId = IdHelper.getLoggedInUserId();
         event = eventService.createEvent(event, userId);
-        return new ResponseEntity<>(getEventLinkById(event),
+        return new ResponseEntity<>(event,
                 statusCode.getForbiddenPostingStatus(event));
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Link> updateEvent(@PathVariable long id,
+    public ResponseEntity<Event> updateEvent(@PathVariable long id,
                                             @RequestBody Event event) {
         String userId = IdHelper.getLoggedInUserId();
         if (!eventService.eventExists(id))
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         else {
             Event oldEvent = eventService.updateAnEvent(event, eventService.getEvent(id), userId);
-            return new ResponseEntity<>(getEventLinkById(oldEvent),
+            return new ResponseEntity<>(oldEvent,
                     statusCode.getForbiddenStatus(oldEvent != null));
 
         }
@@ -197,25 +195,16 @@ public class EventController {
     //If the requesting user is not part of an invited group or topic, or has not been invited
     //individually, the request will result in a 403 Forbidden response.
     @PostMapping(value = "/{eventId}/rsvp")
-    public ResponseEntity<Event> createRsvpRecord(
+    public ResponseEntity<Rsvp> createRsvpRecord(
             @PathVariable("eventId") long eventId) {
-        boolean checkIfCreated;
-        String userId = "3";
+        String userId = IdHelper.getLoggedInUserId();
         Event event = eventService.getEvent(eventId);
 
         if (event == null)
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
 
-        checkIfCreated = eventService.createRsvpRecord(event, userId);
-        return new ResponseEntity<>(event, statusCode.getForbiddenStatus(checkIfCreated));
-    }
-
-    private Link getEventLinkById(Event event) {
-        if (event == null)
-            return null;
-        return linkTo(methodOn(EventController.class)
-                .getEvent(event.getId()))
-                .withSelfRel();
+        Rsvp rsvp = eventService.createRsvpRecord(event, userId);
+        return new ResponseEntity<>(rsvp, statusCode.getForbiddenPostingStatus(rsvp));
     }
 
 }
