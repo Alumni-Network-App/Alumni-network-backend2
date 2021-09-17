@@ -11,6 +11,8 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,10 +30,6 @@ public class Event {
 
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated = LocalDateTime.now();
-
-    @ManyToOne
-    @JoinColumn(name = "topic_id")
-    private Topic topic;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "created_by")
@@ -52,21 +50,34 @@ public class Event {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @ManyToMany(mappedBy = "events")
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name="event_group",
+            joinColumns = {@JoinColumn(name = "event_id")},
+            inverseJoinColumns = {@JoinColumn(name = "group_id")}
+    )
     private List<Group> groups;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
-            name="RSVP",
+            name="event_topic_invite",
             joinColumns = {@JoinColumn(name = "event_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+            inverseJoinColumns = {@JoinColumn(name = "topic_id")}
     )
-    private List<User> userRsvp;
+    private Set<Topic> topics;
 
+    @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(mappedBy = "events", cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name="event_invite",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "event_id")}
+    )
     private List<User> invitedUsers;
 
     @OneToMany(mappedBy = "event")
@@ -105,10 +116,13 @@ public class Event {
         }
     }
 
-    @JsonGetter("topic")
-    public String topic() {
-        if(topic != null) {
-            return "/api/v1/topic/" + topic.getId();
+    @JsonGetter("topics")
+    public List<String> topics() {
+        if(topics != null) {
+            return topics.stream()
+                    .map(topic -> {
+                        return "/api/v1/topic/" + topic.getId();
+                    }).collect(Collectors.toList());
         } else {
             return null;
         }
@@ -123,15 +137,32 @@ public class Event {
     }
 
     public boolean isGroupInvited(long groupId) {
-        for (Group group : groups) {
-            if(group.getId() == groupId)
-                return true;
+        if(groups != null) {
+            for (Group group : groups) {
+                if (group.getId() == groupId)
+                    return true;
+            }
         }
         return false;
     }
 
     public boolean isTopicInvited(long topicId) {
-        return topic != null && topic.getId() == topicId;
+        if(topics != null) {
+            for (Topic topic : topics) {
+                if (topic.getId() == topicId)
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isUserSubscribedToAnyTopic(String userId) {
+        if(topics != null) {
+            for(Topic topic : topics)
+                if(topic.isUserSubscribed(userId))
+                    return true;
+        }
+        return false;
     }
 
     public boolean isUserCreator(String userId){
@@ -139,7 +170,11 @@ public class Event {
     }
 
     public boolean inviteGroup(Group group, String userId){
-        if(!isGroupInvited(group.getId()) && (!group.isPrivate() || group.isUserMember(userId))){
+        if(groups == null) {
+            groups = new ArrayList<>();
+            return groups.add(group);
+        }
+        else if(!isGroupInvited(group.getId()) && (!group.isPrivate() || group.isUserMember(userId))){
             groups.add(group);
             return true;
         }else{
@@ -147,58 +182,47 @@ public class Event {
         }
     }
 
+    public boolean inviteTopic(Topic topic, String userId){
+        if(topics == null)
+            topics = new HashSet<>();
+        if (!topic.isUserSubscribed(userId)) return false;
+        return topics.add(topic);
+
+    }
+
     public boolean deleteGroupInvite(Group group){
-        return groups.remove(group);
+        return groups != null && groups.remove(group);
     }
 
     public Group getGroupInvite(int groupNumber) {
         return groups.get(groupNumber);
     }
 
-    public void setGroupInvite(Group group, int groupNumber) {
-        if(groups != null)
-            groups.set(groupNumber, group);
-    }
-
-    public boolean setInviteTopic(Topic topic){
-        if(this.topic==null){
-            this.topic=topic;
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-    public boolean deleteInviteTopic(Topic topic){
-        if(this.topic==topic){
-            this.topic=null;
-            return true;
-        }else{
-            return false;
-        }
+    public boolean deleteTopicInvite(Topic topic){
+        return topics != null && topics.remove(topic);
     }
 
     public boolean setUserInvite(User user){
-        if(!isUserInvited(user.getId())){
-            invitedUsers.add(user);
-            return true;
-        }else{
-            return false;
-        }
+        if (invitedUsers == null)
+            invitedUsers = new ArrayList<>();
+        if (isUserInvited(user.getId())) return false;
+        return invitedUsers.add(user);
     }
 
     public boolean deleteUserInvite(User user){
-        if(isUserInvited(user.getId())){
-            invitedUsers.remove(user);
-            return true;
-        }else{
-            return false;
-        }
+        return invitedUsers != null
+                && isUserInvited(user.getId())
+                && invitedUsers.remove(user);
     }
 
     @JsonIgnore
     public int getNumberOfGroupInvites() {
         return (groups == null) ? 0 : groups.size();
+    }
+
+    @JsonIgnore
+    public int getNumberOfTopicInvites() {
+        return (topics == null) ? 0 : topics.size();
     }
 
     public boolean isUserPartOfInvitedGroups(User user) {

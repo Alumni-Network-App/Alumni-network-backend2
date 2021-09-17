@@ -2,14 +2,14 @@ package com.example.alumniserver.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.annotation.processing.Generated;
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
@@ -34,9 +34,8 @@ public class Topic {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @OneToMany
-    @JoinColumn(name = "topic_id")
-    private List<Event> events;
+    @ManyToMany(mappedBy = "topics")
+    private Set<Event> events;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
@@ -46,10 +45,10 @@ public class Topic {
     @Column(length = 1000)
     private String description;
 
-    public boolean isUserSubscribed(User user) {
+    public boolean isUserSubscribed(String userId) {
         if(users != null) {
             for (User subbedUser : users) {
-                if (subbedUser.getId().equals(user.getId()))
+                if (subbedUser.getId().equals(userId))
                     return true;
             }
         }
@@ -58,7 +57,7 @@ public class Topic {
 
     public boolean addEventToTopic(Event event) {
         if(events == null)
-            events = new ArrayList<>();
+            events = new HashSet<>();
         return events.add(event);
     }
 

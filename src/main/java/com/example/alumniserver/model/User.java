@@ -88,12 +88,7 @@ public class User {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany
-    @JoinTable(
-            name="event_invite",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "event_id")}
-    )
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "invitedUsers")
     private List<Event> events;
 
     @Getter(AccessLevel.NONE)

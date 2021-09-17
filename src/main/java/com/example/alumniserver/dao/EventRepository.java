@@ -12,13 +12,17 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
     Event findEventById(long id);
-//TODO Fix this
+
     @Query("SELECT DISTINCT e FROM Event e " +
-            "LEFT JOIN e.topic.users u " +
+            "LEFT JOIN e.topics t " +
+            "LEFT JOIN t.users tu " +
             "INNER JOIN e.invitedUsers eiu " +
             "LEFT JOIN e.groups g " +
             "LEFT JOIN g.users gu " +
-            "WHERE (e.user.id = :userId) OR (e.topic IS NOT NULL AND u.id = :userId) OR (eiu.id = :userId) OR (e.groups.size > 0 AND gu.id = :userId) " +
+            "WHERE (e.user.id = :userId) OR " +
+            "(e.topics.size > 0 AND tu.id = :userId) OR " +
+            "(eiu.id = :userId) OR " +
+            "(e.groups.size > 0 AND gu.id = :userId) " +
             "ORDER BY e.id")
     List<Event> selectUserSubscribedEvents(@Param("userId") String userId);
 
