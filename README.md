@@ -250,3 +250,91 @@ Backend: https://alumni-network-backend.herokuapp.com/
     - 403 FORBIDDEN -> If the logged in user attempts to change their name.
     - 400 BAD REQUEST -> If the specified user id doesn't link to a user.
     - 200 OK
+
+#### Event
+- GET /api/v1/event
+  - Returns a list of events which the user in some way is connected to (either creator or one of the invited groups / topics / users)
+  - Statuscodes
+    - 200 OK
+
+- GET /api/v1/event/{eventId}
+  - Returns a specific event with the specified id which the user is creator of.
+  - Statuscodes
+    - 403 FORBIDDEN -> If the logged in user attempts to access information about a specific event which they aren't creator of.
+    - 200 OK
+
+- POST /api/v1/event
+  - Body (Required)
+    - name -> Name of the event.
+    - description -> Describes the event.
+    - bannerImg -> An image url for the banner of an event.
+    - startTime -> When the event start, please provide both a date and time.
+    - endTime -> When the event ends, please provide a data, and time.
+    - One of the following -> groups, topics and / or invitedUsers.
+  - Status codes
+    - 403 FORBIDDEN -> If the user attempts to invite a group or topic for which the user is not a member of.
+    - 400 BAD REQUEST -> If topics, groups or invitedUsers isn't specified.
+    - 201 CREATED
+
+- PUT /api/v1/event/{eventId}
+  - Body (Atleast one of the below are required)
+    - name -> Name of the event.
+    - description -> Describes the event.
+    - bannerImg -> An image url for the banner of an event.
+    - startTime -> When the event start, please provide both a date and time.
+    - endTime -> When the event ends, please provide a data, and time.
+  - Status codes
+    - 403 FORBIDDEN -> If the user attempts to update an event for which they aren't the creator.
+    - 400 BAD REQUEST -> if The event doesn't exist.
+    - 200 OK
+
+- POST /api/v1/event/{eventId}/invite/group/{groupId}
+  - Creates an event invite for a specific group and then returns the event.
+  - Status codes
+    - 403 FORBIDDEN -> If the user attempts to invite a group for which the user is not a member or if the user is not the creator.
+    - 400 BAD REQUEST -> If the specified event or group doesn't exist, can also happen when the group is already invited.
+    - 201 CREATED
+
+- DELETE /api/v1/event/{eventId}/invite/group/{groupId}
+  - Deletes an event invite for a specific group and then returns the event.
+  - Status codes
+    - 403 FORBIDDEN -> If the user attempts to delete a group for which the user is not a member or if the user is not the creator.
+    - 400 BAD REQUEST -> If the specified event or group doesn't exist, can also happen when the group is not invited.
+    - 200 CREATED
+
+- POST /api/v1/event/{eventId}/invite/user/{userId}
+  - Creates an event invite for a specific user and then returns the event.
+  - Status codes
+    - 403 FORBIDDEN -> If the user is not the creator.
+    - 400 BAD REQUEST -> If the specified event or user doesn't exist, can also happen when the user is already invited.
+    - 201 CREATED
+
+- DELETE /api/v1/event/{eventId}/invite/user/{userId}
+  - Deletes an event invite for a specific user and then returns the event.
+  - Status codes
+    - 403 FORBIDDEN -> If the user is not the creator.
+    - 400 BAD REQUEST -> If the specified event or user doesn't exist, can also happen when the user is not invited.
+    - 200 CREATED
+
+- POST /api/v1/event/{eventId}/invite/topic/{topicId}
+  - Creates an event invite for a specific topic and then returns the event.
+  - Status codes
+    - 403 FORBIDDEN -> If the user is not the creator or if the user is not subscribed to the topic.
+    - 400 BAD REQUEST -> If the specified event or topic doesn't exist, can also happen when the topic is already invited.
+    - 201 CREATED
+
+- DELETE /api/v1/event/{eventId}/invite/topic/{topicId}
+  - Deletes an event invite for a specific topic and then returns the event.
+  - Status codes
+    - 403 FORBIDDEN -> If the user is not the creator or if the user is not subscribed to the topic.
+    - 400 BAD REQUEST -> If the specified event or topic doesn't exist, can also happen when the topic is not invited.
+    - 200 CREATED
+
+- POST /api/v1/event/{eventId}/rsvp
+  - Creates a rsvp for a specific event.
+  - Body (required)
+    - guestCount -> The number of guests the logged in user plans to bring to the event.
+  - Status codes
+    - 403 FORBIDDEN -> If the user is not part of the invited guests of the specified event.
+    - 400 BAD REQUEST -> If the specified event id doesn't connect to an event.
+    - 201 CREATED
