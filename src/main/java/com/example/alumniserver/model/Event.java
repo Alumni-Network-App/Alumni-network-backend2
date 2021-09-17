@@ -52,17 +52,17 @@ public class Event {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name="event_group",
             joinColumns = {@JoinColumn(name = "event_id")},
             inverseJoinColumns = {@JoinColumn(name = "group_id")}
     )
-    private List<Group> groups;
+    private Set<Group> groups;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name="event_topic_invite",
             joinColumns = {@JoinColumn(name = "event_id")},
@@ -72,13 +72,13 @@ public class Event {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(
             name="event_invite",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "event_id")}
+            joinColumns = {@JoinColumn(name = "event_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
     )
-    private List<User> invitedUsers;
+    private Set<User> invitedUsers;
 
     @OneToMany(mappedBy = "event")
     private List<Rsvp> rsvps;
@@ -171,15 +171,12 @@ public class Event {
 
     public boolean inviteGroup(Group group, String userId){
         if(groups == null) {
-            groups = new ArrayList<>();
+            groups = new HashSet<>();
             return groups.add(group);
         }
-        else if(!isGroupInvited(group.getId()) && (!group.isPrivate() || group.isUserMember(userId))){
-            groups.add(group);
-            return true;
-        }else{
-            return false;
-        }
+        return ((!group.isPrivate()
+                || group.isUserMember(userId))
+                && groups.add(group));
     }
 
     public boolean inviteTopic(Topic topic, String userId){
@@ -195,7 +192,7 @@ public class Event {
     }
 
     public Group getGroupInvite(int groupNumber) {
-        return groups.get(groupNumber);
+        return groups.stream().toList().get(groupNumber);
     }
 
     public boolean deleteTopicInvite(Topic topic){
@@ -204,14 +201,13 @@ public class Event {
 
     public boolean setUserInvite(User user){
         if (invitedUsers == null)
-            invitedUsers = new ArrayList<>();
+            invitedUsers = new HashSet<>();
         if (isUserInvited(user.getId())) return false;
         return invitedUsers.add(user);
     }
 
     public boolean deleteUserInvite(User user){
         return invitedUsers != null
-                && isUserInvited(user.getId())
                 && invitedUsers.remove(user);
     }
 

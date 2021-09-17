@@ -50,8 +50,7 @@ public class EventService {
             return (isValidGroupInvites(event, groupInvites, userId)) ?
                     repository.save(event) : null;
 
-        return (event.getNumberOfTopicInvites() > 0) ?
-                repository.save(event) : null;
+        return (event.getNumberOfTopicInvites() > 0) ? repository.save(event) : null;
     }
 
     private boolean isValidGroupInvites(Event event, int groupInvites, String userId) {
@@ -92,8 +91,7 @@ public class EventService {
         if (!event.isUserCreator(userId))
             return null;
         Group group = groupService.getGroup(groupId);
-        return (event.inviteGroup(group, userId)
-                && groupService.addEventToGroup(event, group) != null)
+        return event.inviteGroup(group, userId)
                 ? repository.save(event) : null;
     }
 
