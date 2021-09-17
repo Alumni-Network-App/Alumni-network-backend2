@@ -61,6 +61,8 @@ public class EventController {
     @PostMapping
     public ResponseEntity<Event> createEvent(@RequestBody Event event) {
         String userId = IdHelper.getLoggedInUserId();
+        if(event.getNumberOfTopicInvites() == 0 && event.getNumberOfGroupInvites() == 0)
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         event = eventService.createEvent(event, userId);
         return new ResponseEntity<>(event,
                 statusCode.getForbiddenPostingStatus(event));
@@ -187,13 +189,6 @@ public class EventController {
                 statusCode.getForbiddenStatus(event != null));
     }
 
-    //TODO fixa denna sen när tabellen är klar
-    //POST /event/:event_id/rsvp
-    //Create a new event rsvp record. Accepts appropriate parameters in the request body
-    //as application/json. By default, user_id is taken as being that of the requesting user
-    //and event_id is provided in the path.
-    //If the requesting user is not part of an invited group or topic, or has not been invited
-    //individually, the request will result in a 403 Forbidden response.
     @PostMapping(value = "/{eventId}/rsvp")
     public ResponseEntity<Rsvp> createRsvpRecord(
             @PathVariable("eventId") long eventId) {

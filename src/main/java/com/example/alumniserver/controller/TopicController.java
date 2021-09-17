@@ -61,7 +61,7 @@ public class TopicController {
         if(topic == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
-        return (topic.isUserSubscribed(user)) ? new ResponseEntity<>(
+        return (topic.isUserSubscribed(userId)) ? new ResponseEntity<>(
                 getTopicLinkById(topic), HttpStatus.SEE_OTHER)
                 : new ResponseEntity<>(getTopicLinkById(
                         service.createTopicSubscription(topic, user)),

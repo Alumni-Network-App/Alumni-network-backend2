@@ -63,7 +63,6 @@ CREATE TABLE group_member (
 CREATE TABLE "event" (
     "event_id" int   PRIMARY KEY,
     "last_updated" date,
-    "topic_id" int   NOT NULL,
     "created_by" varchar   NOT NULL,
     "name" varchar   NOT NULL,
     "description" varchar(1000)   NOT NULL,
@@ -89,6 +88,17 @@ CREATE TABLE event_invite (
 	CONSTRAINT fk_usertable
 		FOREIGN KEY("user_id")
 			REFERENCES usertable("user_id"),
+	CONSTRAINT fk_event
+		FOREIGN KEY("event_id")
+			REFERENCES "event"("event_id")
+);
+
+CREATE TABLE event_topic_invite (
+	"topic_id" int NOT NULL,
+	"event_id" int NOT NULL,
+	CONSTRAINT fk_topic
+		FOREIGN KEY("topic_id")
+			REFERENCES topic("topic_id"),
 	CONSTRAINT fk_event
 		FOREIGN KEY("event_id")
 			REFERENCES "event"("event_id")

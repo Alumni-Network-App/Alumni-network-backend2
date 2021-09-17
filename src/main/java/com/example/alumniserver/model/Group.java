@@ -34,12 +34,7 @@ public class Group {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany
-    @JoinTable(
-            name="event_group",
-            joinColumns = {@JoinColumn(name = "group_id")},
-            inverseJoinColumns = {@JoinColumn(name = "event_id")}
-    )
+    @ManyToMany(mappedBy = "groups")
     private List<Event> events;
 
 

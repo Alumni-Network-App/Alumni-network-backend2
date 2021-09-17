@@ -44,29 +44,14 @@ public class EventService {
         int groupInvites = event.getNumberOfGroupInvites();
         User user = userService.getUserById(userId);
         event.setUser(user);
-        if (groupInvites > 0) {
-            if (isValidGroupInvites(event, groupInvites, userId)) {
-                event = repository.save(event);
-                updateRelations(event, user, groupInvites);
-                return event;
-            } else
-                return null;
-        } else if (event.getTopic() != null) {
-            event = repository.save(event);
-            addRelationWithTopic(event);
-            addRelationWithUser(event, user);
-            return event;
-        } else
-            return null;
-    }
+        event.setUserInvite(user);
 
-    private void addRelationWithTopic(Event event) {
-        topicService.addEventToTopic(
-                event, topicService.getTopic(event.getTopic().getId()));
-    }
+        if (groupInvites > 0)
+            return (isValidGroupInvites(event, groupInvites, userId)) ?
+                    repository.save(event) : null;
 
-    private void addRelationWithUser(Event event, User user) {
-        userService.addEventToUser(event, user);
+        return (event.getNumberOfTopicInvites() > 0) ?
+                repository.save(event) : null;
     }
 
     private boolean isValidGroupInvites(Event event, int groupInvites, String userId) {
@@ -74,18 +59,8 @@ public class EventService {
             Group group = groupService.getGroup(event.getGroupInvite(i).getId());
             if (group == null || !group.isUserMember(userId))
                 return false;
-            event.setGroupInvite(group, i);
         }
         return true;
-    }
-
-    private void updateRelations(Event event, User user, int groupInvites) {
-        if (groupInvites > 0)
-            for (int i = 0; i < groupInvites; i++)
-                groupService.addEventToGroup(event, event.getGroupInvite(i));
-        if (event.topic() != null)
-            addRelationWithTopic(event);
-        addRelationWithUser(event, user);
     }
 
     public Event updateAnEvent(Event newEvent, Event oldEvent, String userId) {
@@ -135,7 +110,7 @@ public class EventService {
         if (!event.isUserCreator(userId))
             return null;
         Topic topic = topicService.getTopic(topicId);
-        return (event.setInviteTopic(topic)
+        return (event.inviteTopic(topic, userId)
                 && topicService.addEventToTopic(event, topic) != null)
                 ? repository.save(event) : null;
     }
@@ -144,7 +119,7 @@ public class EventService {
         if (!event.isUserCreator(userId))
             return null;
         Topic topic = topicService.getTopic(topicId);
-        return (event.deleteInviteTopic(topic)
+        return (event.deleteTopicInvite(topic)
                 && topicService.deleteEventFromTopic(event, topic) != null)
                 ? repository.save(event) : null;
     }
@@ -183,7 +158,7 @@ public class EventService {
     }
 
     private boolean isUserInvitedToEvent(User user, Event event) {
-        return (event.getTopic() != null && event.getTopic().isUserSubscribed(user))
+        return (event.isUserSubscribedToAnyTopic(user.getId()))
                 || event.isUserPartOfInvitedGroups(user) || event.isUserInvited(user.getId()) || event.isUserCreator(user.getId());
     }
 }
