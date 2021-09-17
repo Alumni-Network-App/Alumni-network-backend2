@@ -1,14 +1,11 @@
 package com.example.alumniserver.model;
 
-import lombok.AccessLevel;
+import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.sql.Date;
-import java.util.List;
 
 
 @Entity
@@ -18,7 +15,7 @@ import java.util.List;
 public class Rsvp {
 
     @EmbeddedId
-    private RsvpKey id;
+    private RsvpId rsvpId;
 
     @Column(name = "guest_count")
     private int guestCount;
@@ -26,13 +23,21 @@ public class Rsvp {
     @Column(name = "last_updated")
     private LocalDateTime lastUpdated = LocalDateTime.now();
 
-    @ManyToOne
-    @MapsId("userId")
-    @JoinColumn(name = "user_id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
-    @ManyToOne
-    @MapsId("eventId")
-    @JoinColumn(name = "event_id")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "event_id", insertable = false, updatable = false)
     private Event event;
+
+    @JsonGetter("user")
+    public String user() {
+        return(user != null) ? "/api/v1/user/" + user.getId() : null;
+    }
+
+    @JsonGetter("event")
+    public String event() {
+        return(event != null) ? "/api/v1/event/" + event.getId() : null;
+    }
 }

@@ -1,10 +1,7 @@
 package com.example.alumniserver.service;
 
 import com.example.alumniserver.dao.EventRepository;
-import com.example.alumniserver.model.Event;
-import com.example.alumniserver.model.Group;
-import com.example.alumniserver.model.Topic;
-import com.example.alumniserver.model.User;
+import com.example.alumniserver.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,16 +13,19 @@ public class EventService {
     private final UserService userService;
     private final GroupService groupService;
     private final TopicService topicService;
+    private final RsvpService rsvpService;
 
     @Autowired
     public EventService(EventRepository repository,
                         UserService userService,
                         GroupService groupService,
-                        TopicService topicService) {
+                        TopicService topicService,
+                        RsvpService rsvpService) {
         this.repository = repository;
         this.userService = userService;
         this.groupService = groupService;
         this.topicService = topicService;
+        this.rsvpService = rsvpService;
     }
 
     public boolean eventExists(long eventId) {
@@ -72,7 +72,7 @@ public class EventService {
     private boolean isValidGroupInvites(Event event, int groupInvites, String userId) {
         for (int i = 0; i < groupInvites; i++) {
             Group group = groupService.getGroup(event.getGroupInvite(i).getId());
-            if (!group.isUserMember(userId))
+            if (group == null || !group.isUserMember(userId))
                 return false;
             event.setGroupInvite(group, i);
         }
@@ -167,17 +167,23 @@ public class EventService {
                 ? repository.save(event) : null;
     }
 
-    //TODO fixa denna skiten
-    public boolean createRsvpRecord(Event event, String userId) {
+
+    public Rsvp createRsvpRecord(Event event, String userId) {
         User user = userService.getUserById(userId);
-        boolean isUserPartOfInvitedTopic = event.getTopic().isUserSubscribed(user);
+        if (isUserInvitedToEvent(user, event)) {
+            Rsvp rsvp = new Rsvp();
+            rsvp.setRsvpId(new RsvpId(user.getId(), event.getId()));
+            rsvp.setEvent(event);
+            rsvp.setUser(user);
+            rsvp.setGuestCount(1);
+            return rsvpService.saveRsvp(rsvp);
+        } else
+            return null;
 
-        if (isUserPartOfInvitedTopic) {
-            repository.save(event);
-            return true;
-        } else {
-            return false;
-        }
+    }
 
+    private boolean isUserInvitedToEvent(User user, Event event) {
+        return (event.getTopic() != null && event.getTopic().isUserSubscribed(user))
+                || event.isUserPartOfInvitedGroups(user) || event.isUserInvited(user.getId()) || event.isUserCreator(user.getId());
     }
 }

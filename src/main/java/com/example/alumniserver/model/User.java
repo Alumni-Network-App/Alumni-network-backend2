@@ -84,7 +84,7 @@ public class User {
     }
 
     @OneToMany(mappedBy = "user")
-    private Set<Rsvp> rsvps;
+    private List<Rsvp> rsvps;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)

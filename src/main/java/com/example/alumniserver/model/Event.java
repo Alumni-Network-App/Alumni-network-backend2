@@ -27,7 +27,7 @@ public class Event {
     private long id;
 
     @Column(name = "last_updated")
-    private LocalDateTime lastUpdated = LocalDateTime.now().withNano(0);
+    private LocalDateTime lastUpdated = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "topic_id")
@@ -70,7 +70,7 @@ public class Event {
     private List<User> invitedUsers;
 
     @OneToMany(mappedBy = "event")
-    private Set<Rsvp> rsvps;
+    private List<Rsvp> rsvps;
 
     @JsonGetter("groups")
     public List<String> groups() {
@@ -201,15 +201,13 @@ public class Event {
         return (groups == null) ? 0 : groups.size();
     }
 
-    //TODO Kommer behöva göras om, behöver vara sin egna modell + ha ett repo och service. (ingen kontroller behövs)
-    //TODO Sen måste du kolla om user är med i en av de invitna grupperna / subscribad till invitad topic.
-    public boolean createEventRSVP(Group group, Topic topic, User user, boolean isUserPartOfInvitedTopic){
-
-        if(isUserInvited(user.getId()) || (isGroupInvited(group.getId()) && group.isUserMember(user.getId())) || isUserPartOfInvitedTopic){
-            userRsvp.add(user);
-            return true;
-        } else {
-            return false;
+    public boolean isUserPartOfInvitedGroups(User user) {
+        if(groups != null){
+            for(Group group : groups)
+                if(group.isUserMember(user.getId()))
+                    return true;
         }
+        return false;
+
     }
 }
