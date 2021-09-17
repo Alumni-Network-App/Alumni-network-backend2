@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -89,7 +90,7 @@ public class User {
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "invitedUsers")
-    private List<Event> events;
+    private Set<Event> events;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
@@ -151,7 +152,7 @@ public class User {
 
     public boolean addEventToUser(Event event) {
         if(events == null)
-            events = new ArrayList<>();
+            events = new HashSet<>();
         return events.add(event);
     }
 

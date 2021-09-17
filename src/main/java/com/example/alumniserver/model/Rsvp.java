@@ -1,11 +1,13 @@
 package com.example.alumniserver.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 
 @Entity
@@ -39,5 +41,21 @@ public class Rsvp {
     @JsonGetter("event")
     public String event() {
         return(event != null) ? "/api/v1/event/" + event.getId() : null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == this)
+            return true;
+        else if(!(o instanceof Rsvp))
+            return false;
+
+        Rsvp rsvp = (Rsvp)o;
+        return (rsvp.rsvpId.equals(this.rsvpId));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(rsvpId);
     }
 }

@@ -34,7 +34,7 @@ public class Topic {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(mappedBy = "topics")
+    @ManyToMany(mappedBy = "topics", cascade = CascadeType.ALL)
     private Set<Event> events;
 
     @Getter(AccessLevel.NONE)

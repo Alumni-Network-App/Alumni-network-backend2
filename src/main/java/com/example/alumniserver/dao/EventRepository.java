@@ -20,9 +20,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "LEFT JOIN e.groups g " +
             "LEFT JOIN g.users gu " +
             "WHERE (e.user.id = :userId) OR " +
-            "(e.topics.size > 0 AND tu.id = :userId) OR " +
+            "(size(e.topics) > 0 AND tu.id = :userId) OR " +
             "(eiu.id = :userId) OR " +
-            "(e.groups.size > 0 AND gu.id = :userId) " +
+            "(size(e.groups) > 0 AND gu.id = :userId) " +
             "ORDER BY e.id")
     List<Event> selectUserSubscribedEvents(@Param("userId") String userId);
 
