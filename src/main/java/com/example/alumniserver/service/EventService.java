@@ -141,14 +141,14 @@ public class EventService {
     }
 
 
-    public Rsvp createRsvpRecord(Event event, String userId) {
+    public Rsvp createRsvpRecord(Event event,Rsvp rsvp, String userId) {
         User user = userService.getUserById(userId);
         if (isUserInvitedToEvent(user, event)) {
-            Rsvp rsvp = new Rsvp();
             rsvp.setRsvpId(new RsvpId(user.getId(), event.getId()));
             rsvp.setEvent(event);
             rsvp.setUser(user);
-            rsvp.setGuestCount(1);
+            if(rsvp.getGuestCount() < 1)
+                rsvp.setGuestCount(1);
             return rsvpService.saveRsvp(rsvp);
         } else
             return null;
