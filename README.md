@@ -1,9 +1,18 @@
 # Alumni-network-backend
 
-## Deploys
+## Deploys (Using Heroku)
 Frontend: https://alumni-network-deluxe.herokuapp.com/
 
 Backend: https://alumni-network-backend.herokuapp.com/
+
+## Technologies
+
+- Postgresql - Database
+- Hibernate
+- Gradle
+- JUnit - Unit testing framework
+- Postman - endpoint testing
+- Spring boot
 
 ## Api
 
