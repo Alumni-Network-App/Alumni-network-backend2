@@ -8,16 +8,12 @@ import com.example.alumniserver.service.EventService;
 import com.example.alumniserver.service.GroupService;
 import com.example.alumniserver.service.TopicService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Controller
 @RequestMapping("/api/v1/event")
@@ -150,7 +146,8 @@ public class EventController {
             Event event = eventService.getEvent(eventId);
             if (event.isTopicInvited(topicId)) {
                 event = eventService.deleteEventTopicInvite(userId, event, topicId);
-                return new ResponseEntity<>(event, statusCode.getForbiddenStatus(event != null));
+                return new ResponseEntity<>(event,
+                        statusCode.getForbiddenStatus(event != null));
             }
         }
 
@@ -198,8 +195,6 @@ public class EventController {
 
         if (event == null)
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        if(rsvp == null)
-            rsvp = new Rsvp();
         rsvp = eventService.createRsvpRecord(event, rsvp, userId);
         return new ResponseEntity<>(rsvp, statusCode.getForbiddenPostingStatus(rsvp));
     }

@@ -221,6 +221,11 @@ public class Event {
         return (topics == null) ? 0 : topics.size();
     }
 
+    @JsonIgnore
+    public int getTotalInvitedUsers() {
+        return (invitedUsers == null) ? 0 : invitedUsers.size();
+    }
+
     public boolean isUserPartOfInvitedGroups(User user) {
         if(groups != null){
             for(Group group : groups)
