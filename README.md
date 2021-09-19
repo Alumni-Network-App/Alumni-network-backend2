@@ -1,4 +1,4 @@
-# Alumni-network-backend
+# Experis Case - Alumni network (API)
 
 ## Deploys (Using Heroku)
 Frontend: https://alumni-network-deluxe.herokuapp.com/
