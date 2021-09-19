@@ -42,15 +42,21 @@ public class EventService {
 
     public Event createEvent(Event event, String userId) {
         int groupInvites = event.getNumberOfGroupInvites();
-        User user = userService.getUserById(userId);
-        event.setUser(user);
-        event.setUserInvite(user);
+        addUserRelationToEvent(userId, event);
 
         if (groupInvites > 0)
             return (isValidGroupInvites(event, groupInvites, userId)) ?
                     repository.save(event) : null;
 
-        return (event.getNumberOfTopicInvites() > 0) ? repository.save(event) : null;
+        return (event.getNumberOfTopicInvites() > 0
+                || event.getTotalInvitedUsers() > 0) ?
+                repository.save(event) : null;
+    }
+
+    private void addUserRelationToEvent(String userId, Event event) {
+        User user = userService.getUserById(userId);
+        event.setUser(user);
+        event.setUserInvite(user);
     }
 
     private boolean isValidGroupInvites(Event event, int groupInvites, String userId) {
