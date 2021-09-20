@@ -41,39 +41,42 @@ public class TopicController {
     }
 
     @GetMapping(value = "/{topicId}")
-    public ResponseEntity<Topic> getTopic(@PathVariable long topicId) {
+    public ResponseEntity<Topic> getTopic(@PathVariable long topicId,
+                                          @RequestHeader("Authorization") String auth) {
         Topic topic = service.getTopic(topicId);
         return new ResponseEntity<>(topic, status.getBadRequestStatus(topic));
     }
 
     @PostMapping
-    public ResponseEntity<Link> postTopic(@RequestBody Topic topic) {
-        String userId = idHelper.getLoggedInUserId();
+    public ResponseEntity<Link> postTopic(@RequestBody Topic topic,
+                                          @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
         topic = service.createTopic(topic, userId);
         return new ResponseEntity<>
-                (getTopicLinkById(topic), status.getForbiddenPostingStatus(topic));
+                (getTopicLinkById(topic, auth), status.getForbiddenPostingStatus(topic));
     }
 
     @PostMapping(value = "/{topicId}/join")
-    public ResponseEntity<Link> postTopicSubscription(@PathVariable long topicId) {
-        String userId = idHelper.getLoggedInUserId();
+    public ResponseEntity<Link> postTopicSubscription(@PathVariable long topicId,
+                                                      @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
         Topic topic = service.getTopic(topicId);
         User user = userService.getUserById(userId);
         if(topic == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         return (topic.isUserSubscribed(userId)) ? new ResponseEntity<>(
-                getTopicLinkById(topic), HttpStatus.SEE_OTHER)
+                getTopicLinkById(topic, auth), HttpStatus.SEE_OTHER)
                 : new ResponseEntity<>(getTopicLinkById(
-                        service.createTopicSubscription(topic, user)),
+                        service.createTopicSubscription(topic, user), auth),
                         HttpStatus.CREATED);
 
     }
 
-    private Link getTopicLinkById(Topic topic) {
+    private Link getTopicLinkById(Topic topic, String auth) {
         return (topic == null) ? null :
         linkTo(methodOn(TopicController.class)
-                .getTopic(topic.getId()))
+                .getTopic(topic.getId(), auth))
                 .withSelfRel();
     }
 
