@@ -55,6 +55,9 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable String userId) {
+        if (IdHelper.getLoggedInUserId() == null) {
+            IdHelper.setLoggedInUserId();
+        }
         User user = service.getUserById(userId);
         return new ResponseEntity<>(
                 user, httpStatusCode.getBadRequestStatus(user)
