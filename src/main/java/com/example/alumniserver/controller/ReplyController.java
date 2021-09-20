@@ -34,8 +34,9 @@ public class ReplyController {
     }
 
     @GetMapping(value = "/{replyId}")
-    public ResponseEntity<Reply> getReplyWithId(@PathVariable long replyId) {
-        String userId = idHelper.getLoggedInUserId();
+    public ResponseEntity<Reply> getReplyWithId(@PathVariable long replyId,
+                                                @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
         Reply reply = service.getReplyWithId(replyId);
         return (reply.getUser().getId().equals(userId)
                 ? new ResponseEntity<>(reply,
@@ -47,8 +48,9 @@ public class ReplyController {
     @GetMapping(value = "/user")
     public ResponseEntity<List<Reply>> getRepliesWithUserId(
             @RequestParam(required = false, defaultValue = "") String search,
+            @RequestHeader("Authorization") String auth,
             Pageable page) {
-        String userId = idHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId(auth);
         List<Reply> replies = service.getRepliesWithUserId(userId, search, page);
         return new ResponseEntity<>(replies, HttpStatus.OK);
     }
@@ -66,12 +68,13 @@ public class ReplyController {
     @PostMapping(value = "/post/{postId}")
     public ResponseEntity<Link> createReply(
             @PathVariable long postId,
-            @RequestBody Reply reply) {
-        String userId = idHelper.getLoggedInUserId();
+            @RequestBody Reply reply,
+            @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
         if (postService.postExists(postId)) {
             Reply addedReply = service.createReply(reply, postId, userId);
             return new ResponseEntity<>(
-                    getReplyLinkById(addedReply.getId()),
+                    getReplyLinkById(addedReply.getId(), auth),
                     statusCode.getForbiddenPostingStatus(addedReply));
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -82,21 +85,22 @@ public class ReplyController {
     @PutMapping(value = "/{replyId}")
     public ResponseEntity<Link> updateReply(
             @PathVariable long replyId,
-            @RequestBody Reply reply
+            @RequestBody Reply reply,
+            @RequestHeader("Authorization") String auth
     ) {
         if (service.replyExists(replyId)) {
-            String userId = idHelper.getLoggedInUserId();
+            String userId = idHelper.getLoggedInUserId(auth);
             Reply updateReply = service.updateReply(reply, replyId, userId);
-            return new ResponseEntity<>(getReplyLinkById(updateReply.getId()),
+            return new ResponseEntity<>(getReplyLinkById(updateReply.getId(), auth),
                     statusCode.getForbiddenStatus(updateReply == null));
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
-    private Link getReplyLinkById(long replyId) {
+    private Link getReplyLinkById(long replyId, String auth) {
         return linkTo(methodOn(ReplyController.class)
-                .getReplyWithId(replyId))
+                .getReplyWithId(replyId, auth))
                 .withSelfRel();
     }
 

@@ -36,14 +36,16 @@ public class GroupController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Group>> getGroups(Pageable page, @RequestParam(required = false, defaultValue = "") String name) {
-        String userId = idHelper.getLoggedInUserId();
+    public ResponseEntity<List<Group>> getGroups(Pageable page,
+                                                 @RequestParam(required = false, defaultValue = "") String name,
+                                                 @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
         return new ResponseEntity<>(service.getGroups(userId, name, page), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{groupId}")
-    public ResponseEntity<Group> getGroup(@PathVariable long groupId) {
-        String userId = idHelper.getLoggedInUserId();
+    public ResponseEntity<Group> getGroup(@PathVariable long groupId, @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
         Group group = service.getGroup(groupId);
         HttpStatus httpStatus = (status.getBadRequestStatus(group) == HttpStatus.BAD_REQUEST) ?
                 HttpStatus.BAD_REQUEST : status.getForbiddenStatus(
@@ -54,29 +56,30 @@ public class GroupController {
     }
 
     @PostMapping
-    public ResponseEntity<Link> createGroup(@RequestBody Group group) {
-        String userId = idHelper.getLoggedInUserId();
+    public ResponseEntity<Link> createGroup(@RequestBody Group group, @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
         Group addedGroup = service.createGroup(group, userId);
         return new ResponseEntity<>(
-                getGroupLinkById(addedGroup),
+                getGroupLinkById(addedGroup, auth),
                 status.getBadRequestPostingStatus(addedGroup));
     }
 
     @PostMapping(value = {"/{groupId}/join", "/{groupId}/join/{userId}"})
     public ResponseEntity<Link> createGroupMembership(
             @PathVariable long groupId,
-            @PathVariable(required = false) String userId
+            @PathVariable(required = false) String userId,
+            @RequestHeader("Authorization") String auth
     ) {
         Group group = service.getGroup(groupId);
-        String loggedInUserId = idHelper.getLoggedInUserId();
+        String loggedInUserId = idHelper.getLoggedInUserId(auth);
         if (group == null)
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         else if (userId == null)
-            userId = idHelper.getLoggedInUserId();
+            userId = idHelper.getLoggedInUserId(auth);
 
         if (group.isUserMember(userId))
             return new ResponseEntity<>(
-                    getGroupLinkById(group),
+                    getGroupLinkById(group, auth),
                     HttpStatus.SEE_OTHER);
         else if (!userId.equals(loggedInUserId)) {
             User user = userService.getUserById(userId);
@@ -86,14 +89,14 @@ public class GroupController {
         } else
             group = service.createGroupMembership(group, userId);
 
-        return new ResponseEntity<>(getGroupLinkById(group),
+        return new ResponseEntity<>(getGroupLinkById(group, auth),
                 status.getForbiddenPostingStatus(group));
     }
 
-    private Link getGroupLinkById(Group group) {
+    private Link getGroupLinkById(Group group, String auth) {
         return (group == null) ? null :
                 linkTo(methodOn(GroupController.class)
-                        .getGroup(group.getId()))
+                        .getGroup(group.getId(), auth))
                         .withSelfRel();
     }
 

@@ -31,8 +31,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Link> getUserLink() {
-        String uid = idHelper.getLoggedInUserId();
+    public ResponseEntity<Link> getUserLink(@RequestHeader("Authorization") String auth) {
+        String uid = idHelper.getLoggedInUserId(auth);
         Link link = getUserLinkById(uid);
         return new ResponseEntity<>(link, HttpStatus.SEE_OTHER);
     }
@@ -41,7 +41,8 @@ public class UserController {
     @PatchMapping(value = "/update/{userId}")
     public ResponseEntity<Link> UpdateUser(
             @PathVariable String userId,
-            @RequestBody User user) {
+            @RequestBody User user,
+            @RequestHeader("Authorization") String auth) {
         if (!service.userExists(userId)) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -61,7 +62,8 @@ public class UserController {
 
 
     @PostMapping
-    public ResponseEntity<Link> addUser(@RequestBody User user) {
+    public ResponseEntity<Link> addUser(@RequestBody User user,
+                                        @RequestHeader("Authorization") String auth) {
         User addedUser = service.addUser(user);
         return new ResponseEntity<>(getUserLinkById(
                 addedUser.getId()),

@@ -51,16 +51,20 @@ public class PostController {
     public ResponseEntity<List<Post>> getPostsFromLoggedInUser(
             @RequestParam(required = false, defaultValue = "") String type,
             @RequestParam(required = false, defaultValue = "") String search,
+            @RequestHeader("Authorization") String auth,
             Pageable page
     ) {
-        String id = idHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId(auth);
         List<Post> posts = postService.getPosts(id, type, search, page);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{postId}")
-    public ResponseEntity<Post> getPost(@PathVariable long postId) {
-        String id = idHelper.getLoggedInUserId();
+    public ResponseEntity<Post> getPost(
+            @PathVariable long postId,
+            @RequestHeader("Authorization") String auth
+    ) {
+        String id = idHelper.getLoggedInUserId(auth);
 
         Post post = postService.getPost(postId);
         if (post != null) {
@@ -76,9 +80,10 @@ public class PostController {
     @GetMapping(value = "/user")
     public ResponseEntity<List<Post>> getPostsToLoggedInUser(
             @RequestParam(required = false, defaultValue = "") String search,
+            @RequestHeader("Authorization") String auth,
             Pageable page
     ) {
-        String id = idHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId(auth);
         return getPostsToType(true, "user", id, id, search, page);
     }
 
@@ -86,8 +91,9 @@ public class PostController {
     public ResponseEntity<List<Post>> getPostsToUserFromSpecificUser(
             @PathVariable String userId,
             @RequestParam(required = false, defaultValue = "") String search,
+            @RequestHeader("Authorization") String auth,
             Pageable page) {
-        String id = idHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId(auth);
         if(userService.userExists(userId)) {
             List<Post> posts = postService.getPostsSentToUser("user", id, userId, search, page);
             return new ResponseEntity<>(posts, HttpStatus.OK);
@@ -99,8 +105,9 @@ public class PostController {
     public ResponseEntity<List<Post>> getPostsToGroup(
             @PathVariable String groupId,
             @RequestParam(required = false, defaultValue = "") String search,
+            @RequestHeader("Authorization") String auth,
             Pageable page) {
-        String id = idHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId(auth);
         boolean groupFound = groupService.groupExists(Long.parseLong(groupId));
         return getPostsToType(groupFound, "group", groupId, id, search, page);
     }
@@ -109,9 +116,10 @@ public class PostController {
     public ResponseEntity<List<Post>> getPostsWithTopic(
             @PathVariable long topicId,
             @RequestParam(required = false, defaultValue = "") String search,
+            @RequestHeader("Authorization") String auth,
             Pageable page) {
         boolean topicExists = topicService.topicExists(topicId);
-        String userId = idHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId(auth);
         return (!topicExists) ?
                 new ResponseEntity<>(null, HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>(postService
@@ -123,15 +131,20 @@ public class PostController {
     public ResponseEntity<List<Post>> getPostsToEvent(
             @PathVariable String eventId,
             @RequestParam(required = false, defaultValue = "") String search,
+            @RequestHeader("Authorization") String auth,
             Pageable page) {
-        String id = idHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId(auth);
         boolean eventExists = eventService.eventExists(Long.parseLong(eventId));
         return getPostsToType(eventExists, "event", eventId, id, search, page);
     }
 
     @PostMapping
-    public ResponseEntity<Link> createPost(@RequestBody Post post) {
-        String id = idHelper.getLoggedInUserId();
+    public ResponseEntity<Link> createPost(
+            @RequestBody Post post,
+            @RequestHeader("Authorization") String auth
+    ) {
+        String id = idHelper.getLoggedInUserId(auth);
+        System.out.println(id);
         if (post.getReceiverType() == null
                 || post.getReceiverId() == null
                 || post.getTopic() == null
@@ -141,14 +154,15 @@ public class PostController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         post = postService.createPost(post, id);
-        return new ResponseEntity<>((post != null) ? getPostLinkById(post.getId()) : null,
+        return new ResponseEntity<>((post != null) ? getPostLinkById(post.getId(), auth) : null,
                 statusCode.getForbiddenPostingStatus(post));
     }
 
     @PutMapping(value = "/{postId}")
     public ResponseEntity<Link> updatePost(
             @PathVariable long postId,
-            @RequestBody Post post
+            @RequestBody Post post,
+            @RequestHeader("Authorization") String auth
     ) {
         if (post.getTopic() != null ||
                 post.getReceiverType() != null ||
@@ -157,7 +171,7 @@ public class PostController {
         } else {
             Post updatedPost = postService.updateAPost(post, postId);
             return new ResponseEntity<>((updatedPost != null) ?
-                    getPostLinkById(updatedPost.getId()) : null,
+                    getPostLinkById(updatedPost.getId(), auth) : null,
                     statusCode.getBadRequestStatus(updatedPost));
         }
     }
@@ -182,9 +196,9 @@ public class PostController {
                         HttpStatus.OK);
     }
 
-    private Link getPostLinkById(long postId) {
+    private Link getPostLinkById(long postId, String auth) {
         return linkTo(methodOn(PostController.class)
-                .getPost(postId))
+                .getPost(postId, auth))
                 .withSelfRel();
     }
 

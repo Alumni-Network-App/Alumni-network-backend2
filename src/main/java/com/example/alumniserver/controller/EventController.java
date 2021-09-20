@@ -35,8 +35,11 @@ public class EventController {
     }
 
     @GetMapping(value = "/{eventId}")
-    public ResponseEntity<Event> getEvent(@PathVariable long eventId) {
-        String userId = idHelper.getLoggedInUserId();
+    public ResponseEntity<Event> getEvent(
+            @PathVariable long eventId,
+            @RequestHeader("Authorization") String auth
+    ) {
+        String userId = idHelper.getLoggedInUserId(auth);
         if (!eventService.eventExists(eventId))
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         else {
@@ -49,16 +52,17 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Event>> getAllEvents() {
-        String userId = idHelper.getLoggedInUserId();
+    public ResponseEntity<List<Event>> getAllEvents(@RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
         List<Event> events = eventService.getAllUserEvents(userId);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Event> createEvent(@RequestBody Event event) {
-        String userId = idHelper.getLoggedInUserId();
-        if(event.getNumberOfTopicInvites() == 0 && event.getNumberOfGroupInvites() == 0)
+    public ResponseEntity<Event> createEvent(@RequestBody Event event,
+                                             @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
+        if (event.getNumberOfTopicInvites() == 0 && event.getNumberOfGroupInvites() == 0)
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         event = eventService.createEvent(event, userId);
         return new ResponseEntity<>(event,
@@ -67,8 +71,9 @@ public class EventController {
 
     @PutMapping(value = "/{id}")
     public ResponseEntity<Event> updateEvent(@PathVariable long id,
-                                            @RequestBody Event event) {
-        String userId = idHelper.getLoggedInUserId();
+                                             @RequestBody Event event,
+                                             @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
         if (!eventService.eventExists(id))
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         else {
@@ -82,8 +87,9 @@ public class EventController {
     @PostMapping(value = "/{eventId}/invite/group/{groupId}")
     public ResponseEntity<Event> createGroupInvite(
             @PathVariable("eventId") long eventId,
-            @PathVariable("groupId") long groupId) {
-        String userId = idHelper.getLoggedInUserId();
+            @PathVariable("groupId") long groupId,
+            @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
 
         if (eventService.eventExists(eventId)
                 && groupService.groupExists(groupId)) {
@@ -101,8 +107,9 @@ public class EventController {
     @DeleteMapping(value = "/{eventId}/invite/group/{groupId}")
     public ResponseEntity<Event> deleteGroupInvite(
             @PathVariable("eventId") long eventId,
-            @PathVariable("groupId") long groupId) {
-        String userId = idHelper.getLoggedInUserId();
+            @PathVariable("groupId") long groupId,
+            @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
 
         if (eventService.eventExists(eventId)
                 && groupService.groupExists(groupId)) {
@@ -120,8 +127,9 @@ public class EventController {
     @PostMapping(value = "/{eventId}/invite/topic/{topicId}")
     public ResponseEntity<Event> createEventTopicInvite(
             @PathVariable("eventId") long eventId,
-            @PathVariable("topicId") long topicId) {
-        String userId = idHelper.getLoggedInUserId();
+            @PathVariable("topicId") long topicId,
+            @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
 
         if (eventService.eventExists(eventId)
                 && topicService.topicExists(topicId)) {
@@ -138,8 +146,9 @@ public class EventController {
     @DeleteMapping(value = "/{eventId}/invite/topic/{topicId}")
     public ResponseEntity<Event> DeleteEventTopicInvite(
             @PathVariable("eventId") long eventId,
-            @PathVariable("topicId") long topicId) {
-        String userId = idHelper.getLoggedInUserId();
+            @PathVariable("topicId") long topicId,
+            @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
 
 
         if (eventService.eventExists(eventId)
@@ -158,8 +167,9 @@ public class EventController {
     @PostMapping(value = "/{eventId}/invite/user/{userId}")
     public ResponseEntity<Event> createEventInviteForUser(
             @PathVariable("eventId") long eventId,
-            @PathVariable("userId") String invitedUserId) {
-        String userId = idHelper.getLoggedInUserId();
+            @PathVariable("userId") String invitedUserId,
+            @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
 
         if (!eventService.eventExists(eventId))
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -174,8 +184,9 @@ public class EventController {
     @DeleteMapping(value = "/{eventId}/invite/user/{userId}")
     public ResponseEntity<Event> deleteEventInviteForUser(
             @PathVariable("eventId") long eventId,
-            @PathVariable("userId") String invitedUserId) {
-        String userId = idHelper.getLoggedInUserId();
+            @PathVariable("userId") String invitedUserId,
+            @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
 
         if (!eventService.eventExists(eventId))
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -190,8 +201,9 @@ public class EventController {
     @PostMapping(value = "/{eventId}/rsvp")
     public ResponseEntity<Rsvp> createRsvpRecord(
             @PathVariable("eventId") long eventId,
-            @RequestBody Rsvp rsvp) {
-        String userId = idHelper.getLoggedInUserId();
+            @RequestBody Rsvp rsvp,
+            @RequestHeader("Authorization") String auth) {
+        String userId = idHelper.getLoggedInUserId(auth);
         Event event = eventService.getEvent(eventId);
 
         if (event == null)
