@@ -41,8 +41,7 @@ public class TopicController {
     }
 
     @GetMapping(value = "/{topicId}")
-    public ResponseEntity<Topic> getTopic(@PathVariable long topicId,
-                                          @RequestHeader("Authorization") String auth) {
+    public ResponseEntity<Topic> getTopic(@PathVariable long topicId) {
         Topic topic = service.getTopic(topicId);
         return new ResponseEntity<>(topic, status.getBadRequestStatus(topic));
     }
@@ -53,7 +52,7 @@ public class TopicController {
         String userId = idHelper.getLoggedInUserId(auth);
         topic = service.createTopic(topic, userId);
         return new ResponseEntity<>
-                (getTopicLinkById(topic, auth), status.getForbiddenPostingStatus(topic));
+                (getTopicLinkById(topic), status.getForbiddenPostingStatus(topic));
     }
 
     @PostMapping(value = "/{topicId}/join")
@@ -66,17 +65,17 @@ public class TopicController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         return (topic.isUserSubscribed(userId)) ? new ResponseEntity<>(
-                getTopicLinkById(topic, auth), HttpStatus.SEE_OTHER)
+                getTopicLinkById(topic), HttpStatus.SEE_OTHER)
                 : new ResponseEntity<>(getTopicLinkById(
-                        service.createTopicSubscription(topic, user), auth),
+                        service.createTopicSubscription(topic, user)),
                         HttpStatus.CREATED);
 
     }
 
-    private Link getTopicLinkById(Topic topic, String auth) {
+    private Link getTopicLinkById(Topic topic) {
         return (topic == null) ? null :
         linkTo(methodOn(TopicController.class)
-                .getTopic(topic.getId(), auth))
+                .getTopic(topic.getId()))
                 .withSelfRel();
     }
 
