@@ -109,12 +109,14 @@ public class PostService {
     }
 
     private boolean isFetchAllowed(String receiverType, String receiverId, String senderId) {
-        return switch (receiverType) {
-            case "group" -> groupService.getGroup(Long.parseLong(receiverId)).isUserMember(senderId);
-            case "event" -> eventService.getEvent(Long.parseLong(receiverId)).isUserInvited(senderId);
-            case "user" -> true;
-            default -> false;
-        };
+        switch (receiverType) {
+            case "group": return groupService.getGroup(Long.parseLong(receiverId)).isUserMember(senderId);
+            case "event":
+                Event event = eventService.getEvent(Long.parseLong(receiverId));
+                return event.isUserInvited(senderId) || event.isUserPartOfInvitedGroups(senderId) || event.isUserSubscribedToAnyTopic(senderId);
+            case "user": return true;
+            default: return false;
+        }
     }
 
     private User getUserInformation(String id) {

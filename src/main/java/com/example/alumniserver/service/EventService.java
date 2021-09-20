@@ -149,7 +149,7 @@ public class EventService {
 
     public Rsvp createRsvpRecord(Event event,Rsvp rsvp, String userId) {
         User user = userService.getUserById(userId);
-        if (isUserInvitedToEvent(user, event)) {
+        if (isUserInvitedToEvent(userId, event)) {
             rsvp.setRsvpId(new RsvpId(user.getId(), event.getId()));
             rsvp.setEvent(event);
             rsvp.setUser(user);
@@ -161,8 +161,8 @@ public class EventService {
 
     }
 
-    private boolean isUserInvitedToEvent(User user, Event event) {
-        return (event.isUserSubscribedToAnyTopic(user.getId()))
-                || event.isUserPartOfInvitedGroups(user) || event.isUserInvited(user.getId()) || event.isUserCreator(user.getId());
+    private boolean isUserInvitedToEvent(String userId, Event event) {
+        return (event.isUserSubscribedToAnyTopic(userId))
+                || event.isUserPartOfInvitedGroups(userId) || event.isUserInvited(userId) || event.isUserCreator(userId);
     }
 }

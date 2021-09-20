@@ -226,10 +226,10 @@ public class Event {
         return (invitedUsers == null) ? 0 : invitedUsers.size();
     }
 
-    public boolean isUserPartOfInvitedGroups(User user) {
+    public boolean isUserPartOfInvitedGroups(String userId) {
         if(groups != null){
             for(Group group : groups)
-                if(group.isUserMember(user.getId()))
+                if(group.isUserMember(userId))
                     return true;
         }
         return false;
