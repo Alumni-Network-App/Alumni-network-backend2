@@ -53,12 +53,8 @@ public class GroupService {
                 ? repository.save(group) : null;
     }
 
-    public Group addEventToGroup(Event event, Group group) {
-        return (group.addEventToGroup(event)) ? repository.save(group) : null;
-    }
-
     private Group createMembership(Group group, User user) {
-        if(!group.getName().equals("")) {
+        if(group.getName() != null) {
             user.addGroup(group);
             group.addUserAsMember(user);
             return repository.save(group);

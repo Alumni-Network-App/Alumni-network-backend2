@@ -31,14 +31,13 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Link> getUserLink() {
-        if(IdHelper.getLoggedInUserId() == null) {
+        if (IdHelper.getLoggedInUserId() == null) {
             IdHelper.setLoggedInUserId();
         }
         String uid = IdHelper.getLoggedInUserId();
         Link link = getUserLinkById(uid);
         return new ResponseEntity<>(link, HttpStatus.SEE_OTHER);
     }
-
 
 
     @PatchMapping(value = "/update/{userId}")
@@ -49,16 +48,16 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
         User updateUser = service.updateUser(userId, user);
-        if (updateUser != null)
-            return new ResponseEntity<>(
-                    getUserLinkById(updateUser.getId()),
-                    HttpStatus.OK);
-        else
-            return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(
+                getUserLinkById(updateUser.getId()),
+                HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable String userId) {
+        if (IdHelper.getLoggedInUserId() == null) {
+            IdHelper.setLoggedInUserId();
+        }
         User user = service.getUserById(userId);
         return new ResponseEntity<>(
                 user, httpStatusCode.getBadRequestStatus(user)
@@ -68,7 +67,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Link> addUser(@RequestBody User user) {
-        if(IdHelper.getLoggedInUserId() == null) {
+        if (IdHelper.getLoggedInUserId() == null) {
             IdHelper.setLoggedInUserId();
         }
         User addedUser = service.addUser(user);
