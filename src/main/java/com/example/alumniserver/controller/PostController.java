@@ -132,6 +132,7 @@ public class PostController {
     @PostMapping
     public ResponseEntity<Link> createPost(@RequestBody Post post) {
         String id = idHelper.getLoggedInUserId();
+        System.out.println(id);
         if (post.getReceiverType() == null
                 || post.getReceiverId() == null
                 || post.getTopic() == null
