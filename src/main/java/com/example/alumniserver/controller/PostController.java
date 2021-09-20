@@ -144,7 +144,6 @@ public class PostController {
             @RequestHeader("Authorization") String auth
     ) {
         String id = idHelper.getLoggedInUserId(auth);
-        System.out.println(id);
         if (post.getReceiverType() == null
                 || post.getReceiverId() == null
                 || post.getTopic() == null

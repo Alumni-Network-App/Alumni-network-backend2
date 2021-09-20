@@ -3,8 +3,10 @@ package com.example.alumniserver.controller;
 import com.example.alumniserver.httpstatus.HttpStatusCode;
 import com.example.alumniserver.idhelper.IdHelper;
 import com.example.alumniserver.model.Reply;
+import com.example.alumniserver.model.User;
 import com.example.alumniserver.service.PostService;
 import com.example.alumniserver.service.ReplyService;
+import com.example.alumniserver.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
@@ -24,13 +26,15 @@ public class ReplyController {
 
     private final ReplyService service;
     private final PostService postService;
+    private final UserService userService;
     private final HttpStatusCode statusCode = new HttpStatusCode();
     private IdHelper idHelper = new IdHelper();
 
     @Autowired
-    public ReplyController(ReplyService service, PostService postService) {
+    public ReplyController(ReplyService service, PostService postService, UserService userService) {
         this.service = service;
         this.postService = postService;
+        this.userService = userService;
     }
 
     @GetMapping(value = "/{replyId}")

@@ -12,17 +12,17 @@ import java.util.List;
 public class ReplyService {
 
     private final ReplyRepository repository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final PostRepository postRepository;
     private final PostService postService;
 
     @Autowired
     public ReplyService(ReplyRepository repository,
-                        UserRepository userRepository,
+                        UserService userService,
                         PostRepository postRepository,
                         PostService postService) {
         this.repository = repository;
-        this.userRepository = userRepository;
+        this.userService = userService;
         this.postRepository = postRepository;
         this.postService = postService;
     }
@@ -41,10 +41,10 @@ public class ReplyService {
 
     public Reply createReply(Reply reply, long postId, String userId) {
         Post post = getPostInformation(postId);
-        if (postService.isPostingAllowed(post, userId)
-            && reply.getUser().getId().equals(userId)
-        ) {
-            return updateReplyRelations(reply, post, userId);
+        if (postService.isPostingAllowed(post, userId)) {
+            reply.setUser(userService.getUserById(userId));
+            reply.setPost(post);
+            return repository.save(reply);
         } else {
             return null;
         }
@@ -73,29 +73,10 @@ public class ReplyService {
         return oldReply;
     }
 
-    private Reply updateReplyRelations(Reply reply, Post post, String userId) {
-        Post updatedPost = updatePostRelations(reply, post);
-        User user = updateUserRelations(reply, userId);
-        reply.setPost(updatedPost);
-        reply.setUser(user);
-        return repository.save(reply);
-    }
-
-    private User updateUserRelations(Reply reply, String userId) {
-        User user = getUserInformation(userId);
-        user.addReply(reply);
-        userRepository.save(user);
-        return user;
-    }
-
     private Post updatePostRelations(Reply reply, Post post) {
         post.addReply(reply);
         postRepository.save(post);
         return post;
-    }
-
-    private User getUserInformation(String userId) {
-        return userRepository.findUserById(userId);
     }
 
     private Post getPostInformation(long postId) {
