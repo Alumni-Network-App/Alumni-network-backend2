@@ -4,14 +4,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class IdHelper {
 
-    private static String id;
-
-    public static String getLoggedInUserId() {
-        return id;
-    }
-
-    public static void setLoggedInUserId() {
-        id = SecurityContextHolder.getContext().getAuthentication().getName();
+    public String getLoggedInUserId() {
+        if(System.getProperty("alumni-user-id") == null)
+            System.setProperty("alumni-user-id",
+                    SecurityContextHolder.getContext().getAuthentication().getName());
+        return System.getProperty("alumni-user-id");
     }
 
 }

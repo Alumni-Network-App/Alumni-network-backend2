@@ -25,6 +25,7 @@ public class ReplyController {
     private final ReplyService service;
     private final PostService postService;
     private final HttpStatusCode statusCode = new HttpStatusCode();
+    private IdHelper idHelper = new IdHelper();
 
     @Autowired
     public ReplyController(ReplyService service, PostService postService) {
@@ -34,7 +35,7 @@ public class ReplyController {
 
     @GetMapping(value = "/{replyId}")
     public ResponseEntity<Reply> getReplyWithId(@PathVariable long replyId) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         Reply reply = service.getReplyWithId(replyId);
         return (reply.getUser().getId().equals(userId)
                 ? new ResponseEntity<>(reply,
@@ -47,7 +48,7 @@ public class ReplyController {
     public ResponseEntity<List<Reply>> getRepliesWithUserId(
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         List<Reply> replies = service.getRepliesWithUserId(userId, search, page);
         return new ResponseEntity<>(replies, HttpStatus.OK);
     }
@@ -66,7 +67,7 @@ public class ReplyController {
     public ResponseEntity<Link> createReply(
             @PathVariable long postId,
             @RequestBody Reply reply) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         if (postService.postExists(postId)) {
             Reply addedReply = service.createReply(reply, postId, userId);
             return new ResponseEntity<>(
@@ -84,7 +85,7 @@ public class ReplyController {
             @RequestBody Reply reply
     ) {
         if (service.replyExists(replyId)) {
-            String userId = IdHelper.getLoggedInUserId();
+            String userId = idHelper.getLoggedInUserId();
             Reply updateReply = service.updateReply(reply, replyId, userId);
             return new ResponseEntity<>(getReplyLinkById(updateReply.getId()),
                     statusCode.getForbiddenStatus(updateReply == null));

@@ -24,6 +24,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/api/v1/post")
 public class PostController {
 
+    private IdHelper idHelper = new IdHelper();
     private final HttpStatusCode statusCode = new HttpStatusCode();
     private final PostService postService;
     private final UserService userService;
@@ -52,14 +53,14 @@ public class PostController {
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page
     ) {
-        String id = IdHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId();
         List<Post> posts = postService.getPosts(id, type, search, page);
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{postId}")
     public ResponseEntity<Post> getPost(@PathVariable long postId) {
-        String id = IdHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId();
 
         Post post = postService.getPost(postId);
         if (post != null) {
@@ -77,7 +78,7 @@ public class PostController {
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page
     ) {
-        String id = IdHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId();
         return getPostsToType(true, "user", id, id, search, page);
     }
 
@@ -86,7 +87,7 @@ public class PostController {
             @PathVariable String userId,
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
-        String id = IdHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId();
         if(userService.userExists(userId)) {
             List<Post> posts = postService.getPostsSentToUser("user", id, userId, search, page);
             return new ResponseEntity<>(posts, HttpStatus.OK);
@@ -99,7 +100,7 @@ public class PostController {
             @PathVariable String groupId,
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
-        String id = IdHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId();
         boolean groupFound = groupService.groupExists(Long.parseLong(groupId));
         return getPostsToType(groupFound, "group", groupId, id, search, page);
     }
@@ -110,7 +111,7 @@ public class PostController {
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
         boolean topicExists = topicService.topicExists(topicId);
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         return (!topicExists) ?
                 new ResponseEntity<>(null, HttpStatus.BAD_REQUEST) :
                 new ResponseEntity<>(postService
@@ -123,14 +124,14 @@ public class PostController {
             @PathVariable String eventId,
             @RequestParam(required = false, defaultValue = "") String search,
             Pageable page) {
-        String id = IdHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId();
         boolean eventExists = eventService.eventExists(Long.parseLong(eventId));
         return getPostsToType(eventExists, "event", eventId, id, search, page);
     }
 
     @PostMapping
     public ResponseEntity<Link> createPost(@RequestBody Post post) {
-        String id = IdHelper.getLoggedInUserId();
+        String id = idHelper.getLoggedInUserId();
         if (post.getReceiverType() == null
                 || post.getReceiverId() == null
                 || post.getTopic() == null

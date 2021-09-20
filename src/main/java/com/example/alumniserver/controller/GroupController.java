@@ -27,6 +27,7 @@ public class GroupController {
     private final UserService userService;
 
     private HttpStatusCode status = new HttpStatusCode();
+    private IdHelper idHelper = new IdHelper();
 
     @Autowired
     public GroupController(GroupService service, UserService userService) {
@@ -36,13 +37,13 @@ public class GroupController {
 
     @GetMapping
     public ResponseEntity<List<Group>> getGroups(Pageable page, @RequestParam(required = false, defaultValue = "") String name) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         return new ResponseEntity<>(service.getGroups(userId, name, page), HttpStatus.OK);
     }
 
     @GetMapping(value = "/{groupId}")
     public ResponseEntity<Group> getGroup(@PathVariable long groupId) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         Group group = service.getGroup(groupId);
         HttpStatus httpStatus = (status.getBadRequestStatus(group) == HttpStatus.BAD_REQUEST) ?
                 HttpStatus.BAD_REQUEST : status.getForbiddenStatus(
@@ -54,7 +55,7 @@ public class GroupController {
 
     @PostMapping
     public ResponseEntity<Link> createGroup(@RequestBody Group group) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         Group addedGroup = service.createGroup(group, userId);
         return new ResponseEntity<>(
                 getGroupLinkById(addedGroup),
@@ -67,11 +68,11 @@ public class GroupController {
             @PathVariable(required = false) String userId
     ) {
         Group group = service.getGroup(groupId);
-        String loggedInUserId = IdHelper.getLoggedInUserId();
+        String loggedInUserId = idHelper.getLoggedInUserId();
         if (group == null)
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         else if (userId == null)
-            userId = IdHelper.getLoggedInUserId();
+            userId = idHelper.getLoggedInUserId();
 
         if (group.isUserMember(userId))
             return new ResponseEntity<>(
