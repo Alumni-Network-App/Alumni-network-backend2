@@ -256,7 +256,6 @@ Backend: https://alumni-network-backend.herokuapp.com/
     - bio -> Information about the users life.
     - funFact -> Something funny about the user.
   - Statuscodes
-    - 403 FORBIDDEN -> If the logged in user attempts to change their name.
     - 400 BAD REQUEST -> If the specified user id doesn't link to a user.
     - 200 OK
 
