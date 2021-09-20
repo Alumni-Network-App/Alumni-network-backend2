@@ -27,6 +27,7 @@ public class TopicController {
     private final TopicService service;
     private final UserService userService;
     private final HttpStatusCode status = new HttpStatusCode();
+    private IdHelper idHelper = new IdHelper();
 
     @Autowired
     public TopicController(TopicService service, UserService userService) {
@@ -47,7 +48,7 @@ public class TopicController {
 
     @PostMapping
     public ResponseEntity<Link> postTopic(@RequestBody Topic topic) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         topic = service.createTopic(topic, userId);
         return new ResponseEntity<>
                 (getTopicLinkById(topic), status.getForbiddenPostingStatus(topic));
@@ -55,7 +56,7 @@ public class TopicController {
 
     @PostMapping(value = "/{topicId}/join")
     public ResponseEntity<Link> postTopicSubscription(@PathVariable long topicId) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         Topic topic = service.getTopic(topicId);
         User user = userService.getUserById(userId);
         if(topic == null) {

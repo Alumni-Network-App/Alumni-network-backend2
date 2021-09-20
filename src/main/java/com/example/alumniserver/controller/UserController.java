@@ -22,6 +22,7 @@ public class UserController {
 
     private final UserService service;
     private HttpStatusCode httpStatusCode = new HttpStatusCode();
+    private IdHelper idHelper = new IdHelper();
 
     @Autowired
     public UserController(UserService service) {
@@ -31,10 +32,7 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Link> getUserLink() {
-        if (IdHelper.getLoggedInUserId() == null) {
-            IdHelper.setLoggedInUserId();
-        }
-        String uid = IdHelper.getLoggedInUserId();
+        String uid = idHelper.getLoggedInUserId();
         Link link = getUserLinkById(uid);
         return new ResponseEntity<>(link, HttpStatus.SEE_OTHER);
     }
@@ -55,9 +53,6 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@PathVariable String userId) {
-        if (IdHelper.getLoggedInUserId() == null) {
-            IdHelper.setLoggedInUserId();
-        }
         User user = service.getUserById(userId);
         return new ResponseEntity<>(
                 user, httpStatusCode.getBadRequestStatus(user)
@@ -67,9 +62,6 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<Link> addUser(@RequestBody User user) {
-        if (IdHelper.getLoggedInUserId() == null) {
-            IdHelper.setLoggedInUserId();
-        }
         User addedUser = service.addUser(user);
         return new ResponseEntity<>(getUserLinkById(
                 addedUser.getId()),

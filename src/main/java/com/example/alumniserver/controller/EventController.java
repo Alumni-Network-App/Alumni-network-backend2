@@ -23,6 +23,7 @@ public class EventController {
     private final EventService eventService;
     private final GroupService groupService;
     private final TopicService topicService;
+    private IdHelper idHelper = new IdHelper();
 
     @Autowired
     public EventController(EventService eventService,
@@ -35,7 +36,7 @@ public class EventController {
 
     @GetMapping(value = "/{eventId}")
     public ResponseEntity<Event> getEvent(@PathVariable long eventId) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         if (!eventService.eventExists(eventId))
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         else {
@@ -49,14 +50,14 @@ public class EventController {
 
     @GetMapping
     public ResponseEntity<List<Event>> getAllEvents() {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         List<Event> events = eventService.getAllUserEvents(userId);
         return new ResponseEntity<>(events, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<Event> createEvent(@RequestBody Event event) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         if(event.getNumberOfTopicInvites() == 0 && event.getNumberOfGroupInvites() == 0)
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         event = eventService.createEvent(event, userId);
@@ -67,7 +68,7 @@ public class EventController {
     @PutMapping(value = "/{id}")
     public ResponseEntity<Event> updateEvent(@PathVariable long id,
                                             @RequestBody Event event) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         if (!eventService.eventExists(id))
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         else {
@@ -82,7 +83,7 @@ public class EventController {
     public ResponseEntity<Event> createGroupInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("groupId") long groupId) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
 
         if (eventService.eventExists(eventId)
                 && groupService.groupExists(groupId)) {
@@ -101,7 +102,7 @@ public class EventController {
     public ResponseEntity<Event> deleteGroupInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("groupId") long groupId) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
 
         if (eventService.eventExists(eventId)
                 && groupService.groupExists(groupId)) {
@@ -120,7 +121,7 @@ public class EventController {
     public ResponseEntity<Event> createEventTopicInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("topicId") long topicId) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
 
         if (eventService.eventExists(eventId)
                 && topicService.topicExists(topicId)) {
@@ -138,7 +139,7 @@ public class EventController {
     public ResponseEntity<Event> DeleteEventTopicInvite(
             @PathVariable("eventId") long eventId,
             @PathVariable("topicId") long topicId) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
 
 
         if (eventService.eventExists(eventId)
@@ -158,7 +159,7 @@ public class EventController {
     public ResponseEntity<Event> createEventInviteForUser(
             @PathVariable("eventId") long eventId,
             @PathVariable("userId") String invitedUserId) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
 
         if (!eventService.eventExists(eventId))
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -174,7 +175,7 @@ public class EventController {
     public ResponseEntity<Event> deleteEventInviteForUser(
             @PathVariable("eventId") long eventId,
             @PathVariable("userId") String invitedUserId) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
 
         if (!eventService.eventExists(eventId))
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -190,7 +191,7 @@ public class EventController {
     public ResponseEntity<Rsvp> createRsvpRecord(
             @PathVariable("eventId") long eventId,
             @RequestBody Rsvp rsvp) {
-        String userId = IdHelper.getLoggedInUserId();
+        String userId = idHelper.getLoggedInUserId();
         Event event = eventService.getEvent(eventId);
 
         if (event == null)
