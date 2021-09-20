@@ -56,12 +56,9 @@ public class GroupController {
     public ResponseEntity<Link> createGroup(@RequestBody Group group) {
         String userId = IdHelper.getLoggedInUserId();
         Group addedGroup = service.createGroup(group, userId);
-        if (addedGroup != null)
-            return new ResponseEntity<>(
-                    getGroupLinkById(addedGroup.getId()),
-                    HttpStatus.CREATED);
-        else
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(
+                getGroupLinkById(addedGroup),
+                status.getBadRequestPostingStatus(addedGroup));
     }
 
     @PostMapping(value = {"/{groupId}/join", "/{groupId}/join/{userId}"})
@@ -78,9 +75,9 @@ public class GroupController {
 
         if (group.isUserMember(userId))
             return new ResponseEntity<>(
-                    getGroupLinkById(group.getId()),
+                    getGroupLinkById(group),
                     HttpStatus.SEE_OTHER);
-        else if (userId != loggedInUserId) {
+        else if (!userId.equals(loggedInUserId)) {
             User user = userService.getUserById(userId);
             if (user == null)
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -88,15 +85,15 @@ public class GroupController {
         } else
             group = service.createGroupMembership(group, userId);
 
-        Link link = (group != null) ? getGroupLinkById(group.getId()) : null;
-        return new ResponseEntity<>(link,
+        return new ResponseEntity<>(getGroupLinkById(group),
                 status.getForbiddenPostingStatus(group));
     }
 
-    private Link getGroupLinkById(long groupId) {
-        return linkTo(methodOn(GroupController.class)
-                .getGroup(groupId))
-                .withSelfRel();
+    private Link getGroupLinkById(Group group) {
+        return (group == null) ? null :
+                linkTo(methodOn(GroupController.class)
+                        .getGroup(group.getId()))
+                        .withSelfRel();
     }
 
 }

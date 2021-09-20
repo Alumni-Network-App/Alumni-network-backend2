@@ -58,4 +58,8 @@ public class HttpStatusCode<T> {
         return (t == null) ? HttpStatus.FORBIDDEN : HttpStatus.CREATED;
     }
 
+    public HttpStatus getBadRequestPostingStatus(T t) {
+        return (t == null) ? HttpStatus.BAD_REQUEST : HttpStatus.CREATED;
+    }
+
 }
