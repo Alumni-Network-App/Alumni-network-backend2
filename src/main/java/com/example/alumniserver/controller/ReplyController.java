@@ -63,7 +63,7 @@ public class ReplyController {
     public ResponseEntity<List<Reply>> getRepliesToPost(@PathVariable long postId) {
         if (postService.postExists(postId)) {
             List<Reply> replies = service.getRepliesToPostId(postId);
-            return new ResponseEntity<>(replies, statusCode.getForbiddenStatus(replies == null));
+            return new ResponseEntity<>(replies, statusCode.getForbiddenStatus(replies != null));
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
