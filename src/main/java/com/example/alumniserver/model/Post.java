@@ -27,7 +27,7 @@ public class Post<T> {
     private long id;
 
     @Column(name = "last_updated")
-    private LocalDateTime date = LocalDateTime.now().withNano(0);
+    private LocalDateTime date = LocalDateTime.now();
 
     @Column(length = 1000)
     private String content;
