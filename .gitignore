@@ -38,5 +38,5 @@ out/
 
 ### Resource files ###
 application-user.properties
-
+firebase_config.json
 data.sql
