@@ -52,9 +52,7 @@ public class ReplyService {
 
     public Reply updateReply(Reply reply, long replyId, String senderId) {
         Reply fetchedReply = repository.findReplyById(replyId);
-        if (fetchedReply.getUser().getId() != senderId
-                || reply.getPost().getId() != fetchedReply.getPost().getId()
-        )
+        if (!fetchedReply.getUser().getId().equals(senderId))
             return null;
         else {
             reply.setId(replyId);
