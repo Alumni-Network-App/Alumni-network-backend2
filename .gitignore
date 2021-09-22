@@ -40,3 +40,4 @@ out/
 application-user.properties
 
 data.sql
+firebase_config.json
