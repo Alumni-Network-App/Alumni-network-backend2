@@ -79,7 +79,7 @@ public class ReplyService {
     }
 
     private Post getPostInformation(long postId) {
-        return postRepository.findPostByIdOrderByDateDesc(postId);
+        return postRepository.findPostByIdOrderByLastUpdatedDesc(postId);
     }
 
 

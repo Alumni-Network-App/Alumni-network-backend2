@@ -42,7 +42,7 @@ public class PostService {
     }
 
     public Post getPost(long postId) {
-        return repository.findPostByIdOrderByDateDesc(postId);
+        return repository.findPostByIdOrderByLastUpdatedDesc(postId);
     }
 
     public boolean isUsersPost(String userId, Post post) {
@@ -80,7 +80,7 @@ public class PostService {
     }
 
     public Post updateAPost(Post post, long postId) {
-        Post fetchedPost = repository.findPostByIdOrderByDateDesc(postId);
+        Post fetchedPost = repository.findPostByIdOrderByLastUpdatedDesc(postId);
         post.setId(postId);
         if (fetchedPost.getReceiverType().equals(post.getReceiverType())
                 && postExists(postId)) {
