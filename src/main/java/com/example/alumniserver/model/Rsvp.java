@@ -25,7 +25,7 @@ public class Rsvp {
     private int guestCount;
 
     @Column(name = "last_updated")
-    private ZonedDateTime date = LocalDateTime.now().atZone(ZoneId.of("CET"));
+    private ZonedDateTime date = ZonedDateTime.now(ZoneId.of("CET"));
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)

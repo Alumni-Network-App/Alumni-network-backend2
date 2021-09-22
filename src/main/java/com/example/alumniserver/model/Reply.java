@@ -24,7 +24,7 @@ public class Reply {
     private String content;
 
     @Column(name = "last_updated")
-    private ZonedDateTime date = LocalDateTime.now().atZone(ZoneId.of("CET"));
+    private ZonedDateTime date = ZonedDateTime.now(ZoneId.of("CET"));
 
     @ManyToOne
     @JoinColumn(name = "reply_parent_id")

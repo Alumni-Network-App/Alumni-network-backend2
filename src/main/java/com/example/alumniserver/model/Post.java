@@ -29,7 +29,7 @@ public class Post<T> {
     private long id;
 
     @Column(name = "last_updated")
-    private ZonedDateTime date = LocalDateTime.now().atZone(ZoneId.of("CET"));
+    private ZonedDateTime date = ZonedDateTime.now(ZoneId.of("CET"));
 
     @Column(length = 1000)
     private String content;
