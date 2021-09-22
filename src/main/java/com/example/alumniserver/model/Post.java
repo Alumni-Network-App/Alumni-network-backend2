@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Required;
 
 import javax.persistence.*;
 import java.rmi.server.UID;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -65,7 +66,7 @@ public class Post<T> {
     }
 
     public void setLastUpdated() {
-        lastUpdated = LocalDateTime.now();
+        lastUpdated = LocalDateTime.now(Clock.systemDefaultZone());
     }
 
     @JsonGetter("topic")

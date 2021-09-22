@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -35,7 +36,7 @@ public class Reply {
     private User user;
 
     public void setLastUpdated() {
-        lastUpdated = LocalDateTime.now();
+        lastUpdated = LocalDateTime.now(Clock.systemDefaultZone());
     }
 
     @JsonGetter("user")
