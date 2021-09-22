@@ -25,7 +25,7 @@ public class Rsvp {
     private int guestCount;
 
     @Column(name = "last_updated")
-    private ZonedDateTime date = ZonedDateTime.now(ZoneId.of("CET"));
+    private LocalDateTime lastUpdated;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
@@ -43,6 +43,10 @@ public class Rsvp {
     @JsonGetter("event")
     public String event() {
         return(event != null) ? "/api/v1/event/" + event.getId() : null;
+    }
+
+    public void setLastUpdated() {
+        lastUpdated = LocalDateTime.now();
     }
 
     @Override

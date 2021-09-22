@@ -43,6 +43,7 @@ public class EventService {
     public Event createEvent(Event event, String userId) {
         int groupInvites = event.getNumberOfGroupInvites();
         addUserRelationToEvent(userId, event);
+        event.setLastUpdated();
 
         if (groupInvites > 0)
             return (isValidGroupInvites(event, groupInvites, userId)) ?
@@ -88,6 +89,7 @@ public class EventService {
 
         if (updatedEvent.getBannerImg() != null)
             oldEvent.setBannerImg(updatedEvent.getBannerImg());
+        oldEvent.setLastUpdated();
 
         return oldEvent;
 

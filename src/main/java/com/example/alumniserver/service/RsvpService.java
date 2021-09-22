@@ -20,7 +20,7 @@ public class RsvpService {
 
 
     public Rsvp saveRsvp(Rsvp rsvp){
-
+        rsvp.setLastUpdated();
         return rsvpRepository.save(rsvp);
     }
 

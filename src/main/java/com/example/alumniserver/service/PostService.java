@@ -70,6 +70,7 @@ public class PostService {
             User user = getUserInformation(senderId);
             post.setUser(user);
             user.addPost(post);
+            post.setLastUpdated();
             post = repository.save(post);
             userService.updateUserRelations(user);
             return post;
@@ -128,7 +129,7 @@ public class PostService {
             oldPost.setTitle(updatedPost.getTitle());
         if (!updatedPost.getContent().equals(""))
             oldPost.setContent(updatedPost.getContent());
-        oldPost.setDate(updatedPost.getDate());
+        oldPost.setLastUpdated();
         return oldPost;
     }
 
