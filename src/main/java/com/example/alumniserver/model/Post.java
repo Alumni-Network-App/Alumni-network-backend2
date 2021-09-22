@@ -29,7 +29,7 @@ public class Post<T> {
     private long id;
 
     @Column(name = "last_updated")
-    private ZonedDateTime date = ZonedDateTime.now(ZoneId.of("CET"));
+    private LocalDateTime lastUpdated;
 
     @Column(length = 1000)
     private String content;
@@ -62,6 +62,10 @@ public class Post<T> {
         if(replies == null)
             replies = new ArrayList<>();
         replies.add(reply);
+    }
+
+    public void setLastUpdated() {
+        lastUpdated = LocalDateTime.now();
     }
 
     @JsonGetter("topic")

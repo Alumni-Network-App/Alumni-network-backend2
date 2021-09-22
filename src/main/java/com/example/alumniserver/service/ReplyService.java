@@ -43,6 +43,7 @@ public class ReplyService {
         Post post = getPostInformation(postId);
         if (postService.isPostingAllowed(post, userId)) {
             reply.setUser(userService.getUserById(userId));
+            reply.setLastUpdated();
             reply.setPost(post);
             return repository.save(reply);
         } else {
@@ -67,7 +68,7 @@ public class ReplyService {
     private Reply updateFields(Reply updatedReply, Reply oldReply) {
         if (!updatedReply.getContent().equals(""))
             oldReply.setContent(updatedReply.getContent());
-        oldReply.setDate(updatedReply.getDate());
+        oldReply.setLastUpdated();
         return oldReply;
     }
 

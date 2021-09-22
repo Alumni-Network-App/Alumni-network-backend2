@@ -24,7 +24,7 @@ public class Reply {
     private String content;
 
     @Column(name = "last_updated")
-    private ZonedDateTime date = ZonedDateTime.now(ZoneId.of("CET"));
+    private LocalDateTime lastUpdated;
 
     @ManyToOne
     @JoinColumn(name = "reply_parent_id")
@@ -33,6 +33,10 @@ public class Reply {
     @ManyToOne
     @JoinColumn(name = "sender_id")
     private User user;
+
+    public void setLastUpdated() {
+        lastUpdated = LocalDateTime.now();
+    }
 
     @JsonGetter("user")
     public String user() {

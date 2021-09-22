@@ -30,7 +30,7 @@ public class Event {
     private long id;
 
     @Column(name = "last_updated")
-    private ZonedDateTime date = ZonedDateTime.now(ZoneId.of("CET"));
+    private LocalDateTime lastUpdated;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "created_by")
@@ -83,6 +83,10 @@ public class Event {
 
     @OneToMany(mappedBy = "event")
     private List<Rsvp> rsvps;
+
+    public void setLastUpdated() {
+        lastUpdated = LocalDateTime.now();
+    }
 
     @JsonGetter("groups")
     public List<String> groups() {
