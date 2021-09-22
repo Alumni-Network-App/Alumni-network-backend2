@@ -78,7 +78,7 @@ public class ReplyController {
         if (postService.postExists(postId)) {
             Reply addedReply = service.createReply(reply, postId, userId);
             return new ResponseEntity<>(
-                    getReplyLinkById(addedReply.getId(), auth),
+                    getReplyLinkById(addedReply, auth),
                     statusCode.getForbiddenPostingStatus(addedReply));
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -95,16 +95,17 @@ public class ReplyController {
         if (service.replyExists(replyId)) {
             String userId = idHelper.getLoggedInUserId(auth);
             Reply updateReply = service.updateReply(reply, replyId, userId);
-            return new ResponseEntity<>(getReplyLinkById(updateReply.getId(), auth),
-                    statusCode.getForbiddenStatus(updateReply == null));
+            return new ResponseEntity<>(getReplyLinkById(updateReply, auth),
+                    statusCode.getForbiddenStatus(updateReply != null));
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
-    private Link getReplyLinkById(long replyId, String auth) {
-        return linkTo(methodOn(ReplyController.class)
-                .getReplyWithId(replyId, auth))
+    private Link getReplyLinkById(Reply reply, String auth) {
+        return (reply == null) ? null :
+                linkTo(methodOn(ReplyController.class)
+                .getReplyWithId(reply.getId(), auth))
                 .withSelfRel();
     }
 
