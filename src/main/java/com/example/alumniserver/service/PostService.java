@@ -67,10 +67,10 @@ public class PostService {
     public Post createPost(Post post, String senderId) {
 
         if (isPostingAllowed(post, senderId)) {
+            post.setLastUpdated();
             User user = getUserInformation(senderId);
             post.setUser(user);
             user.addPost(post);
-            post.setLastUpdated();
             post = repository.save(post);
             userService.updateUserRelations(user);
             return post;
