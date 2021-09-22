@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 
@@ -23,7 +25,7 @@ public class Rsvp {
     private int guestCount;
 
     @Column(name = "last_updated")
-    private LocalDateTime lastUpdated = LocalDateTime.now();
+    private ZonedDateTime date = LocalDateTime.now().atZone(ZoneId.of("CET"));
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
