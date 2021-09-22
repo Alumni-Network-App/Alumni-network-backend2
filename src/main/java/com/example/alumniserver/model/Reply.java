@@ -6,8 +6,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "reply")
@@ -24,7 +22,7 @@ public class Reply {
     private String content;
 
     @Column(name = "last_updated")
-    private ZonedDateTime date = LocalDateTime.now().atZone(ZoneId.of("CET"));
+    private LocalDateTime date = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "reply_parent_id")

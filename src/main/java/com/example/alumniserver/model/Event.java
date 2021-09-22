@@ -11,7 +11,6 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +29,7 @@ public class Event {
     private long id;
 
     @Column(name = "last_updated")
-    private ZonedDateTime date = LocalDateTime.now().atZone(ZoneId.of("CET"));
+    private LocalDateTime lastUpdated = LocalDateTime.now();
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "created_by")
