@@ -9,9 +9,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -85,7 +83,7 @@ public class Event {
     private List<Rsvp> rsvps;
 
     public void setLastUpdated() {
-        lastUpdated = LocalDateTime.now();
+        lastUpdated = LocalDateTime.now(Clock.systemDefaultZone());
     }
 
     @JsonGetter("groups")
