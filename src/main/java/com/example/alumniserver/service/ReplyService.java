@@ -36,7 +36,7 @@ public class ReplyService {
     }
 
     public List<Reply> getRepliesToPostId(long postId) {
-        return repository.findAllByPostId(postId);
+        return repository.findAllByPostIdOrderByLastUpdatedDesc(postId);
     }
 
     public Reply createReply(Reply reply, long postId, String userId) {
@@ -70,12 +70,6 @@ public class ReplyService {
             oldReply.setContent(updatedReply.getContent());
         oldReply.setLastUpdated();
         return oldReply;
-    }
-
-    private Post updatePostRelations(Reply reply, Post post) {
-        post.addReply(reply);
-        postRepository.save(post);
-        return post;
     }
 
     private Post getPostInformation(long postId) {

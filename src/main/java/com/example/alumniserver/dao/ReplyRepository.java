@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
     Reply findReplyById(long id);
-    @Query("SELECT r FROM Reply r WHERE r.user.id = :userId AND r.content LIKE %:searchTerm%")
+    @Query("SELECT r FROM Reply r WHERE r.user.id = :userId AND r.content LIKE %:searchTerm% ORDER BY r.lastUpdated DESC")
     Page<Reply> findReplies(String userId, String searchTerm, Pageable page);
-    List<Reply> findAllByPostId(long postId);
+    List<Reply> findAllByPostIdOrderByLastUpdatedDesc(long postId);
 }
