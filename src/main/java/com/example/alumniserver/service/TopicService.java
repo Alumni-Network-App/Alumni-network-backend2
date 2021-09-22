@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +37,7 @@ public class TopicService {
     public Topic createTopic(Topic topic, String userId) {
         if(isValidTopic(topic)) {
             User user = userService.getUserById(userId);
+            topic.setLastUpdated();
             topic.addUserToTopic(user);
             topic = repository.save(topic);
             user.addTopicToSubscription(topic);
@@ -72,5 +74,11 @@ public class TopicService {
     public Topic deleteEventFromTopic(Event event, Topic topic) {
         return (topic != null && topic.deleteEventFromTopic(event))
                 ? repository.save(topic) : null;
+    }
+
+    public Topic updateTopicTime(long topicId, LocalDateTime lastUpdated) {
+        Topic topic = repository.findById(topicId).get();
+        topic.setLastUpdated(lastUpdated);
+        return repository.save(topic);
     }
 }

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +46,13 @@ public class Topic {
 
     @Column(length = 1000)
     private String description;
+
+    @Column(name = "last_updated")
+    private LocalDateTime lastUpdated;
+
+    public void setLastUpdated() {
+        lastUpdated = LocalDateTime.now(Clock.systemDefaultZone());
+    }
 
     public boolean isUserSubscribed(String userId) {
         if(users != null) {

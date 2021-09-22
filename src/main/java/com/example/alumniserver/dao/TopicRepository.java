@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TopicRepository extends JpaRepository<Topic, Long> {
 
-    @Query("SELECT t FROM Topic t WHERE t.name LIKE %:name%")
+    @Query("SELECT t FROM Topic t WHERE t.name LIKE %:name% ORDER BY t.lastUpdated DESC NULLS LAST")
     Page<Topic> findTopics(@Param("name")String name, Pageable page);
 
 }

@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +34,12 @@ public class Group {
     @Column(name = "is_private")
     private boolean isPrivate;
 
+    @Column(name = "last_updated")
+    private LocalDateTime lastUpdated;
+
+    public void setLastUpdated() {
+        lastUpdated = LocalDateTime.now(Clock.systemDefaultZone());
+    }
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)

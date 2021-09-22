@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,18 +22,21 @@ public class PostService {
     private final GroupService groupService;
     private final EventService eventService;
     private final UserService userService;
+    private final TopicService topicService;
 
     @Autowired
     public PostService(
             PostRepository repository,
             GroupService groupService,
             EventService eventService,
+            TopicService topicService,
             UserService userService
     ) {
         this.repository = repository;
         this.groupService = groupService;
         this.eventService = eventService;
         this.userService = userService;
+        this.topicService = topicService;
     }
 
     public List<Post> getPosts(String id, String receiverType, String search, Pageable pageable) {
@@ -68,6 +72,8 @@ public class PostService {
 
         if (isPostingAllowed(post, senderId)) {
             post.setLastUpdated();
+            updateLastUpdatedForType(post.getReceiverType(), Long.parseLong(post.getReceiverId()), post.getLastUpdated());
+            updateLastUpdatedForType("topic", post.getTopic().getId(), post.getLastUpdated());
             User user = getUserInformation(senderId);
             post.setUser(user);
             user.addPost(post);
@@ -131,6 +137,13 @@ public class PostService {
             oldPost.setContent(updatedPost.getContent());
         oldPost.setLastUpdated();
         return oldPost;
+    }
+
+    private void updateLastUpdatedForType(String receiverType, long receiverId, LocalDateTime lastUpdated) {
+        switch (receiverType) {
+            case "group" -> groupService.updateGroupTime(receiverId, lastUpdated);
+            case "topic" -> topicService.updateTopicTime(receiverId, lastUpdated);
+        }
     }
 
 }
