@@ -72,14 +72,11 @@ public class PostService {
 
         if (isPostingAllowed(post, senderId)) {
             post.setLastUpdated();
-            updateLastUpdatedForType(post.getReceiverType(), Long.parseLong(post.getReceiverId()), post.getLastUpdated());
-            updateLastUpdatedForType("topic", post.getTopic().getId(), post.getLastUpdated());
+            //updateLastUpdatedForType(post.getReceiverType(), Long.parseLong(post.getReceiverId()), post.getLastUpdated());
+            //updateLastUpdatedForType("topic", post.getTopic().getId(), post.getLastUpdated());
             User user = getUserInformation(senderId);
             post.setUser(user);
-            user.addPost(post);
-            post = repository.save(post);
-            userService.updateUserRelations(user);
-            return post;
+            return repository.save(post);
         } else {
             return null;
         }
