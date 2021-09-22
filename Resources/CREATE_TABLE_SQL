@@ -10,12 +10,13 @@ CREATE TABLE usertable (
 CREATE TABLE "topic" (
     "topic_id" int   PRIMARY KEY,
     "name" varchar   NOT NULL,
+    "last_updated" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     "description" varchar   NOT NULL
 );
 
 CREATE TABLE cont (
     "content" varchar(1000)   NOT NULL,
-    "last_updated" date   NOT NULL
+    "last_updated"  TIMESTAMP WITHOUT TIME ZONE  NOT NULL
 );
 
 CREATE TABLE post (
@@ -45,6 +46,7 @@ CREATE TABLE "reply" (
 CREATE TABLE "group" (
     "group_id" int   PRIMARY KEY,
     "name" varchar   NOT NULL,
+    "last_updated" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     "description" varchar   NOT NULL,
     "is_private" boolean   NOT NULL
 );
@@ -62,13 +64,13 @@ CREATE TABLE group_member (
 
 CREATE TABLE "event" (
     "event_id" int   PRIMARY KEY,
-    "last_updated" date,
+    "last_updated" TIMESTAMP WITHOUT TIME ZONE,
     "created_by" varchar   NOT NULL,
     "name" varchar   NOT NULL,
     "description" varchar(1000)   NOT NULL,
     "banner_img" varchar   NOT NULL,
-    "start_time" date   NOT NULL,
-    "end_time" date   NOT NULL
+    "start_time" TIMESTAMP WITHOUT TIME ZONE   NOT NULL,
+    "end_time" TIMESTAMP WITHOUT TIME ZONE   NOT NULL
 );
 
 CREATE TABLE event_group (
@@ -116,7 +118,7 @@ CREATE TABLE topic_subscription (
 );
 
 CREATE TABLE RSVP (
-    "last_updated" date   NOT NULL,
+    "last_updated" TIMESTAMP WITHOUT TIME ZONE   NOT NULL,
     "guest_count" int   NOT NULL,
     "user_id" varchar   NOT NULL,
     "event_id" int   NOT NULL,

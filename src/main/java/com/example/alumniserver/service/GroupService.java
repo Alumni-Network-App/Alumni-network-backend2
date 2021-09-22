@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class GroupService {
 
     public Group createGroup(Group group, String userId) {
         User user = userRepository.findUserById(userId);
+        group.setLastUpdated();
         return createMembership(group, user);
     }
 
@@ -64,5 +66,11 @@ public class GroupService {
 
     public boolean groupExists(long groupId) {
         return repository.existsById(groupId);
+    }
+
+    public Group updateGroupTime(long groupId, LocalDateTime lastUpdated) {
+        Group group = repository.findGroupById(groupId);
+        group.setLastUpdated(lastUpdated);
+        return repository.save(group);
     }
 }
