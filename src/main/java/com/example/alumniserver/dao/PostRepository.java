@@ -12,12 +12,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    @Query("SELECT p FROM Post p WHERE p.user.id = :userId AND CONCAT(p.content, p.title) LIKE %:search% ORDER BY p.date DESC")
+    @Query("SELECT p FROM Post p WHERE p.user.id = :userId AND CONCAT(p.content, p.title) LIKE %:search% ORDER BY p.lastUpdated DESC")
     Page<Post> getPosts(@Param("userId") String userId,
                         @Param("search") String search,
                         Pageable page);
 
-    @Query("SELECT p FROM Post p WHERE p.user.id = :userId AND p.receiverType = :receiverType AND CONCAT(p.content, p.title) LIKE %:search% ORDER BY p.date DESC")
+    @Query("SELECT p FROM Post p WHERE p.user.id = :userId AND p.receiverType = :receiverType AND CONCAT(p.content, p.title) LIKE %:search% ORDER BY p.lastUpdated DESC")
     Page<Post> getFilteredPosts(
             @Param("userId") String userId,
             @Param("receiverType") String receiverType,
@@ -29,14 +29,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "AND p.receiverType = :type " +
             "AND p.receiverId = :receiverId " +
             "AND CONCAT(p.content, p.title) LIKE %:filter% " +
-            "ORDER BY p.date DESC")
+            "ORDER BY p.lastUpdated DESC")
     Page<Post> getFilteredPostsToTypeWithId(@Param("type") String type,
                                             @Param("receiverId") String receiverId,
                                             @Param("senderId") String senderId,
                                             @Param("filter") String filter,
                                             Pageable page);
 
-    @Query("SELECT DISTINCT p FROM Post p WHERE p.receiverType = :type AND p.receiverId = :receiverId AND CONCAT(p.content, p.title) LIKE %:filter% ORDER BY p.date DESC")
+    @Query("SELECT DISTINCT p FROM Post p WHERE p.receiverType = :type AND p.receiverId = :receiverId AND CONCAT(p.content, p.title) LIKE %:filter% ORDER BY p.lastUpdated DESC")
     Page<Post> getFilteredPostsToTypeWithIdFromUser(@Param("type") String type,
                                                     @Param("receiverId") String receiverId,
                                                     @Param("filter") String filter,
@@ -48,12 +48,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "FROM Post p INNER JOIN p.topic.users u " +
             "WHERE u.id = :senderId AND p.topic.id = :topicId " +
             "AND CONCAT(p.content, p.title) LIKE %:filter% " +
-            "ORDER BY p.date DESC")
+            "ORDER BY p.lastUpdated DESC")
     Page<Post> getFilteredPostsToTopic(@Param("topicId") long topicId,
                                        @Param("senderId") String userId,
                                        @Param("filter") String filter,
                                        Pageable page);
 
-    Post findPostByIdOrderByDateDesc(long postId);
+    Post findPostByIdOrderByLastUpdatedDesc(long postId);
 
 }
