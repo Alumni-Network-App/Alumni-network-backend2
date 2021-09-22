@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Required;
 import javax.persistence.*;
 import java.rmi.server.UID;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -27,7 +29,7 @@ public class Post<T> {
     private long id;
 
     @Column(name = "last_updated")
-    private LocalDateTime date = LocalDateTime.now();
+    private ZonedDateTime date = ZonedDateTime.now(ZoneId.of("CET"));
 
     @Column(length = 1000)
     private String content;
