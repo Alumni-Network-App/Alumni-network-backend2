@@ -83,8 +83,7 @@ public class PostService {
     public Post updateAPost(Post post, long postId) {
         Post fetchedPost = repository.findPostByIdOrderByLastUpdatedDesc(postId);
         post.setId(postId);
-        if (fetchedPost.getReceiverType().equals(post.getReceiverType())
-                && postExists(postId)) {
+        if (post.getReceiverType() == null || fetchedPost.getReceiverType().equals(post.getReceiverType())) {
             return repository.save(updateFields(post, fetchedPost));
         } else {
             return null;
@@ -126,9 +125,9 @@ public class PostService {
     }
 
     private Post updateFields(Post updatedPost, Post oldPost) {
-        if (!updatedPost.getTitle().equals(""))
+        if (updatedPost.getTitle() != null)
             oldPost.setTitle(updatedPost.getTitle());
-        if (!updatedPost.getContent().equals(""))
+        if (updatedPost.getContent() != null)
             oldPost.setContent(updatedPost.getContent());
         oldPost.setLastUpdated();
         return oldPost;
