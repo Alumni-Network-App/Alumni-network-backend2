@@ -45,8 +45,6 @@ public class Group {
     private Set<Event> events;
 
 
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
     @ManyToMany
     @JoinTable(
             name="group_member",
@@ -96,9 +94,5 @@ public class Group {
 
     public boolean removeEventFromGroup(Event event) {
         return events.remove(event);
-    }
-
-    public boolean addEventToGroup(Event event) {
-        return events.add(event);
     }
 }
