@@ -72,8 +72,6 @@ public class PostService {
 
         if (isPostingAllowed(post, senderId)) {
             post.setLastUpdated();
-            //updateLastUpdatedForType(post.getReceiverType(), Long.parseLong(post.getReceiverId()), post.getLastUpdated());
-            //updateLastUpdatedForType("topic", post.getTopic().getId(), post.getLastUpdated());
             User user = getUserInformation(senderId);
             post.setUser(user);
             return repository.save(post);
@@ -134,13 +132,6 @@ public class PostService {
             oldPost.setContent(updatedPost.getContent());
         oldPost.setLastUpdated();
         return oldPost;
-    }
-
-    private void updateLastUpdatedForType(String receiverType, long receiverId, LocalDateTime lastUpdated) {
-        switch (receiverType) {
-            case "group" -> groupService.updateGroupTime(receiverId, lastUpdated);
-            case "topic" -> topicService.updateTopicTime(receiverId, lastUpdated);
-        }
     }
 
 }

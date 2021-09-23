@@ -27,11 +27,14 @@ public class GroupService {
     }
 
     public List<Group> getGroups(String userId, String name, Pageable page) {
-        return repository.findGroups(userId, name, page).getContent();
+        List<Group> groups = repository.findGroups(userId, name, page).getContent();
+        groups.forEach(group -> System.out.print(group.getGroupId() + ", "));
+        System.out.println();
+        return groups;
     }
 
     public Group getGroup(long groupId) {
-        return repository.findGroupById(groupId);
+        return repository.findGroupByGroupId(groupId);
     }
 
     public Group createGroup(Group group, String userId) {
@@ -68,9 +71,7 @@ public class GroupService {
         return repository.existsById(groupId);
     }
 
-    public Group updateGroupTime(long groupId, LocalDateTime lastUpdated) {
-        Group group = repository.findGroupById(groupId);
-        group.setLastUpdated(lastUpdated);
-        return repository.save(group);
+    public void updateGroupTime(long groupId, LocalDateTime lastUpdated) {
+        repository.updateGroup(groupId, lastUpdated);
     }
 }

@@ -62,7 +62,7 @@ public class EventService {
 
     private boolean isValidGroupInvites(Event event, int groupInvites, String userId) {
         for (int i = 0; i < groupInvites; i++) {
-            Group group = groupService.getGroup(event.getGroupInvite(i).getId());
+            Group group = groupService.getGroup(event.getGroupInvite(i).getGroupId());
             if (group == null || !group.isUserMember(userId))
                 return false;
         }

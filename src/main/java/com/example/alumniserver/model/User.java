@@ -143,7 +143,7 @@ public class User {
         if(groups != null) {
             return groups.stream()
                     .map(group -> {
-                        return "/api/v1/group/" + group.getId();
+                        return "/api/v1/group/" + group.getGroupId();
                     }).collect(Collectors.toList());
         } else {
             return null;
