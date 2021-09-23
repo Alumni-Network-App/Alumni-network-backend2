@@ -28,8 +28,6 @@ public class GroupService {
 
     public List<Group> getGroups(String userId, String name, Pageable page) {
         List<Group> groups = repository.findGroups(userId, name, page).getContent();
-        groups.forEach(group -> System.out.print(group.getGroupId() + ", "));
-        System.out.println();
         return groups;
     }
 
