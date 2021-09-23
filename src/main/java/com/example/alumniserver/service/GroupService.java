@@ -60,7 +60,6 @@ public class GroupService {
 
     private Group createMembership(Group group, User user) {
         if(group.getName() != null) {
-            user.addGroup(group);
             group.addUserAsMember(user);
             return repository.save(group);
         } else
