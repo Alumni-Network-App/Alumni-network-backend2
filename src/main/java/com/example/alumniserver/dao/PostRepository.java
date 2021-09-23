@@ -45,12 +45,12 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 
     @Query("SELECT DISTINCT p " +
-            "FROM Post p INNER JOIN p.topic.users u " +
-            "WHERE u.id = :senderId AND p.topic.id = :topicId " +
+            "FROM Post p " +
+            "WHERE p.user.id = :senderId AND p.topic.id= :topicId " +
             "AND CONCAT(p.content, p.title) LIKE %:filter% " +
             "ORDER BY p.lastUpdated DESC")
     Page<Post> getFilteredPostsToTopic(@Param("topicId") long topicId,
-                                       @Param("senderId") String userId,
+                                       @Param("senderId") String senderId,
                                        @Param("filter") String filter,
                                        Pageable page);
 
