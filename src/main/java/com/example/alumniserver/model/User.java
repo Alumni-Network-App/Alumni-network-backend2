@@ -49,7 +49,7 @@ public class User {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(mappedBy = "users")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "users")
     private Set<Group> groups;
 
     public boolean addTopicToSubscription(Topic topic) {

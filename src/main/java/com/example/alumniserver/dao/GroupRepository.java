@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public interface GroupRepository extends JpaRepository<Group, Long> {
     Group findGroupByGroupId(long id);
 
-    @Query("SELECT g FROM Group g INNER JOIN g.users u WHERE g.name LIKE %:name% AND (g.isPrivate = FALSE OR u.id = :userId) ORDER BY g.lastUpdated DESC NULLS LAST")
+    @Query("SELECT g FROM Group g LEFT JOIN g.users u WHERE g.name LIKE %:name% AND (g.isPrivate = FALSE OR size(g.users) > 0 AND u.id = :userId) ORDER BY g.lastUpdated DESC NULLS LAST")
     Page<Group> findGroups(@Param("userId")String userId, @Param("name")String name, Pageable pageable);
 
     @Transactional
