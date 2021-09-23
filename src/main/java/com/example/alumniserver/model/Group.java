@@ -23,7 +23,7 @@ public class Group {
     @Id
     @Column(name = "group_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    private long groupId;
 
     @Column
     private String name;

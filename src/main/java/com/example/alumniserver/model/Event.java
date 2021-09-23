@@ -91,7 +91,7 @@ public class Event {
         if(groups != null) {
             return groups.stream()
                     .map(group -> {
-                        return "/api/v1/group/" + group.getId();
+                        return "/api/v1/group/" + group.getGroupId();
                     }).collect(Collectors.toList());
         } else {
             return null;
@@ -142,7 +142,7 @@ public class Event {
     public boolean isGroupInvited(long groupId) {
         if(groups != null) {
             for (Group group : groups) {
-                if (group.getId() == groupId)
+                if (group.getGroupId() == groupId)
                     return true;
             }
         }

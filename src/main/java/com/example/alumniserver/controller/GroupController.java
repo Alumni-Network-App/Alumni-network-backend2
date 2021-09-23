@@ -63,7 +63,11 @@ public class GroupController {
                 getGroupLinkById(addedGroup, auth),
                 status.getBadRequestPostingStatus(addedGroup));
     }
+/*
+    @PatchMapping("/{groupId}")
+    public ResponseEntity<Link> updateGroup(@PathVariable)
 
+ */
     @PostMapping(value = {"/{groupId}/join", "/{groupId}/join/{userId}"})
     public ResponseEntity<Link> createGroupMembership(
             @PathVariable long groupId,
@@ -96,7 +100,7 @@ public class GroupController {
     private Link getGroupLinkById(Group group, String auth) {
         return (group == null) ? null :
                 linkTo(methodOn(GroupController.class)
-                        .getGroup(group.getId(), auth))
+                        .getGroup(group.getGroupId(), auth))
                         .withSelfRel();
     }
 
