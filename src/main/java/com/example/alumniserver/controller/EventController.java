@@ -62,7 +62,7 @@ public class EventController {
     public ResponseEntity<Event> createEvent(@RequestBody Event event,
                                              @RequestHeader("Authorization") String auth) {
         String userId = idHelper.getLoggedInUserId(auth);
-        if (event.getNumberOfTopicInvites() == 0 && event.getNumberOfGroupInvites() == 0)
+        if (event.getNumberOfTopicInvites() == 0 && event.getNumberOfGroupInvites() == 0 && event.getTotalInvitedUsers() == 0)
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         event = eventService.createEvent(event, userId);
         return new ResponseEntity<>(event,
