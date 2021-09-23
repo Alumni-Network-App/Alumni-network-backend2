@@ -1,15 +1,13 @@
 package com.example.alumniserver.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,8 +47,13 @@ public class Group {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(mappedBy = "groups", cascade = CascadeType.ALL)
-    private List<User> users;
+    @ManyToMany
+    @JoinTable(
+            name="group_member",
+            joinColumns = {@JoinColumn(name = "group_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    private Set<User> users;
 
     @JsonGetter("users")
     public List<String> users() {
@@ -86,7 +89,7 @@ public class Group {
 
     public void addUserAsMember(User user) {
         if(users == null){
-            users = new ArrayList<>();
+            users = new HashSet<>();
         }
         users.add(user);
     }

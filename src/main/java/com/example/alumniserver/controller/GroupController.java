@@ -40,7 +40,8 @@ public class GroupController {
                                                  @RequestParam(required = false, defaultValue = "") String name,
                                                  @RequestHeader("Authorization") String auth) {
         String userId = idHelper.getLoggedInUserId(auth);
-        return new ResponseEntity<>(service.getGroups(userId, name, page), HttpStatus.OK);
+        List<Group> groups = service.getGroups(userId, name, page);
+        return new ResponseEntity<>(groups, HttpStatus.OK);
     }
 
     @GetMapping(value = "/{groupId}")
@@ -77,6 +78,7 @@ public class GroupController {
         else if (userId == null)
             userId = idHelper.getLoggedInUserId(auth);
 
+
         if (group.isUserMember(userId))
             return new ResponseEntity<>(
                     getGroupLinkById(group, auth),
@@ -86,8 +88,9 @@ public class GroupController {
             if (user == null)
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             group = service.addUserToGroup(group, user, loggedInUserId);
-        } else
+        } else {
             group = service.createGroupMembership(group, userId);
+        }
 
         return new ResponseEntity<>(getGroupLinkById(group, auth),
                 status.getForbiddenPostingStatus(group));

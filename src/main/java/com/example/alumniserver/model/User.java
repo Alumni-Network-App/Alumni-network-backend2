@@ -1,10 +1,7 @@
 package com.example.alumniserver.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -52,31 +49,8 @@ public class User {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name="group_member",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "group_id")}
-    )
-    private List<Group> groups;
-
-    public void addGroup(Group group) {
-        if(groups == null)
-            groups = new ArrayList<>();
-        groups.add(group);
-    }
-
-    public boolean addPost(Post post) {
-        if(posts == null)
-            posts = new ArrayList<>();
-        return posts.add(post);
-    }
-
-    public boolean addReply(Reply reply) {
-        if(replies == null)
-            replies = new ArrayList<>();
-        return replies.add(reply);
-    }
+    @ManyToMany(mappedBy = "users")
+    private Set<Group> groups;
 
     public boolean addTopicToSubscription(Topic topic) {
         if(topicSubscriptions == null)
