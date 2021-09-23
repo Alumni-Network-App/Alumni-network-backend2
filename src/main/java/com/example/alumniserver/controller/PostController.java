@@ -31,7 +31,6 @@ public class PostController {
     private final GroupService groupService;
     private final TopicService topicService;
     private final EventService eventService;
-    private final GroupController groupController;
 
     @Autowired
     public PostController(
@@ -39,15 +38,13 @@ public class PostController {
             UserService userService,
             GroupService groupService,
             TopicService topicService,
-            EventService eventService,
-            GroupController groupController
+            EventService eventService
     ) {
         this.postService = postService;
         this.userService = userService;
         this.groupService = groupService;
         this.topicService = topicService;
         this.eventService = eventService;
-        this.groupController = groupController;
     }
 
     @GetMapping
@@ -156,10 +153,10 @@ public class PostController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
 
-        /*post = postService.createPost(post, id);
+        post = postService.createPost(post, id);
         if(post != null && post.getReceiverType().equals("group"))
-            groupController.(Long.parseLong(post.getReceiverId()), post.getLastUpdated());
-*/
+            groupService.updateGroupTime(Long.parseLong(post.getReceiverId()), post.getLastUpdated());
+
         return new ResponseEntity<>((post != null) ? getPostLinkById(post.getId(), auth) : null,
                 statusCode.getForbiddenPostingStatus(post));
     }
