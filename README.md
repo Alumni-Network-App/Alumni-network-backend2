@@ -1,5 +1,15 @@
 # Experis Academy Case - Alumni network (API)
 
+
+## About
+The Experis Academy fullstack developer course with Noroff Accelerate has been run
+many times and in many different locations since the programme first began. Both Experis and Noroff have experienced difficulty in maintaining contact with past candidates
+to notify them of social events and gather data for quality assurance purposes. With that in mind, This application is developed to facilitate this kind of communication.
+
+## Frontend 
+Check out the repository for our frontend application [here](https://github.com/Alumni-Network-App/alumni-network-client) <br>
+You can view our user manual [here](https://github.com/Alumni-Network-App/alumni-network-client/blob/main/alumninetwork-manual.pdf) <br>
+
 ## Deploys (Using Heroku)
 Frontend: https://alumni-network-deluxe.herokuapp.com/
 
